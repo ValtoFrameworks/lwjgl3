@@ -6,7 +6,6 @@ package nanovg.templates
 
 import org.lwjgl.generator.*
 import nanovg.*
-import opengl.*
 
 val nanovg_gl3 = "NanoVGGL3".dependsOn(Module.OPENGL)?.nativeClass(Module.NANOVG, prefix = "NVG", library = NANOVG_LIBRARY) {
     nativeDirective(
@@ -41,7 +40,7 @@ val nanovg_gl3 = "NanoVGGL3".dependsOn(Module.OPENGL)?.nativeClass(Module.NANOVG
         "IMAGE_NODELETE".enum("Do not delete GL texture handle.", "1<<16")
     )
 
-    val ctx = NVGcontext_p.IN("ctx", "the NanoVG context")
+    val ctx = NVGcontext.p.IN("ctx", "the NanoVG context")
 
     NativeName("nvglCreateImageFromHandleGL3")..int(
         "lCreateImageFromHandle",
@@ -64,7 +63,7 @@ val nanovg_gl3 = "NanoVGGL3".dependsOn(Module.OPENGL)?.nativeClass(Module.NANOVG
         int.IN("image", "the image handle")
     )
 
-    NativeName("nvgCreateGL3")..NVGcontext_p(
+    NativeName("nvgCreateGL3")..NVGcontext.p(
         "Create",
         """
         Creates a NanoVG context with an OpenGL 3.0 rendering back-end.
@@ -84,7 +83,7 @@ val nanovg_gl3 = "NanoVGGL3".dependsOn(Module.OPENGL)?.nativeClass(Module.NANOVG
         ctx
     )
 
-    NativeName("nvgluCreateFramebufferGL3")..NVGLUframebuffer_p(
+    NativeName("nvgluCreateFramebufferGL3")..NVGLUframebuffer.p(
         "luCreateFramebuffer",
         "Creates a framebuffer object to render to.",
 
@@ -99,7 +98,7 @@ val nanovg_gl3 = "NanoVGGL3".dependsOn(Module.OPENGL)?.nativeClass(Module.NANOVG
         "Binds the framebuffer object associated with the specified ##NVGLUFramebuffer.",
 
         ctx,
-        nullable..NVGLUframebuffer_p.IN("fb", "the framebuffer to bind")
+        nullable..NVGLUframebuffer.p.IN("fb", "the framebuffer to bind")
     )
 
     NativeName("nvgluDeleteFramebufferGL3")..void(
@@ -107,6 +106,6 @@ val nanovg_gl3 = "NanoVGGL3".dependsOn(Module.OPENGL)?.nativeClass(Module.NANOVG
         "Deletes an ##NVGLUFramebuffer.",
 
         ctx,
-        NVGLUframebuffer_p.IN("fb", "the framebuffer to delete")
+        NVGLUframebuffer.p.IN("fb", "the framebuffer to delete")
     )
 }

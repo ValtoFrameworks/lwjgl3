@@ -7,15 +7,10 @@ package org.lwjgl.system;
 import java.nio.*;
 
 import static java.lang.Character.*;
+import static org.lwjgl.system.MathUtil.*;
 import static org.lwjgl.system.MemoryUtil.*;
 
-/**
- * This class serves two purposes:
- * <ul>
- * <li>Keep the {@link MemoryUtil} class free of implementation details.</li>
- * <li>Enable elimination of {@link ByteBuffer} allocations (via escape analysis) with the Unsafe implementation.</li>
- * </ul>
- */
+/** {@code strlen} and string encoding utilities. */
 class MemoryTextUtil {
 
     protected MemoryTextUtil() {
@@ -29,7 +24,7 @@ class MemoryTextUtil {
     int strlen64NT1(long address, int maxLength) {
         int i = 0;
 
-        ByteBuffer buffer = memByteBuffer(address, maxLength);
+        ByteBuffer buffer = memByteBuffer(address, Integer.MAX_VALUE);
 
         if (8 <= maxLength) {
             int misalignment = (int)address & 7;
@@ -43,13 +38,12 @@ class MemoryTextUtil {
             }
 
             // Aligned longs for performance
-            do {
-                long v = buffer.getLong(i);
-                if (((v - 0x0101010101010101L) & ~v & 0x8080808080808080L) != 0) {
+            while (i <= maxLength - 8) {
+                if (mathHasZeroByte(buffer.getLong(i))) {
                     break;
                 }
                 i += 8;
-            } while (i <= maxLength - 8);
+            }
         }
 
         // Tail
@@ -70,7 +64,7 @@ class MemoryTextUtil {
     int strlen64NT2(long address, int maxLength) {
         int i = 0;
 
-        ByteBuffer buffer = memByteBuffer(address, maxLength);
+        ByteBuffer buffer = memByteBuffer(address, Integer.MAX_VALUE);
 
         if (8 <= maxLength) {
             int misalignment = (int)address & 7;
@@ -84,13 +78,12 @@ class MemoryTextUtil {
             }
 
             // Aligned longs for performance
-            do {
-                long v = buffer.getLong(i);
-                if (((v - 0x0001000100010001L) & ~v & 0x8000800080008000L) != 0) {
+            while (i <= maxLength - 8) {
+                if (mathHasZeroShort(buffer.getLong(i))) {
                     break;
                 }
                 i += 8;
-            } while (i <= maxLength - 8);
+            }
         }
 
         // Tail
@@ -111,7 +104,7 @@ class MemoryTextUtil {
     int strlen32NT1(long address, int maxLength) {
         int i = 0;
 
-        ByteBuffer buffer = memByteBuffer(address, maxLength);
+        ByteBuffer buffer = memByteBuffer(address, Integer.MAX_VALUE);
 
         if (4 <= maxLength) {
             int misalignment = (int)address & 3;
@@ -125,13 +118,12 @@ class MemoryTextUtil {
             }
 
             // Aligned ints for performance
-            do {
-                int v = buffer.getInt(i);
-                if (((v - 0x01010101) & ~v & 0x80808080) != 0) {
+            while (i <= maxLength - 4) {
+                if (mathHasZeroByte(buffer.getInt(i))) {
                     break;
                 }
                 i += 4;
-            } while (i <= maxLength - 4);
+            }
         }
 
         // Tail
@@ -152,7 +144,7 @@ class MemoryTextUtil {
     int strlen32NT2(long address, int maxLength) {
         int i = 0;
 
-        ByteBuffer buffer = memByteBuffer(address, maxLength);
+        ByteBuffer buffer = memByteBuffer(address, Integer.MAX_VALUE);
 
         if (4 <= maxLength) {
             int misalignment = (int)address & 3;
@@ -166,13 +158,12 @@ class MemoryTextUtil {
             }
 
             // Aligned ints for performance
-            do {
-                int v = buffer.getInt(i);
-                if (((v - 0x00010001) & ~v & 0x80008000) != 0) {
+            while (i <= maxLength - 4) {
+                if (mathHasZeroShort(buffer.getInt(i))) {
                     break;
                 }
                 i += 4;
-            } while (i <= maxLength - 4);
+            }
         }
 
         // Tail
@@ -189,32 +180,16 @@ class MemoryTextUtil {
 
     /** @see MemoryUtil#memASCII(CharSequence, boolean, ByteBuffer, int) */
     int encodeASCII(CharSequence text, boolean nullTerminated, ByteBuffer target, int offset) {
-        int p = offset;
-
-        for (int i = 0; i < text.length(); i++, p++) {
-            target.put(p, (byte)text.charAt(i));
+        int len = text.length();
+        for (int i = 0; i < len; i++) {
+            target.put(offset + i, (byte)text.charAt(i));
         }
 
         if (nullTerminated) {
-            target.put(p++, (byte)0);
+            target.put(offset + len, (byte)0);
         }
 
-        return p - offset;
-    }
-
-    /** @see MemoryUtil#memASCII(ByteBuffer, int, int) */
-    static String decodeASCII(ByteBuffer buffer, int length, int offset) {
-        if (length <= 0) {
-            return "";
-        }
-
-        char[] chars = new char[length];
-
-        for (int i = 0; i < length; i++) {
-            chars[i] = (char)buffer.get(offset + i);
-        }
-
-        return new String(chars);
+        return len + (nullTerminated ? 1 : 0);
     }
 
     // ---------------------------------------------------------------------------------------------------------------------
@@ -325,115 +300,20 @@ class MemoryTextUtil {
         }
     }
 
-    /** @see MemoryUtil#memUTF8(ByteBuffer, int, int) */
-    static String decodeUTF8(ByteBuffer buffer, int length, int offset) {
-        if (length <= 0) {
-            return "";
-        }
-
-        char[] string = new char[length];
-
-        int i = 0, position = offset, limit = offset + length;
-
-        // fast path
-        while (position < limit) {
-            int c = buffer.get(position);
-            if (c < 0) {
-                break;
-            }
-
-            string[i++] = (char)c;
-            position++;
-        }
-
-        // slow path
-        while (position < limit) {
-            int b0 = buffer.get(position++);
-            if (0 <= b0) {
-                string[i++] = (char)b0;
-            } else if ((b0 >> 5) == -2 && (b0 & 0x1E) != 0) {
-                int b1 = buffer.get(position++);
-                checkMalformed2(b1);
-
-                string[i++] = (char)(((b0 << 6) ^ b1) ^ (((byte)0xC0 << 6) ^ ((byte)0x80 << 0)));
-            } else if ((b0 >> 4) == -2) {
-                int b1 = buffer.get(position++);
-                int b2 = buffer.get(position++);
-                checkMalformed3(b0, b1, b2);
-
-                string[i++] = checkSurrogate((char)((b0 << 12) ^ (b1 << 6) ^ (b2 ^ (((byte)0xE0 << 12) ^ ((byte)0x80 << 6) ^ ((byte)0x80 << 0)))));
-            } else if ((b0 >> 3) == -2) {
-                int b1 = buffer.get(position++);
-                int b2 = buffer.get(position++);
-                int b3 = buffer.get(position++);
-                int cp = ((b0 << 18) ^ (b1 << 12) ^ (b2 << 6) ^ (b3 ^ ((byte)0xF0 << 18 ^ ((byte)0x80 << 12) ^ ((byte)0x80 << 6) ^ ((byte)0x80 << 0))));
-                checkMalformed4(b1, b2, b3, cp);
-
-                string[i++] = (char)((cp >>> 10) + MIN_HIGH_SURROGATE - (MIN_SUPPLEMENTARY_CODE_POINT >>> 10));
-                string[i++] = (char)((cp & 0x3FF) + MIN_LOW_SURROGATE);
-            } else if (Checks.DEBUG) {
-                throw new RuntimeException("Malformed character sequence");
-            }
-        }
-
-        return new String(string, 0, i);
-    }
-
-    private static void checkMalformed2(int b1) {
-        if (Checks.DEBUG && (b1 & 0xC0) != 0x80) {
-            throw new RuntimeException("Malformed character sequence");
-        }
-    }
-
-    private static void checkMalformed3(int b0, int b1, int b2) {
-        if (Checks.DEBUG && ((b0 == (byte)0xE0 && (b1 & 0xE0) == 0x80) || (b1 & 0xC0) != 0x80 || (b2 & 0xC0) != 0x80)) {
-            throw new RuntimeException("Malformed character sequence");
-        }
-    }
-
-    private static char checkSurrogate(char c) {
-        if (Checks.DEBUG && MIN_SURROGATE <= c && c <= MAX_SURROGATE) {
-            throw new RuntimeException("Malformed character sequence");
-        }
-        return c;
-    }
-
-    private static void checkMalformed4(int b1, int b2, int b3, int cp) {
-        if (Checks.DEBUG && ((b1 & 0xC0) != 0x80 || (b2 & 0xC0) != 0x80 || (b3 & 0xC0) != 0x80 || !isSupplementaryCodePoint(cp))) {
-            throw new RuntimeException("Malformed character sequence");
-        }
-    }
-
     // ---------------------------------------------------------------------------------------------------------------------
 
     /** @see MemoryUtil#memUTF16(CharSequence, boolean, ByteBuffer, int) */
     int encodeUTF16(CharSequence text, boolean nullTerminated, ByteBuffer target, int offset) {
-        int p = offset;
-        for (int i = 0; i < text.length(); i++, p += 2) {
-            target.putChar(p, text.charAt(i));
+        int len = text.length();
+        for (int i = 0; i < len; i++) {
+            target.putChar(offset + 2 * i, text.charAt(i));
         }
 
         if (nullTerminated) {
-            target.putChar(p, '\0');
-            p += 2;
+            target.putChar(offset + 2 * len, '\0');
         }
 
-        return p - offset;
-    }
-
-    /** @see MemoryUtil#memUTF16(ByteBuffer, int, int) */
-    static String decodeUTF16(ByteBuffer buffer, int length, int offset) {
-        if (length <= 0) {
-            return "";
-        }
-
-        char[] chars = new char[length];
-
-        for (int i = 0; i < chars.length; i++) {
-            chars[i] = buffer.getChar(offset + (i << 1));
-        }
-
-        return new String(chars);
+        return 2 * (len + (nullTerminated ? 1 : 0));
     }
 
 }
