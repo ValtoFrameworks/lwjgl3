@@ -447,6 +447,9 @@
             <compileBinding binding="ovr">
                 <pathelement path="${bin.lwjgl}/vulkan"/>
             </compileBinding>
+            <compileBinding binding="vma">
+                <pathelement path="${bin.lwjgl}/vulkan"/>
+            </compileBinding>
         </parallel>
     </target>
 
@@ -804,9 +807,9 @@
 
         <exec executable="git" failonerror="true" output="${lib}/${revision}" taskname="Git revision">
             <arg value="log"/>
+            <arg value="--first-parent"/>
             <arg value="--pretty=format:%H"/>
             <arg value="HEAD~2..HEAD~1"/> <!-- Skip the CI commit -->
-            <arg value="-1"/>
         </exec>
 
         <local name="libraries"/>
@@ -864,6 +867,27 @@
         </sequential>
     </macrodef>
 
+    <macrodef name="natives-jar">
+        <attribute name="name"/>
+        <attribute name="title"/>
+        <attribute name="platform"/>
+        <attribute name="extension"/>
+        <element name="content" optional="true" implicit="true"/>
+        <sequential>
+            <local name="platform.skip"/>
+            <condition property="platform.skip">
+                <resourcecount when="eq" count="0">
+                    <fileset dir="${release}/${module}/native" includes="*@{extension}"/>
+                </resourcecount>
+            </condition>
+
+            <lwjgl-jar destfile="${release}/${module}/${module}-natives-@{platform}.jar" title="@{title}" unless:set="platform.skip">
+                <fileset dir="${release}/${module}/native" includes="*@{extension}*"/>
+                <fileset dir="${bin.lwjgl}/@{name}.natives" includes="META-INF/versions/9/module-info.class" if:set="jdk9"/>
+            </lwjgl-jar>
+        </sequential>
+    </macrodef>
+
     <macrodef name="release-natives">
         <attribute name="name"/>
         <attribute name="title"/>
@@ -909,20 +933,9 @@
             </checksum>
 
             <parallel threadsPerProcessor="1" failonany="true">
-                <lwjgl-jar destfile="${release}/${module}/${module}-natives-linux.jar" title="@{title}">
-                    <fileset dir="${release}/${module}/native" includes="*.so*"/>
-                    <fileset dir="${bin.lwjgl}/@{name}.natives" includes="META-INF/versions/9/module-info.class" if:set="jdk9"/>
-                </lwjgl-jar>
-
-                <lwjgl-jar destfile="${release}/${module}/${module}-natives-macos.jar" title="@{title}">
-                    <fileset dir="${release}/${module}/native" includes="*.dylib*"/>
-                    <fileset dir="${bin.lwjgl}/@{name}.natives" includes="META-INF/versions/9/module-info.class" if:set="jdk9"/>
-                </lwjgl-jar>
-
-                <lwjgl-jar destfile="${release}/${module}/${module}-natives-windows.jar" title="@{title}">
-                    <fileset dir="${release}/${module}/native" includes="*.dll*"/>
-                    <fileset dir="${bin.lwjgl}/@{name}.natives" includes="META-INF/versions/9/module-info.class" if:set="jdk9"/>
-                </lwjgl-jar>
+                <natives-jar name="@{name}" title="@{title}" platform="linux" extension=".so"/>
+                <natives-jar name="@{name}" title="@{title}" platform="macos" extension=".dylib"/>
+                <natives-jar name="@{name}" title="@{title}" platform="windows" extension=".dll"/>
             </parallel>
         </sequential>
     </macrodef>
@@ -1211,8 +1224,16 @@
         <!-- AMD Tootle -->
         <release-module package="org.lwjgl.util.tootle" name="tootle" native-library="lwjgl_tootle" title="tootle" if:true="${binding.tootle}"/>
 
+        <!-- Vulkan Memory Allocator -->
+        <release-module package="org.lwjgl.util.vma" name="vma" native-library="lwjgl_vma" title="vma" if:true="${binding.vma}"/>
+
         <!-- Vulkan -->
-        <release-module package="org.lwjgl.vulkan" name="vulkan" title="Vulkan" license="khronos" if:true="${binding.vulkan}"/>
+        <release-module package="org.lwjgl.vulkan" name="vulkan" title="Vulkan" license="khronos" if:true="${binding.vulkan}">
+            <natives>
+                <get-release url="macosx/x64/libMoltenVK.dylib"/>
+                <get-release url="macosx/x64/libMoltenVK.dylib.git"/>
+            </natives>
+        </release-module>
 
         <!-- xxHash -->
         <release-module package="org.lwjgl.util.xxhash" name="xxhash" native-library="lwjgl_xxhash" title="xxHash" if:true="${binding.xxhash}"/>

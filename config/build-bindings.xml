@@ -39,6 +39,7 @@ This script is included in /config/build-definitions.xml.
     <property name="binding.tinyexr" value="true"/>
     <property name="binding.tinyfd" value="true"/>
     <property name="binding.tootle" value="true"/>
+    <property name="binding.vma" value="true"/>
     <property name="binding.vulkan" value="true"/>
     <property name="binding.xxhash" value="true"/>
     <property name="binding.yoga" value="true"/>
@@ -49,11 +50,10 @@ This script is included in /config/build-definitions.xml.
     <property name="java-only.binding.jawt" value="true"/>
     <property name="java-only.binding.odbc" value="true"/>
     <property name="java-only.binding.opencl" value="true"/>
-    <property name="java-only.binding.vulkan" value="true"/>
 
     <!-- Set the path to the Oculus SDK to enable. -->
     <!-- TODO: add headers in here -->
-    <property name="OCULUS_SDK_PATH" location="../../CLONES/OculusSDK" relative="false"/>
+    <property name="OCULUS_SDK_PATH" location="../OculusSDK" relative="false"/>
 
     <!-- // ================================ // -->
 

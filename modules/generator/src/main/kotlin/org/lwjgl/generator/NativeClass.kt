@@ -29,8 +29,7 @@ enum class APICapabilities {
 abstract class APIBinding(
     module: Module,
     className: String,
-    val apiCapabilities: APICapabilities = APICapabilities.NONE,
-    val callingConvention: CallingConvention = CallingConvention.STDCALL
+    val apiCapabilities: APICapabilities = APICapabilities.NONE
 ) : GeneratorTarget(module, className) {
 
     init {
@@ -93,9 +92,8 @@ abstract class APIBinding(
 /** An APIBinding without an associated capabilities class.  */
 abstract class SimpleBinding(
     module: Module,
-    private val libraryExpression: String,
-    callingConvention: CallingConvention
-) : APIBinding(module, "*", callingConvention = callingConvention) { // TODO
+    private val libraryExpression: String
+) : APIBinding(module, "*") { // TODO
     override fun PrintWriter.generateJava() = Unit
     override fun generateFunctionAddress(writer: PrintWriter, function: Func) {
         writer.println("$t${t}long ${if (function has Address) RESULT else FUNCTION_ADDRESS} = Functions.${function.simpleName};")
@@ -133,9 +131,8 @@ fun simpleBinding(
     module: Module,
     libraryName: String = module.name.toLowerCase(),
     libraryExpression: String = "\"$libraryName\"",
-    callingConvention: CallingConvention = CallingConvention.DEFAULT,
     bundledWithLWJGL: Boolean = false
-) = object : SimpleBinding(module, libraryName.toUpperCase(), callingConvention) {
+) = object : SimpleBinding(module, libraryName.toUpperCase()) {
     override fun PrintWriter.generateFunctionSetup(nativeClass: NativeClass) {
         val libraryReference = libraryName.toUpperCase()
 
@@ -152,7 +149,7 @@ fun simpleBinding(
 /** Creates a simple APIBinding that delegates function pointer loading to this APIBinding. */
 fun APIBinding.delegate(
     libraryExpression: String
-) = object : SimpleBinding(module, libraryExpression, callingConvention) {
+) = object : SimpleBinding(module, libraryExpression) {
     override fun PrintWriter.generateFunctionSetup(nativeClass: NativeClass) {
         generateFunctionsClass(nativeClass, "\n$t/** Contains the function pointers loaded from {@code $libraryExpression}. */")
     }
@@ -161,18 +158,19 @@ fun APIBinding.delegate(
 // TODO: Remove if KT-7859 is fixed.
 private fun APIBinding.generateFunctionSetup(writer: PrintWriter, nativeClass: NativeClass) = writer.generateFunctionSetup(nativeClass)
 
-class NativeClass(
+class NativeClass internal constructor(
     module: Module,
     className: String,
     nativeSubPath: String,
     val templateName: String = className,
     val prefix: String,
-    val prefixMethod: String,
-    val prefixConstant: String,
+    internal val prefixMethod: String,
+    internal val prefixConstant: String,
     val prefixTemplate: String,
     val postfix: String,
     val binding: APIBinding?,
-    val library: String?
+    internal val library: String?,
+    internal val callingConvention: CallingConvention
 ) : GeneratorTargetNative(module, className, nativeSubPath) {
     companion object {
         private val JDOC_LINK_PATTERN = """(?<!\p{javaJavaIdentifierPart}|[@#])#(\p{javaJavaIdentifierStart}\p{javaJavaIdentifierPart}*)""".toRegex()
@@ -520,8 +518,6 @@ class NativeClass(
                 if (binding !is SimpleBinding && functions.any(Func::hasCustomJNI))
                     libraryInit()
 
-                printCustomMethods(static = true)
-
                 if (binding is SimpleBinding || functions.any { !it.hasExplicitFunctionAddress }) {
                     println("""
     ${if (hasFunctions && access === Access.PUBLIC) "protected" else "private"} $className() {
@@ -529,6 +525,7 @@ class NativeClass(
     }""")
                     binding.generateFunctionSetup(this, this@NativeClass)
                 }
+                printCustomMethods(static = true)
             } else {
                 libraryInit()
 
@@ -704,13 +701,15 @@ class NativeClass(
     }
 
     fun customMethod(method: String) {
-        customMethods.add(method)
+        customMethods.add(method.trim())
     }
 
     private fun PrintWriter.printCustomMethods(static: Boolean) {
-        customMethods.filter { it.startsWith("static {") == static }.forEach {
-            println("\n$t${it.trim()}")
-        }
+        customMethods
+            .filter { it.startsWith("static {") == static }
+            .forEach {
+                println("\n$t$it")
+            }
     }
 
     operator fun NativeClass.get(functionName: String) = _functions[functionName] ?: throw IllegalArgumentException("Referenced function does not exist: $templateName.$functionName")
@@ -785,9 +784,10 @@ fun String.nativeClass(
     postfix: String = "",
     binding: APIBinding? = null,
     library: String? = null,
+    callingConvention: CallingConvention = module.callingConvention,
     init: (NativeClass.() -> Unit)? = null
 ): NativeClass {
-    val ext = NativeClass(module, this, nativeSubPath, templateName, prefix, prefixMethod, prefixConstant, prefixTemplate, postfix, binding, library)
+    val ext = NativeClass(module, this, nativeSubPath, templateName, prefix, prefixMethod, prefixConstant, prefixTemplate, postfix, binding, library, callingConvention)
     if (init != null)
         ext.init()
 

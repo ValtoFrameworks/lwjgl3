@@ -77,6 +77,7 @@ val VROverlayTransformType = "VROverlayTransformType".enumType
 
 val PropertyContainerHandle_t = typedef(uint64_t, "PropertyContainerHandle_t")
 val PropertyTypeTag_t = typedef(uint32_t, "PropertyTypeTag_t")
+val DriverHandle_t = typedef(PropertyContainerHandle_t, "DriverHandle_t")
 val VRActionHandle_t = typedef(uint64_t, "VRActionHandle_t")
 val VRActionSetHandle_t = typedef(uint64_t, "VRActionSetHandle_t")
 val VRInputValueHandle_t = typedef(uint64_t, "VRInputValueHandle")
@@ -94,10 +95,10 @@ val glSharedTextureHandle_t = typedef(opaque_p, "glSharedTextureHandle_t")
 val glInt_t = typedef(int32_t, "glInt_t")
 val glUInt_t = typedef(uint32_t, "glUInt_t")
 
-val VkInstance_T = "VkInstance_T"
-val VkPhysicalDevice_T = "VkPhysicalDevice_T"
-val VkDevice_T = "VkDevice_T"
-val VkQueue_T = "VkQueue_T"
+val VkInstance_T = "VkInstance_T".opaque
+val VkPhysicalDevice_T = "VkPhysicalDevice_T".opaque
+val VkDevice_T = "VkDevice_T".opaque
+val VkQueue_T = "VkQueue_T".opaque
 
 val HmdMatrix34_t = struct(Module.OPENVR, "HmdMatrix34", nativeName = "HmdMatrix34_t") {
     float.array("m", "", size = 3 x 4)
@@ -178,6 +179,8 @@ val VREvent_Reserved_t = struct(Module.OPENVR, "VREventReserved", nativeName = "
 
     uint64_t.member("reserved0", "")
     uint64_t.member("reserved1", "")
+    uint64_t.member("reserved2", "")
+    uint64_t.member("reserved3", "")
 }
 
 val VREvent_Controller_t = struct(Module.OPENVR, "VREventController", nativeName = "VREvent_Controller_t", mutable = false) {

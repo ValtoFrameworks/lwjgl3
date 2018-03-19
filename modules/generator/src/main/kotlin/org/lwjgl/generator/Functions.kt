@@ -39,7 +39,7 @@ internal const val JNIENV = "__env"
 /** Special parameter that generates an explicit function address parameter. */
 val EXPLICIT_FUNCTION_ADDRESS = opaque_p.IN(FUNCTION_ADDRESS, "the function address")
 /** Special parameter that will accept the JNI function's JNIEnv* parameter. Hidden in Java code. */
-val JNI_ENV = "JNIEnv".p.IN(JNIENV, "the JNI environment struct")
+val JNI_ENV = "JNIEnv".opaque.p.IN(JNIENV, "the JNI environment struct")
 
 private val TRY_FINALLY_ALIGN = "^(\\s+)".toRegex(RegexOption.MULTILINE)
 
@@ -171,27 +171,27 @@ class Func(
             .count { it.isAutoSizeResultOut }
             .let { autoSizeResultOutParams -> this.parameters.asSequence().any { it.has<MultiType>() || it.isArrayParameter(autoSizeResultOutParams) } }
 
-    private val returnsJavaMethodType
-        get() = this.returns.let {
-            if (it.nativeType is PointerType<*>) {
-                if (it.nativeType.elementType is StructType && hasParam { it.has<AutoSizeResultParam>() })
+    private val ReturnValue.javaMethodType
+        get() = this.nativeType.let {
+            if (it is PointerType<*>) {
+                if (it.elementType is StructType && hasParam { it.has<AutoSizeResultParam>() })
                     "${it.javaMethodType}.Buffer"
-                else if (it.nativeType is CallbackType)
-                    it.nativeType.className
+                else if (it is CallbackType)
+                    it.className
                 else
                     it.javaMethodType
             } else
                 it.javaMethodType
         }
 
-    private val returnsNativeMethodType
-        get() = this.returns.let { if (it.isStructValue) "void" else it.nativeType.nativeMethodType }
+    private val ReturnValue.nativeMethodType
+        get() = if (this.isStructValue) "void" else this.nativeType.nativeMethodType
 
-    private val returnsJniFunctionType
-        get() = this.returns.let { if (it.isStructValue) "void" else it.nativeType.jniFunctionType }
+    private val ReturnValue.jniFunctionType
+        get() = if (this.isStructValue) "void" else this.nativeType.jniFunctionType
 
     internal val returnsNull
-        get() = !(has(Nonnull) || has(Address))
+        get() = !(has(Nonnull) || has(Address) || (has<Macro>() && !get<Macro>().function))
 
     private fun hasAutoSizePredicate(reference: Parameter): (Parameter) -> Boolean = { it.has<AutoSize>() && it.get<AutoSize>().hasReference(reference.name) }
 
@@ -591,7 +591,7 @@ class Func(
             if (hasUnsafeMethod)
                 writer.generateUnsafeMethod(constantMacro)
 
-            if (returns.nativeType !is CharSequenceType && parameters.none { it.has<AutoSize>() && it.paramType == IN })
+            if ((returns.nativeType !is CharSequenceType || has<Address>()) && parameters.none { it.has<AutoSize>() && it.paramType == IN })
                 writer.generateJavaMethod(constantMacro)
 
             writer.generateAlternativeMethods()
@@ -600,7 +600,7 @@ class Func(
         if (constantMacro && !has(private)) {
             writer.println()
             writer.printDocumentation { true }
-            writer.println("$t${accessModifier}static final ${if (returns.nativeType is CharSequenceType) "String" else returnsJavaMethodType} $name = $name();")
+            writer.println("$t${accessModifier}static final ${if (returns.nativeType is CharSequenceType) "String" else returns.javaMethodType} $name = $name();")
         }
     }
 
@@ -653,7 +653,7 @@ class Func(
             println("$t@Nullable")
         }
 
-        val retType = returnsNativeMethodType
+        val retType = returns.nativeMethodType
 
         if (nativeOnly) {
             val retTypeAnnotation = returns.nativeType.annotation(retType)
@@ -689,7 +689,7 @@ class Func(
         if (returns.nativeType is JObjectType && returnsNull) {
             println("$t@Nullable")
         }
-        print("$t${if (constantMacro) "private " else accessModifier}static $returnsNativeMethodType n$name(")
+        print("$t${if (constantMacro) "private " else accessModifier}static ${returns.nativeMethodType} n$name(")
         printList(getNativeParams()) {
             if (it.isFunctionProvider)
                 it.asJavaMethodParam(false)
@@ -755,7 +755,7 @@ class Func(
         print(if (hasCustomJNI)
             "n$name("
         else
-            "${binding.callingConvention.method}${getNativeParams(withExplicitFunctionAddress = false).map { it.nativeType.jniSignatureJava }.joinToString("")}${returns.nativeType.jniSignature}("
+            "${nativeClass.callingConvention.method}${getNativeParams(withExplicitFunctionAddress = false).map { it.nativeType.jniSignatureJava }.joinToString("")}${returns.nativeType.jniSignature}("
         )
         if (!hasExplicitFunctionAddress) {
             print(FUNCTION_ADDRESS)
@@ -799,7 +799,7 @@ class Func(
             println("$t@Nullable")
         }
 
-        val retType = returnsJavaMethodType
+        val retType = returns.javaMethodType
 
         val retTypeAnnotation = returns.nativeType.annotation(retType)
         if (retTypeAnnotation != null) {
@@ -974,7 +974,7 @@ class Func(
         printParams: PrintWriter.() -> Unit
     ) {
         val returnsObject = returns.nativeType is ObjectType
-        val returnType = if (returnsObject) (returns.nativeType as ObjectType).className else returnsNativeMethodType
+        val returnType = if (returnsObject) (returns.nativeType as ObjectType).className else returns.nativeMethodType
 
         if (hasFinally)
             print(t)
@@ -999,7 +999,7 @@ class Func(
                 if (hasCustomJNI)
                     "n$name("
                 else macroExpression ?:
-                     "${nativeClass.binding!!.callingConvention.method}${getNativeParams(withExplicitFunctionAddress = false).map { it.nativeType.jniSignatureJava }.joinToString("")}${returns.nativeType.jniSignature}("
+                     "${nativeClass.callingConvention.method}${getNativeParams(withExplicitFunctionAddress = false).map { it.nativeType.jniSignatureJava }.joinToString("")}${returns.nativeType.jniSignature}("
             )
             if (hasFunctionAddressParam && !hasExplicitFunctionAddress && !has<Macro>()) {
                 print(FUNCTION_ADDRESS)
@@ -1035,8 +1035,8 @@ class Func(
 
         nativeClass.binding?.generateAlternativeMethods(this, this@Func, transforms)
 
-        if (returns.nativeType is CharSequenceType)
-            transforms[returns] = StringReturnTransform(!has<Nonnull>())
+        if (returns.nativeType is CharSequenceType && !has<Address>())
+            transforms[returns] = StringReturnTransform(returnsNull)
         else if (has<MapPointer>()) {
             val mapPointer = get<MapPointer>()
 
@@ -1405,7 +1405,7 @@ class Func(
             println("$t@Nullable")
         }
 
-        val retType = returns.transformDeclarationOrElse(transforms, returnsJavaMethodType, false)!!
+        val retType = returns.transformDeclarationOrElse(transforms, returns.javaMethodType, false)!!
 
         val retTypeAnnotation = returns.nativeType.annotation(retType)
         if (retTypeAnnotation != null) {
@@ -1622,7 +1622,7 @@ class Func(
     internal fun generateFunctionDefinition(writer: PrintWriter) = writer.generateFunctionDefinitionImpl()
     private fun PrintWriter.generateFunctionDefinitionImpl() {
         print("typedef ${returns.toNativeType(nativeClass.binding)} (")
-        if (nativeClass.binding?.callingConvention !== CallingConvention.DEFAULT)
+        if (nativeClass.callingConvention !== CallingConvention.DEFAULT)
             print("APIENTRY ")
         print("*${nativeName}PROC) (")
         val nativeParams = getNativeParams(withExplicitFunctionAddress = false, withJNIEnv = true)
@@ -1667,7 +1667,7 @@ class Func(
             (it.nativeType is PointerType<*> && it.nativeType !is ArrayType<*>) || it.nativeType.mapping.let { it is PrimitiveMapping && 4 < it.bytes }
         }
         if (workaroundJDK8167409) println("#ifdef LWJGL_WINDOWS")
-        print("JNIEXPORT $returnsJniFunctionType JNICALL Java${if (critical) "Critical" else ""}_${nativeClass.nativeFileNameJNI}_")
+        print("JNIEXPORT ${returns.jniFunctionType} JNICALL Java${if (critical) "Critical" else ""}_${nativeClass.nativeFileNameJNI}_")
         if (!isNativeOnly)
             print('n')
         print(name.asJNIName)
@@ -1697,9 +1697,10 @@ class Func(
                 val pointerType = it.toNativeType(nativeClass.binding, pointerMode = true)
                 print("$t$pointerType")
                 if (!pointerType.endsWith('*')) print(' ')
-                val castExpression = if (it.nativeType === va_list)
+                val castExpression = if (it.nativeType === va_list) {
+                    print("*")
                     "VA_LIST_CAST"
-                else
+                } else
                     "($pointerType)"
                 println("${it.name} = $castExpression${if (nativeClass.binding == null) "(intptr_t)" else ""}${it.name}$POINTER_POSTFIX;")
             }
@@ -1734,7 +1735,7 @@ class Func(
         }
 
         if (code.nativeAfterCall != null && !returns.isVoid && !returns.isStructValue)
-            println("$t$returnsJniFunctionType $RESULT;")
+            println("$t${returns.jniFunctionType} $RESULT;")
 
         code.nativeBeforeCall.let { if (it != null) println(it) }
 
@@ -1768,8 +1769,8 @@ class Func(
                     }
                 } else if (!returns.isVoid) {
                     print(if (code.nativeAfterCall != null) "$RESULT = " else "return ")
-                    if (returnsJniFunctionType != returns.nativeType.name)
-                        print("($returnsJniFunctionType)")
+                    if (returns.jniFunctionType != returns.nativeType.name)
+                        print("(${returns.jniFunctionType})")
                     if (returns.nativeType is PointerType<*> && nativeClass.binding == null)
                         print("(intptr_t)")
                     if (has<Address>())
