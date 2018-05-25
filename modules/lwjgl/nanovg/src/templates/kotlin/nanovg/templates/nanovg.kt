@@ -8,16 +8,7 @@ import org.lwjgl.generator.*
 import nanovg.*
 
 val nanovg = "NanoVG".nativeClass(Module.NANOVG, prefix = "NVG", library = NANOVG_LIBRARY) {
-    nativeDirective(
-        """#ifdef LWJGL_WINDOWS
-    #define _CRT_SECURE_NO_WARNINGS
-    __pragma(warning(disable : 4710 4738))
-#endif""", beforeIncludes = true)
-
-    includeNanoVGAPI("""#include <stdlib.h>
-#include <string.h>
-#include "lwjgl_malloc.h"
-#define STBI_MALLOC(sz)    org_lwjgl_malloc(sz)
+    includeNanoVGAPI("""#define STBI_MALLOC(sz)    org_lwjgl_malloc(sz)
 #define STBI_REALLOC(p,sz) org_lwjgl_realloc(p,sz)
 #define STBI_FREE(p)       org_lwjgl_free(p)
 #define STBI_FAILURE_USERMSG
@@ -222,8 +213,8 @@ nvgFill(vg);""")}
         """,
 
         ctx,
-        int.IN("windowWidth", "the window width"),
-        int.IN("windowHeight", "the window height"),
+        float.IN("windowWidth", "the window width"),
+        float.IN("windowHeight", "the window height"),
         float.IN("devicePixelRatio", "the device pixel ratio")
     )
 

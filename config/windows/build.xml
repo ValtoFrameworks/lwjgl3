@@ -40,7 +40,7 @@
 
     <macrodef name="build">
         <attribute name="module"/>
-        <attribute name="flags" default="/Wall /WX /wd4711"/>
+        <attribute name="flags" default="/W2"/>
         <attribute name="simple" default="false"/>
         <element name="beforeCompile" optional="true"/>
         <element name="compileargs" optional="true"/>
@@ -264,7 +264,11 @@ EXPORTS
         </build>
 
         <!-- rpmalloc -->
-        <build_simple module="rpmalloc"/>
+        <build module="rpmalloc" simple="true" if:true="${binding.rpmalloc}">
+            <linkargs>
+                <arg value="Advapi32.lib"/>
+            </linkargs>
+        </build>
 
         <!-- SSE -->
         <build_simple module="sse"/>
@@ -332,7 +336,7 @@ EXPORTS
         </build>
 
         <!-- Vulkan Memory Allocator -->
-        <build module="vma" flags="/W4" if:true="${binding.vma}">
+        <build module="vma" if:true="${binding.vma}">
             <compileargs>
                 <arg value="/I${src.main}"/>
                 <arg value="/I${module.lwjgl}\vulkan\src\main\c"/>

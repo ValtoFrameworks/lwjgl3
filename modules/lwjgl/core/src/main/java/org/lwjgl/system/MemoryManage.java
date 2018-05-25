@@ -13,6 +13,7 @@ import java.util.concurrent.atomic.*;
 import static org.lwjgl.system.APIUtil.*;
 import static org.lwjgl.system.MemoryUtil.*;
 import static org.lwjgl.system.StackWalkUtil.*;
+import static org.lwjgl.system.dyncall.DynCallback.*;
 import static org.lwjgl.system.libc.LibCStdlib.*;
 
 /** Provides {@link MemoryAllocator} implementations for {@link MemoryUtil} to use. */
@@ -78,10 +79,76 @@ final class MemoryManage {
 
         private final MemoryAllocator allocator;
 
+        private final long[] callbacks;
+
         DebugAllocator(MemoryAllocator allocator) {
             this.allocator = allocator;
 
+            this.callbacks = new long[] {
+                new CallbackI.P() {
+                    @Override public String getSignature() {
+                        return "(p)p";
+                    }
+                    @Override public long callback(long args) {
+                        long size = dcbArgPointer(args);
+                        return malloc(size);
+                    }
+                }.address(),
+                new CallbackI.P() {
+                    @Override public String getSignature() {
+                        return "(pp)p";
+                    }
+                    @Override public long callback(long args) {
+                        long num  = dcbArgPointer(args);
+                        long size = dcbArgPointer(args);
+                        return calloc(num, size);
+                    }
+                }.address(),
+                new CallbackI.P() {
+                    @Override public String getSignature() {
+                        return "(pp)p";
+                    }
+                    @Override public long callback(long args) {
+                        long ptr  = dcbArgPointer(args);
+                        long size = dcbArgPointer(args);
+                        return realloc(ptr, size);
+                    }
+                }.address(),
+                new CallbackI.V() {
+                    @Override public String getSignature() {
+                        return "(p)v";
+                    }
+                    @Override public void callback(long args) {
+                        long ptr = dcbArgPointer(args);
+                        free(ptr);
+                    }
+                }.address(),
+                new CallbackI.P() {
+                    @Override public String getSignature() {
+                        return "(pp)p";
+                    }
+                    @Override public long callback(long args) {
+                        long alignment = dcbArgPointer(args);
+                        long size      = dcbArgPointer(args);
+                        return aligned_alloc(alignment, size);
+                    }
+                }.address(),
+                new CallbackI.V() {
+                    @Override public String getSignature() {
+                        return "(p)v";
+                    }
+                    @Override public void callback(long args) {
+                        long ptr = dcbArgPointer(args);
+                        aligned_free(ptr);
+                    }
+                }.address()
+            };
+
             Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+                for (long callback : callbacks) {
+                    Callback.free(callback);
+                }
+
                 if (ALLOCATIONS.isEmpty()) {
                     return;
                 }
@@ -104,12 +171,12 @@ final class MemoryManage {
             }));
         }
 
-        @Override public long getMalloc()       { return allocator.getMalloc(); }
-        @Override public long getCalloc()       { return allocator.getCalloc(); }
-        @Override public long getRealloc()      { return allocator.getRealloc(); }
-        @Override public long getFree()         { return allocator.getFree(); }
-        @Override public long getAlignedAlloc() { return allocator.getAlignedAlloc(); }
-        @Override public long getAlignedFree()  { return allocator.getAlignedFree(); }
+        @Override public long getMalloc()       { return callbacks[0]; }
+        @Override public long getCalloc()       { return callbacks[1]; }
+        @Override public long getRealloc()      { return callbacks[2]; }
+        @Override public long getFree()         { return callbacks[3]; }
+        @Override public long getAlignedAlloc() { return callbacks[4]; }
+        @Override public long getAlignedFree()  { return callbacks[5]; }
 
         @Override public long malloc(long size) {
             return track(allocator.malloc(size), size);
@@ -175,7 +242,7 @@ final class MemoryManage {
 
                 Allocation allocation = ALLOCATIONS.put(address, new Allocation(stackWalkGetTrace(), size));
                 if (allocation != null) {
-                    throw new IllegalStateException("The memory address specified is already being tracked");
+                    throw new IllegalStateException("The memory address specified is already being tracked: 0x" + Long.toHexString(address).toUpperCase());
                 }
             }
 
@@ -189,7 +256,7 @@ final class MemoryManage {
 
             Allocation allocation = ALLOCATIONS.remove(address);
             if (allocation == null) {
-                throw new IllegalStateException("The memory address specified is not being tracked");
+                throw new IllegalStateException("The memory address specified is not being tracked: 0x" + Long.toHexString(address).toUpperCase());
             }
 
             return allocation.size;
@@ -241,8 +308,9 @@ final class MemoryManage {
         }
 
         static void report(MemoryAllocationReport report) {
-            for (Allocation allocation : ALLOCATIONS.values()) {
-                report.invoke(allocation.size, allocation.threadId, THREADS.get(allocation.threadId), allocation.getElements());
+            for (Entry<Long, Allocation> entry : ALLOCATIONS.entrySet()) {
+                Allocation allocation = entry.getValue();
+                report.invoke(entry.getKey(), allocation.size, allocation.threadId, THREADS.get(allocation.threadId), allocation.getElements());
             }
         }
 
@@ -265,14 +333,14 @@ final class MemoryManage {
                             aggregate(allocation.threadId, allocation.size, mapThread);
                         }
                         for (Entry<Long, AtomicLong> entry : mapThread.entrySet()) {
-                            report.invoke(entry.getValue().get(), entry.getKey(), THREADS.get(entry.getKey()), (StackTraceElement[])null);
+                            report.invoke(NULL, entry.getValue().get(), entry.getKey(), THREADS.get(entry.getKey()), (StackTraceElement[])null);
                         }
                     } else {
                         long total = 0L;
                         for (Allocation allocation : ALLOCATIONS.values()) {
                             total += allocation.size;
                         }
-                        report.invoke(total, NULL, null, (StackTraceElement[])null);
+                        report.invoke(NULL, total, NULL, null, (StackTraceElement[])null);
                     }
                     break;
                 case GROUP_BY_METHOD:
@@ -289,7 +357,7 @@ final class MemoryManage {
                             Map<StackTraceElement, AtomicLong> mapmapMethod = tms.getValue();
 
                             for (Entry<StackTraceElement, AtomicLong> ms : mapmapMethod.entrySet()) {
-                                report.invoke(ms.getValue().get(), threadId, THREADS.get(threadId), ms.getKey());
+                                report.invoke(NULL, ms.getValue().get(), threadId, THREADS.get(threadId), ms.getKey());
                             }
                         }
                     } else {
@@ -298,7 +366,7 @@ final class MemoryManage {
                             aggregate(allocation.getElements()[0], allocation.size, mapMethod);
                         }
                         for (Entry<StackTraceElement, AtomicLong> ms : mapMethod.entrySet()) {
-                            report.invoke(ms.getValue().get(), NULL, null, ms.getKey());
+                            report.invoke(NULL, ms.getValue().get(), NULL, null, ms.getKey());
                         }
                     }
                     break;
@@ -316,7 +384,7 @@ final class MemoryManage {
                             Map<Allocation, AtomicLong> mapStackTrace = tss.getValue();
 
                             for (Entry<Allocation, AtomicLong> ss : mapStackTrace.entrySet()) {
-                                report.invoke(ss.getValue().get(), threadId, THREADS.get(threadId), ss.getKey().getElements());
+                                report.invoke(NULL, ss.getValue().get(), threadId, THREADS.get(threadId), ss.getKey().getElements());
                             }
                         }
                     } else {
@@ -325,7 +393,7 @@ final class MemoryManage {
                             aggregate(allocation, allocation.size, mapStackTrace);
                         }
                         for (Entry<Allocation, AtomicLong> ss : mapStackTrace.entrySet()) {
-                            report.invoke(ss.getValue().get(), NULL, null, ss.getKey().getElements());
+                            report.invoke(NULL, ss.getValue().get(), NULL, null, ss.getKey().getElements());
                         }
                     }
                     break;

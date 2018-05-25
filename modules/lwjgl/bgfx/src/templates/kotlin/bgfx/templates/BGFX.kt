@@ -14,7 +14,7 @@ val BGFX = "BGFX".nativeClass(Module.BGFX, prefix = "BGFX", prefixMethod = "bgfx
     IntConstant(
         "API version",
 
-        "API_VERSION".."66"
+        "API_VERSION".."68"
     )
 
     ShortConstant(
@@ -705,6 +705,18 @@ RGBA16S
         "OCCLUSION_QUERY_RESULT_NORESULT".enum("Query result is not available yet."),
 
         "OCCLUSION_QUERY_RESULT_COUNT".enum
+    )
+
+    EnumConstant(
+        "{@code bgfx_topology}",
+
+        "TOPOLOGY_TRI_LIST".enum("Triangle list"),
+        "TOPOLOGY_TRI_STRIP".enum("Triangle strip"),
+        "TOPOLOGY_LINE_LIST".enum("Line list"),
+        "TOPOLOGY_LINE_STRIP".enum("Line strip"),
+        "TOPOLOGY_POINT_LIST".enum("Point list"),
+
+        "TOPOLOGY_COUNT".enum
     )
 
     val TopologyConvert = EnumConstant(

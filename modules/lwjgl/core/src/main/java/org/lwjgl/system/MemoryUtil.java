@@ -140,7 +140,20 @@ public final class MemoryUtil {
      * @return the {@link MemoryAllocator} instance
      */
     public static MemoryAllocator getAllocator() {
-        return ALLOCATOR_IMPL;
+        return getAllocator(false);
+    }
+
+    /**
+     * Returns the {@link MemoryAllocator} instance used internally by the explicit memory management API ({@link #memAlloc}, {@link #memFree}, etc).
+     *
+     * @param tracked whether allocations will be tracked for memory leaks, if {@link Configuration#DEBUG_MEMORY_ALLOCATOR} is enabled.
+     *
+     * @return the {@link MemoryAllocator} instance
+     */
+    public static MemoryAllocator getAllocator(boolean tracked) {
+        return tracked
+            ? ALLOCATOR
+            : ALLOCATOR_IMPL;
     }
 
     // --- [ memAlloc ] ---
@@ -550,12 +563,13 @@ public final class MemoryUtil {
         /**
          * Reports allocated memory.
          *
+         * @param address    the address of the memory allocated. May be {@link #NULL}.
          * @param memory     the amount of memory allocated, in bytes
          * @param threadId   id of the thread that allocated the memory. May be {@link #NULL}.
          * @param threadName name of the thread that allocated the memory. May be {@code null}.
          * @param stacktrace the allocation stacktrace. May be {@code null}.
          */
-        void invoke(long memory, long threadId, @Nullable String threadName, @Nullable StackTraceElement... stacktrace);
+        void invoke(long address, long memory, long threadId, @Nullable String threadName, @Nullable StackTraceElement... stacktrace);
 
         /** Specifies how to aggregate the reported allocations. */
         enum Aggregate {

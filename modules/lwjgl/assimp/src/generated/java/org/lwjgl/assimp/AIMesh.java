@@ -33,8 +33,8 @@ import static org.lwjgl.system.MemoryStack.*;
  * <li>{@code mNumVertices} &ndash; 
  * The number of vertices in this mesh. This is also the size of all of the per-vertex data arrays. The maximum value for this member is {@link Assimp#AI_MAX_VERTICES}.</li>
  * <li>{@code mNumFaces} &ndash; 
- * The number of primitives (triangles, polygons, lines) in this mesh. This is also the size of the mFaces array. The maximum value for this member is
- * {@link Assimp#AI_MAX_FACES}.</li>
+ * The number of primitives (triangles, polygons, lines) in this mesh. This is also the size of the {@code mFaces} array. The maximum value for this
+ * member is {@link Assimp#AI_MAX_FACES}.</li>
  * <li>{@code mVertices} &ndash; Vertex positions. This array is always present in a mesh. The array is {@code mNumVertices} in size.</li>
  * <li>{@code mNormals} &ndash; 
  * Vertex normals. The array contains normalized vectors, {@code NULL} if not present. The array is {@code mNumVertices} in size. Normals are undefined for point
@@ -248,6 +248,8 @@ public class AIMesh extends Struct implements NativeResource {
     /** Returns a {@link AIString} view of the {@code mName} field. */
     @NativeType("struct aiString")
     public AIString mName() { return nmName(address()); }
+    /** Passes the {@code mName} field to the specified {@link java.util.function.Consumer Consumer}. */
+    public AIMesh mName(java.util.function.Consumer<AIString> consumer) { consumer.accept(mName()); return this; }
     /** Returns the value of the {@code mNumAnimMeshes} field. */
     @NativeType("unsigned int")
     public int mNumAnimMeshes() { return nmNumAnimMeshes(address()); }
@@ -719,6 +721,8 @@ public class AIMesh extends Struct implements NativeResource {
         /** Returns a {@link AIString} view of the {@code mName} field. */
         @NativeType("struct aiString")
         public AIString mName() { return AIMesh.nmName(address()); }
+        /** Passes the {@code mName} field to the specified {@link java.util.function.Consumer Consumer}. */
+        public AIMesh.Buffer mName(java.util.function.Consumer<AIString> consumer) { consumer.accept(mName()); return this; }
         /** Returns the value of the {@code mNumAnimMeshes} field. */
         @NativeType("unsigned int")
         public int mNumAnimMeshes() { return AIMesh.nmNumAnimMeshes(address()); }

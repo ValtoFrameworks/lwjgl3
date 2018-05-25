@@ -8,16 +8,8 @@ import org.lwjgl.generator.*
 import nuklear.*
 
 val nuklear = "Nuklear".nativeClass(Module.NUKLEAR, prefix = "NK", prefixMethod = "nk_", library = "lwjgl_nuklear") {
-    nativeDirective("""#ifdef LWJGL_LINUX
-    #pragma GCC diagnostic ignored "-Wunused-function"
-    #pragma GCC diagnostic ignored "-Wunused-but-set-variable"
-#endif""", beforeIncludes = true)
-
     nativeDirective(
         """DISABLE_WARNINGS()
-#ifdef LWJGL_WINDOWS
-    __pragma(warning(disable : 4738))
-#endif
 #define NK_PRIVATE
 #define NK_INCLUDE_FIXED_TYPES
 #define NK_INCLUDE_STANDARD_IO
@@ -713,6 +705,7 @@ nk_style_pop_vec2(ctx);""")}
     EnumConstant(
         "nk_panel_type",
 
+        "PANEL_NONE".enum("", "0"),
         "PANEL_WINDOW".enum("", 0.NK_FLAG),
         "PANEL_GROUP".enum("", 1.NK_FLAG),
         "PANEL_POPUP".enum("", 2.NK_FLAG),

@@ -3,15 +3,12 @@
  * License terms: https://www.lwjgl.org/license
  * MACHINE GENERATED FILE, DO NOT EDIT
  */
-#ifdef LWJGL_WINDOWS
-    #define _CRT_SECURE_NO_WARNINGS
-    __pragma(warning(disable : 4710 4738))
-#endif
 #include "common_tools.h"
-DISABLE_WARNINGS()
-#include <stdlib.h>
-#include <string.h>
 #include "lwjgl_malloc.h"
+#define NVG_MALLOC(sz)     org_lwjgl_malloc(sz)
+#define NVG_REALLOC(p,sz)  org_lwjgl_realloc(p,sz)
+#define NVG_FREE(p)        org_lwjgl_free(p)
+DISABLE_WARNINGS()
 #define STBI_MALLOC(sz)    org_lwjgl_malloc(sz)
 #define STBI_REALLOC(p,sz) org_lwjgl_realloc(p,sz)
 #define STBI_FREE(p)       org_lwjgl_free(p)
@@ -29,7 +26,7 @@ ENABLE_WARNINGS()
 
 EXTERN_C_ENTER
 
-JNIEXPORT void JNICALL Java_org_lwjgl_nanovg_NanoVG_nnvgBeginFrame(JNIEnv *__env, jclass clazz, jlong ctxAddress, jint windowWidth, jint windowHeight, jfloat devicePixelRatio) {
+JNIEXPORT void JNICALL Java_org_lwjgl_nanovg_NanoVG_nnvgBeginFrame(JNIEnv *__env, jclass clazz, jlong ctxAddress, jfloat windowWidth, jfloat windowHeight, jfloat devicePixelRatio) {
     NVGcontext *ctx = (NVGcontext *)(intptr_t)ctxAddress;
     UNUSED_PARAMS(__env, clazz)
     nvgBeginFrame(ctx, windowWidth, windowHeight, devicePixelRatio);

@@ -26,11 +26,7 @@ fun NativeClass.remoteryIncludes(type: String) {
 #define RMT_USE_OPENGL 1
 #define RMT_ASSUME_LITTLE_ENDIAN 1
 #ifdef LWJGL_LINUX
-    #define RMT_USE_POSIX_THREADNAMES 1${if (type == "h") "" else """
-    #pragma GCC diagnostic ignored "-Wunused-parameter"
-    #pragma GCC diagnostic ignored "-Wunused-but-set-variable"
-    #pragma GCC diagnostic ignored "-Wunused-function"
-    #pragma GCC diagnostic ignored "-Wpedantic""""}
+    #define RMT_USE_POSIX_THREADNAMES 1
 #elif LWJGL_MACOS
     #define RMT_USE_METAL 1
 #endif
@@ -110,7 +106,7 @@ val rmtInputHandlerPtr = Module.REMOTERY.callback {
     )
 }
 
-val rmtSettings = struct(Module.REMOTERY, "RMTSettings", nativeName = "rmtSettings") {
+val rmtSettings = struct(Module.REMOTERY, "RMTSettings", nativeName = "rmtSettings", skipBuffer = true) {
     documentation = "Structure to fill in to modify Remotery default settings."
 
     rmtU16.member("port", "which port to listen for incoming connections on")

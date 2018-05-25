@@ -7,15 +7,7 @@ package core.libc.templates
 import org.lwjgl.generator.*
 
 val string = "LibCString".nativeClass(Module.CORE_LIBC) {
-    /*nativeDirective(
-        """#ifdef LWJGL_WINDOWS
-    #define _CRT_SECURE_NO_WARNINGS
-    __pragma(warning(disable : 4710))
-#endif""", beforeIncludes = true)*/
-
-    nativeImport(
-        "<string.h>"
-    )
+    nativeImport("<string.h>")
 
     documentation = "Native bindings to string.h."
 
@@ -91,5 +83,55 @@ val string = "LibCString".nativeClass(Module.CORE_LIBC) {
             check(src, dest.remaining());
         }
         return nmemcpy(memAddress(dest), memAddress(src), (long)src.remaining() * src.sizeof());
+    }""")
+
+    opaque_p(
+        "memmove",
+        """
+        Copies {@code count} bytes from memory area {@code src} to memory area {@code dest}.
+
+        The memory areas may overlap: copying takes place as though the bytes in {@code src} are first copied into a temporary array that does not overlap
+        {@code src} or {@code dest}, and the bytes are then copied from the temporary array to {@code dest}.
+        """,
+
+        MultiType(
+            PointerMapping.DATA_SHORT,
+            PointerMapping.DATA_INT,
+            PointerMapping.DATA_LONG,
+            PointerMapping.DATA_FLOAT,
+            PointerMapping.DATA_DOUBLE,
+            byteArray = true
+        )..void.p.IN("dest", "pointer to the destination memory area"),
+        MultiType(
+            PointerMapping.DATA_SHORT,
+            PointerMapping.DATA_INT,
+            PointerMapping.DATA_LONG,
+            PointerMapping.DATA_FLOAT,
+            PointerMapping.DATA_DOUBLE,
+            byteArray = true
+        )..void.const.p.IN("src", "pointer to the source memory area"),
+        AutoSize("src", "dest")..size_t.IN("count", "the number of bytes to be copied"),
+
+        returnDoc = "the value of {@code dest}"
+    )
+
+    customMethod("""
+    /**
+     * Copies {@code count} bytes from memory area {@code src} to memory area {@code dest}.
+     *
+     * <p>The memory areas may overlap: copying takes place as though the bytes in {@code src} are first copied into a temporary array that does not overlap
+     * {@code src} or {@code dest}, and the bytes are then copied from the temporary array to {@code dest}.</p>
+     *
+     * @param dest pointer to the destination memory area
+     * @param src  pointer to the source memory area
+     *
+     * @return the value of {@code dest}
+     */
+    @NativeType("void *")
+    public static <T extends CustomBuffer<T>> long memmove(@NativeType("void *") T dest, @NativeType("void const *") T src) {
+        if (CHECKS) {
+            check(src, dest.remaining());
+        }
+        return nmemmove(memAddress(dest), memAddress(src), (long)src.remaining() * src.sizeof());
     }""")
 }
