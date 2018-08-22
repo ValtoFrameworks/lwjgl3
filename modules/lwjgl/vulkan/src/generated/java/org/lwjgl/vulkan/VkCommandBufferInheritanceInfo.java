@@ -30,7 +30,7 @@ import static org.lwjgl.system.MemoryStack.*;
  * 
  * <ul>
  * <li>{@code sType} <b>must</b> be {@link VK10#VK_STRUCTURE_TYPE_COMMAND_BUFFER_INHERITANCE_INFO STRUCTURE_TYPE_COMMAND_BUFFER_INHERITANCE_INFO}</li>
- * <li>{@code pNext} <b>must</b> be {@code NULL}</li>
+ * <li>{@code pNext} <b>must</b> be {@code NULL} or a pointer to a valid instance of {@link VkCommandBufferInheritanceConditionalRenderingInfoEXT}</li>
  * <li>Both of {@code framebuffer}, and {@code renderPass} that are valid handles <b>must</b> have been created, allocated, or retrieved from the same {@code VkDevice}</li>
  * </ul>
  * 
@@ -58,7 +58,7 @@ import static org.lwjgl.system.MemoryStack.*;
  * 
  * <h3>Layout</h3>
  * 
- * <code><pre>
+ * <pre><code>
  * struct VkCommandBufferInheritanceInfo {
  *     VkStructureType sType;
  *     void const * pNext;
@@ -68,13 +68,14 @@ import static org.lwjgl.system.MemoryStack.*;
  *     VkBool32 occlusionQueryEnable;
  *     VkQueryControlFlags queryFlags;
  *     VkQueryPipelineStatisticFlags pipelineStatistics;
- * }</pre></code>
+ * }</code></pre>
  */
 public class VkCommandBufferInheritanceInfo extends Struct implements NativeResource {
 
     /** The struct size in bytes. */
     public static final int SIZEOF;
 
+    /** The struct alignment in bytes. */
     public static final int ALIGNOF;
 
     /** The struct member offsets. */

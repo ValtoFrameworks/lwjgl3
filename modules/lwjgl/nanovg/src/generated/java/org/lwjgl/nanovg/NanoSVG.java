@@ -128,13 +128,7 @@ public class NanoSVG {
     /** Unsafe version of: {@link #nsvgParseFromFile ParseFromFile} */
     public static native long nnsvgParseFromFile(long filename, long units, float dpi);
 
-    /**
-     * Parses SVG file from a file, returns SVG image as paths.
-     *
-     * @param filename 
-     * @param units    
-     * @param dpi      
-     */
+    /** Parses SVG file from a file, returns SVG image as paths. */
     @Nullable
     @NativeType("NSVGimage *")
     public static NSVGImage nsvgParseFromFile(@NativeType("char const *") ByteBuffer filename, @NativeType("char const *") ByteBuffer units, float dpi) {
@@ -146,13 +140,7 @@ public class NanoSVG {
         return NSVGImage.createSafe(__result);
     }
 
-    /**
-     * Parses SVG file from a file, returns SVG image as paths.
-     *
-     * @param filename 
-     * @param units    
-     * @param dpi      
-     */
+    /** Parses SVG file from a file, returns SVG image as paths. */
     @Nullable
     @NativeType("NSVGimage *")
     public static NSVGImage nsvgParseFromFile(@NativeType("char const *") CharSequence filename, @NativeType("char const *") CharSequence units, float dpi) {
@@ -176,10 +164,6 @@ public class NanoSVG {
      * Parses SVG file from a null terminated string, returns SVG image as paths.
      * 
      * <p>Important note: changes the string.</p>
-     *
-     * @param input 
-     * @param units 
-     * @param dpi   
      */
     @Nullable
     @NativeType("NSVGimage *")
@@ -196,10 +180,6 @@ public class NanoSVG {
      * Parses SVG file from a null terminated string, returns SVG image as paths.
      * 
      * <p>Important note: changes the string.</p>
-     *
-     * @param input 
-     * @param units 
-     * @param dpi   
      */
     @Nullable
     @NativeType("NSVGimage *")
@@ -215,16 +195,25 @@ public class NanoSVG {
         }
     }
 
+    // --- [ nsvgDuplicatePath ] ---
+
+    /** Unsafe version of: {@link #nsvgDuplicatePath DuplicatePath} */
+    public static native long nnsvgDuplicatePath(long p);
+
+    /** Duplicates a path. */
+    @Nullable
+    @NativeType("NSVGpath *")
+    public static NSVGPath nsvgDuplicatePath(@NativeType("NSVGpath *") NSVGPath p) {
+        long __result = nnsvgDuplicatePath(p.address());
+        return NSVGPath.createSafe(__result);
+    }
+
     // --- [ nsvgDelete ] ---
 
     /** Unsafe version of: {@link #nsvgDelete Delete} */
     public static native void nnsvgDelete(long image);
 
-    /**
-     * Deletes list of paths.
-     *
-     * @param image 
-     */
+    /** Deletes an image. */
     public static void nsvgDelete(@NativeType("NSVGimage *") NSVGImage image) {
         nnsvgDelete(image.address());
     }

@@ -26,7 +26,7 @@ import static org.lwjgl.system.MemoryUtil.*;
  * 
  * <div style="margin-left: 26px; border-left: 1px solid gray; padding-left: 14px;"><h5>Note</h5>
  * 
- * <p>The example code for the this extension (like the {@link KHRSurface VK_KHR_surface} and {@code VK_GOOGLE_display_timing} extensions) is contained in the cube demo that is shipped with the official Khronos SDK, and is being kept up-to-date in that location (see: https://github.com/KhronosGroup/Vulkan-LoaderAndValidationLayers/blob/master/demos/cube.c ).</p>
+ * <p>The example code for the this extension (like the {@link KHRSurface VK_KHR_surface} and {@code VK_GOOGLE_display_timing} extensions) is contained in the cube demo that is shipped with the official Khronos SDK, and is being kept up-to-date in that location (see: https://github.com/KhronosGroup/Vulkan-Tools/blob/master/cube/cube.c ).</p>
  * </div>
  * 
  * <dl>
@@ -98,11 +98,11 @@ public class GOOGLEDisplayTiming {
      * 
      * <p>To query the duration of a refresh cycle (RC) for the presentation engine's display, call:</p>
      * 
-     * <code><pre>
+     * <pre><code>
      * VkResult vkGetRefreshCycleDurationGOOGLE(
      *     VkDevice                                    device,
      *     VkSwapchainKHR                              swapchain,
-     *     VkRefreshCycleDurationGOOGLE*               pDisplayTimingProperties);</pre></code>
+     *     VkRefreshCycleDurationGOOGLE*               pDisplayTimingProperties);</code></pre>
      * 
      * <h5>Valid Usage (Implicit)</h5>
      * 
@@ -170,12 +170,12 @@ public class GOOGLEDisplayTiming {
      * 
      * <p>To asynchronously query the presentation engine, for newly-available timing information about one or more previous presents to a given swapchain, call:</p>
      * 
-     * <code><pre>
+     * <pre><code>
      * VkResult vkGetPastPresentationTimingGOOGLE(
      *     VkDevice                                    device,
      *     VkSwapchainKHR                              swapchain,
      *     uint32_t*                                   pPresentationTimingCount,
-     *     VkPastPresentationTimingGOOGLE*             pPresentationTimings);</pre></code>
+     *     VkPastPresentationTimingGOOGLE*             pPresentationTimings);</code></pre>
      * 
      * <h5>Description</h5>
      * 

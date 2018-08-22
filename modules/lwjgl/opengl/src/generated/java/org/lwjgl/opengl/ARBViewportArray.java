@@ -10,9 +10,6 @@ import java.nio.*;
 import org.lwjgl.system.*;
 
 import static org.lwjgl.system.Checks.*;
-import static org.lwjgl.system.JNI.*;
-import static org.lwjgl.system.MemoryStack.*;
-import static org.lwjgl.system.MemoryUtil.*;
 
 /**
  * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_viewport_array.txt">ARB_viewport_array</a> extension.
@@ -66,7 +63,7 @@ public class ARBViewportArray {
      * @param count the number of viewports to set
      */
     public static void nglViewportArrayv(int first, int count, long v) {
-        GL41.nglViewportArrayv(first, count, v);
+        GL41C.nglViewportArrayv(first, count, v);
     }
 
     /**
@@ -76,7 +73,7 @@ public class ARBViewportArray {
      * @param v     an array containing the viewport parameters
      */
     public static void glViewportArrayv(@NativeType("GLuint") int first, @NativeType("GLfloat const *") FloatBuffer v) {
-        nglViewportArrayv(first, v.remaining() >> 2, memAddress(v));
+        GL41C.glViewportArrayv(first, v);
     }
 
     // --- [ glViewportIndexedf ] ---
@@ -91,14 +88,14 @@ public class ARBViewportArray {
      * @param h     the viewport height
      */
     public static void glViewportIndexedf(@NativeType("GLuint") int index, @NativeType("GLfloat") float x, @NativeType("GLfloat") float y, @NativeType("GLfloat") float w, @NativeType("GLfloat") float h) {
-        GL41.glViewportIndexedf(index, x, y, w, h);
+        GL41C.glViewportIndexedf(index, x, y, w, h);
     }
 
     // --- [ glViewportIndexedfv ] ---
 
     /** Unsafe version of: {@link #glViewportIndexedfv ViewportIndexedfv} */
     public static void nglViewportIndexedfv(int index, long v) {
-        GL41.nglViewportIndexedfv(index, v);
+        GL41C.nglViewportIndexedfv(index, v);
     }
 
     /**
@@ -108,10 +105,7 @@ public class ARBViewportArray {
      * @param v     the viewport parameters
      */
     public static void glViewportIndexedfv(@NativeType("GLuint") int index, @NativeType("GLfloat const *") FloatBuffer v) {
-        if (CHECKS) {
-            check(v, 4);
-        }
-        nglViewportIndexedfv(index, memAddress(v));
+        GL41C.glViewportIndexedfv(index, v);
     }
 
     // --- [ glScissorArrayv ] ---
@@ -122,7 +116,7 @@ public class ARBViewportArray {
      * @param count the number of scissor boxes to modify
      */
     public static void nglScissorArrayv(int first, int count, long v) {
-        GL41.nglScissorArrayv(first, count, v);
+        GL41C.nglScissorArrayv(first, count, v);
     }
 
     /**
@@ -132,7 +126,7 @@ public class ARBViewportArray {
      * @param v     an array containing the left, bottom, width and height of each scissor box, in that order
      */
     public static void glScissorArrayv(@NativeType("GLuint") int first, @NativeType("GLint const *") IntBuffer v) {
-        nglScissorArrayv(first, v.remaining() >> 2, memAddress(v));
+        GL41C.glScissorArrayv(first, v);
     }
 
     // --- [ glScissorIndexed ] ---
@@ -147,14 +141,14 @@ public class ARBViewportArray {
      * @param height the scissor box height
      */
     public static void glScissorIndexed(@NativeType("GLuint") int index, @NativeType("GLint") int left, @NativeType("GLint") int bottom, @NativeType("GLsizei") int width, @NativeType("GLsizei") int height) {
-        GL41.glScissorIndexed(index, left, bottom, width, height);
+        GL41C.glScissorIndexed(index, left, bottom, width, height);
     }
 
     // --- [ glScissorIndexedv ] ---
 
     /** Unsafe version of: {@link #glScissorIndexedv ScissorIndexedv} */
     public static void nglScissorIndexedv(int index, long v) {
-        GL41.nglScissorIndexedv(index, v);
+        GL41C.nglScissorIndexedv(index, v);
     }
 
     /**
@@ -164,10 +158,7 @@ public class ARBViewportArray {
      * @param v     an array containing the left, bottom, width and height of each scissor box, in that order
      */
     public static void glScissorIndexedv(@NativeType("GLuint") int index, @NativeType("GLint const *") IntBuffer v) {
-        if (CHECKS) {
-            check(v, 4);
-        }
-        nglScissorIndexedv(index, memAddress(v));
+        GL41C.glScissorIndexedv(index, v);
     }
 
     // --- [ glDepthRangeArrayv ] ---
@@ -178,7 +169,7 @@ public class ARBViewportArray {
      * @param count the number of viewports whose depth range to update
      */
     public static void nglDepthRangeArrayv(int first, int count, long v) {
-        GL41.nglDepthRangeArrayv(first, count, v);
+        GL41C.nglDepthRangeArrayv(first, count, v);
     }
 
     /**
@@ -188,7 +179,7 @@ public class ARBViewportArray {
      * @param v     n array containing the near and far values for the depth range of each modified viewport
      */
     public static void glDepthRangeArrayv(@NativeType("GLuint") int first, @NativeType("GLdouble const *") DoubleBuffer v) {
-        nglDepthRangeArrayv(first, v.remaining() >> 1, memAddress(v));
+        GL41C.glDepthRangeArrayv(first, v);
     }
 
     // --- [ glDepthRangeIndexed ] ---
@@ -201,14 +192,14 @@ public class ARBViewportArray {
      * @param zFar  the mapping of the far clipping plane to window coordinates. The initial value is 1.
      */
     public static void glDepthRangeIndexed(@NativeType("GLuint") int index, @NativeType("GLdouble") double zNear, @NativeType("GLdouble") double zFar) {
-        GL41.glDepthRangeIndexed(index, zNear, zFar);
+        GL41C.glDepthRangeIndexed(index, zNear, zFar);
     }
 
     // --- [ glGetFloati_v ] ---
 
     /** Unsafe version of: {@link #glGetFloati_v GetFloati_v} */
     public static void nglGetFloati_v(int target, int index, long data) {
-        GL41.nglGetFloati_v(target, index, data);
+        GL41C.nglGetFloati_v(target, index, data);
     }
 
     /**
@@ -219,10 +210,7 @@ public class ARBViewportArray {
      * @param data   a scalar or buffer in which to place the returned data
      */
     public static void glGetFloati_v(@NativeType("GLenum") int target, @NativeType("GLuint") int index, @NativeType("GLfloat *") FloatBuffer data) {
-        if (CHECKS) {
-            check(data, 1);
-        }
-        nglGetFloati_v(target, index, memAddress(data));
+        GL41C.glGetFloati_v(target, index, data);
     }
 
     /**
@@ -233,21 +221,14 @@ public class ARBViewportArray {
      */
     @NativeType("void")
     public static float glGetFloati(@NativeType("GLenum") int target, @NativeType("GLuint") int index) {
-        MemoryStack stack = stackGet(); int stackPointer = stack.getPointer();
-        try {
-            FloatBuffer data = stack.callocFloat(1);
-            nglGetFloati_v(target, index, memAddress(data));
-            return data.get(0);
-        } finally {
-            stack.setPointer(stackPointer);
-        }
+        return GL41C.glGetFloati(target, index);
     }
 
     // --- [ glGetDoublei_v ] ---
 
     /** Unsafe version of: {@link #glGetDoublei_v GetDoublei_v} */
     public static void nglGetDoublei_v(int target, int index, long data) {
-        GL41.nglGetDoublei_v(target, index, data);
+        GL41C.nglGetDoublei_v(target, index, data);
     }
 
     /**
@@ -258,10 +239,7 @@ public class ARBViewportArray {
      * @param data   a scalar or buffer in which to place the returned data
      */
     public static void glGetDoublei_v(@NativeType("GLenum") int target, @NativeType("GLuint") int index, @NativeType("GLdouble *") DoubleBuffer data) {
-        if (CHECKS) {
-            check(data, 1);
-        }
-        nglGetDoublei_v(target, index, memAddress(data));
+        GL41C.glGetDoublei_v(target, index, data);
     }
 
     /**
@@ -272,81 +250,42 @@ public class ARBViewportArray {
      */
     @NativeType("void")
     public static double glGetDoublei(@NativeType("GLenum") int target, @NativeType("GLuint") int index) {
-        MemoryStack stack = stackGet(); int stackPointer = stack.getPointer();
-        try {
-            DoubleBuffer data = stack.callocDouble(1);
-            nglGetDoublei_v(target, index, memAddress(data));
-            return data.get(0);
-        } finally {
-            stack.setPointer(stackPointer);
-        }
+        return GL41C.glGetDoublei(target, index);
     }
 
     /** Array version of: {@link #glViewportArrayv ViewportArrayv} */
     public static void glViewportArrayv(@NativeType("GLuint") int first, @NativeType("GLfloat const *") float[] v) {
-        long __functionAddress = GL.getICD().glViewportArrayv;
-        if (CHECKS) {
-            check(__functionAddress);
-        }
-        callPV(__functionAddress, first, v.length >> 2, v);
+        GL41C.glViewportArrayv(first, v);
     }
 
     /** Array version of: {@link #glViewportIndexedfv ViewportIndexedfv} */
     public static void glViewportIndexedfv(@NativeType("GLuint") int index, @NativeType("GLfloat const *") float[] v) {
-        long __functionAddress = GL.getICD().glViewportIndexedfv;
-        if (CHECKS) {
-            check(__functionAddress);
-            check(v, 4);
-        }
-        callPV(__functionAddress, index, v);
+        GL41C.glViewportIndexedfv(index, v);
     }
 
     /** Array version of: {@link #glScissorArrayv ScissorArrayv} */
     public static void glScissorArrayv(@NativeType("GLuint") int first, @NativeType("GLint const *") int[] v) {
-        long __functionAddress = GL.getICD().glScissorArrayv;
-        if (CHECKS) {
-            check(__functionAddress);
-        }
-        callPV(__functionAddress, first, v.length >> 2, v);
+        GL41C.glScissorArrayv(first, v);
     }
 
     /** Array version of: {@link #glScissorIndexedv ScissorIndexedv} */
     public static void glScissorIndexedv(@NativeType("GLuint") int index, @NativeType("GLint const *") int[] v) {
-        long __functionAddress = GL.getICD().glScissorIndexedv;
-        if (CHECKS) {
-            check(__functionAddress);
-            check(v, 4);
-        }
-        callPV(__functionAddress, index, v);
+        GL41C.glScissorIndexedv(index, v);
     }
 
     /** Array version of: {@link #glDepthRangeArrayv DepthRangeArrayv} */
     public static void glDepthRangeArrayv(@NativeType("GLuint") int first, @NativeType("GLdouble const *") double[] v) {
-        long __functionAddress = GL.getICD().glDepthRangeArrayv;
-        if (CHECKS) {
-            check(__functionAddress);
-        }
-        callPV(__functionAddress, first, v.length >> 1, v);
+        GL41C.glDepthRangeArrayv(first, v);
     }
 
     /** Array version of: {@link #glGetFloati_v GetFloati_v} */
     public static void glGetFloati_v(@NativeType("GLenum") int target, @NativeType("GLuint") int index, @NativeType("GLfloat *") float[] data) {
-        long __functionAddress = GL.getICD().glGetFloati_v;
-        if (CHECKS) {
-            check(__functionAddress);
-            check(data, 1);
-        }
-        callPV(__functionAddress, target, index, data);
+        GL41C.glGetFloati_v(target, index, data);
     }
 
     /** Array version of: {@link #glGetDoublei_v GetDoublei_v} */
     public static void glGetDoublei_v(@NativeType("GLenum") int target, @NativeType("GLuint") int index, @NativeType("GLdouble *") double[] data) {
-        long __functionAddress = GL.getICD().glGetDoublei_v;
-        if (CHECKS) {
-            check(__functionAddress);
-            check(data, 1);
-        }
-        callPV(__functionAddress, target, index, data);
+        GL41C.glGetDoublei_v(target, index, data);
     }
 
 }

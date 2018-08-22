@@ -39,13 +39,13 @@ import static org.lwjgl.system.MemoryUtil.*;
  * <li>{@code maxUniforms} &ndash; maximum number of uniform handles</li>
  * <li>{@code maxOcclusionQueries} &ndash; maximum number of occlusion query handles</li>
  * <li>{@code maxEncoders} &ndash; maximum number of encoder threads</li>
- * <li>{@code transientVbSize} &ndash; amount of transient vertex buffer used</li>
- * <li>{@code transientIbSize} &ndash; amount of transient index buffer used</li>
+ * <li>{@code transientVbSize} &ndash; maximum transient vertex buffer size</li>
+ * <li>{@code transientIbSize} &ndash; maximum transient index buffer size</li>
  * </ul>
  * 
  * <h3>Layout</h3>
  * 
- * <code><pre>
+ * <pre><code>
  * struct bgfx_caps_limits_t {
  *     uint32_t maxDrawCalls;
  *     uint32_t maxBlits;
@@ -69,7 +69,7 @@ import static org.lwjgl.system.MemoryUtil.*;
  *     uint32_t maxEncoders;
  *     uint32_t transientVbSize;
  *     uint32_t transientIbSize;
- * }</pre></code>
+ * }</code></pre>
  */
 @NativeType("struct bgfx_caps_limits_t")
 public class BGFXCapsLimits extends Struct {
@@ -77,6 +77,7 @@ public class BGFXCapsLimits extends Struct {
     /** The struct size in bytes. */
     public static final int SIZEOF;
 
+    /** The struct alignment in bytes. */
     public static final int ALIGNOF;
 
     /** The struct member offsets. */

@@ -7,7 +7,6 @@ package opengles
 import org.lwjgl.generator.*
 import org.lwjgl.generator.Generator.Companion.register
 import java.io.*
-import java.util.SortedSet
 
 val NativeClass.capName: String
     get() = if (templateName.startsWith(prefixTemplate)) templateName else "${prefixTemplate}_$templateName"
@@ -89,14 +88,16 @@ private val GLESBinding = register(object : APIBinding(
         if (documentation.isEmpty())
             println("$t/** $link */")
         else {
-            print("$t/**\n$t * <p>$link</p>\n$t * \n")
             if (documentation.indexOf('\n') == -1) {
+                println("$t/**")
                 print("$t * ")
-                println(documentation.substring("$t/** ".length, documentation.length - 3))
-                println("$t */")
+                print(documentation.substring("$t/** ".length, documentation.length - " */".length))
             } else {
-                println(documentation.substring("$t/**\n".length))
+                print(documentation.substring(0, documentation.length - "\n$t */".length))
             }
+            print("\n$t * ")
+            print("\n$t * @see $link")
+            println("\n$t */")
         }
     }
 

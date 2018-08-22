@@ -70,7 +70,7 @@ val ARB_sync = "ARBSync".nativeClassGL("ARB_sync") {
     LongConstant(
         "Accepted in the {@code timeout} parameter of WaitSync.",
 
-        "TIMEOUT_IGNORED".."0xFFFFFFFFFFFFFFFFl" // TODO: http://youtrack.jetbrains.com/issue/KT-2780
+        "TIMEOUT_IGNORED".."0xFFFFFFFFFFFFFFFFL" // TODO: http://youtrack.jetbrains.com/issue/KT-2780
     )
 
     IntConstant(
@@ -82,12 +82,12 @@ val ARB_sync = "ARBSync".nativeClassGL("ARB_sync") {
         "WAIT_FAILED"..0x911D
     )
 
-    GL32 reuse "FenceSync"
-    GL32 reuse "IsSync"
-    GL32 reuse "DeleteSync"
-    GL32 reuse "ClientWaitSync"
-    GL32 reuse "WaitSync"
-    GL32 reuse "GetInteger64v"
-    GL32 reuse "GetSynciv"
+    GL32C reuse "FenceSync"
+    GL32C reuse "IsSync"
+    GL32C reuse "DeleteSync"
+    GL32C reuse "ClientWaitSync"
+    GL32C reuse "WaitSync"
+    GL32C reuse "GetInteger64v"
+    GL32C reuse "GetSynciv"
 
 }

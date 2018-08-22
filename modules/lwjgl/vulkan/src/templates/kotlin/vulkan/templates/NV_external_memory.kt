@@ -14,8 +14,8 @@ val NV_external_memory = "NVExternalMemory".nativeClassVK("NV_external_memory", 
         Applications may wish to export memory to other Vulkan instances or other APIs, or import memory from other Vulkan instances or other APIs to enable Vulkan workloads to be split up across application module, process, or API boundaries. This extension enables applications to create exportable Vulkan memory objects such that the underlying resources can be referenced outside the Vulkan instance that created them.
 
         <h5>Examples</h5>
-        <code><pre>
-￿    // TODO: Write some sample code here.</pre></code>
+        <pre><code>
+￿    // TODO: Write some sample code here.</code></pre>
 
         <dl>
             <dt><b>Name String</b></dt>
@@ -34,6 +34,16 @@ val NV_external_memory = "NVExternalMemory".nativeClassVK("NV_external_memory", 
             <dd><ul>
                 <li>Requires Vulkan 1.0</li>
                 <li>Requires {@link NVExternalMemoryCapabilities VK_NV_external_memory_capabilities}</li>
+            </ul></dd>
+
+            <dt><b>Deprecation state</b></dt>
+            <dd><ul>
+                <li>
+                    <em>Deprecated</em> by <a target="_blank" href="https://www.khronos.org/registry/vulkan/specs/1.0-extensions/html/vkspec.html\#VK_KHR_external_memory">VK_KHR_external_memory</a> extension
+                    <ul>
+                        <li>Which in turn was <em>promoted</em> to <a target="_blank" href="https://www.khronos.org/registry/vulkan/specs/1.0-extensions/html/vkspec.html\#versions-1.1-promotions">Vulkan 1.1</a></li>
+                    </ul>
+                </li>
             </ul></dd>
 
             <dt><b>Contact</b></dt>

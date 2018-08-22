@@ -21,7 +21,7 @@ import static org.lwjgl.system.MemoryStack.*;
  * <h5>Valid Usage (Implicit)</h5>
  * 
  * <ul>
- * <li>If {@code rectangleCount} is not 0, and {@code pRectangles} is not {@code NULL}, {@code pRectangles} <b>must</b> be a valid pointer to an array of {@code rectangleCount} {@link VkRectLayerKHR} structures</li>
+ * <li>If {@code rectangleCount} is not 0, and {@code pRectangles} is not {@code NULL}, {@code pRectangles} <b>must</b> be a valid pointer to an array of {@code rectangleCount} valid {@link VkRectLayerKHR} structures</li>
  * </ul>
  * 
  * <h5>See Also</h5>
@@ -37,17 +37,18 @@ import static org.lwjgl.system.MemoryStack.*;
  * 
  * <h3>Layout</h3>
  * 
- * <code><pre>
+ * <pre><code>
  * struct VkPresentRegionKHR {
  *     uint32_t rectangleCount;
  *     {@link VkRectLayerKHR VkRectLayerKHR const} * pRectangles;
- * }</pre></code>
+ * }</code></pre>
  */
 public class VkPresentRegionKHR extends Struct implements NativeResource {
 
     /** The struct size in bytes. */
     public static final int SIZEOF;
 
+    /** The struct alignment in bytes. */
     public static final int ALIGNOF;
 
     /** The struct member offsets. */

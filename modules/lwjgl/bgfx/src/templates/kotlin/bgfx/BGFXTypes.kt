@@ -15,15 +15,16 @@ fun config() {
         The bgfx documentation can be found online ${url("https://bkaradzic.github.io/bgfx/", "here")}. The API reference is available
         ${url("https://bkaradzic.github.io/bgfx/bgfx.html", "here")}.
 
-        The bgfx library is very customizable and can be tailored to specific needs. For this reason, the {@code lwjgl-bgfx} artifact does not include any
-        prebuilt native libraries.
-
-        To compile your own version, follow the ${url("https://bkaradzic.github.io/bgfx/build.html", "build instructions")} for Windows, Linux and MacOS.
-        Please ensure to use the {@code --with-shared-lib} configuration to create a shared library. Just copy the compiled library found in
-        {@code <bgfx>/.build/<platform>/bin/} to the classpath of your LWJGL application.
-
-        By default, lwjgl-bgfx searches for bgfx[32].dll (Windows), libbgfx.so (Linux) or libbgfx.dylib (MacOS). This can be customized by defining
-        {@code org.lwjgl.bgfx.libname}.
+        Starting with LWJGL 3.2.1, builds of the bgfx tools are available for download via the LWJGL site's <a href="https://www.lwjgl.org/browse">file
+        browser</a>. These tools are:
+        ${ul(
+            "Geometry Compiler (geometryc)",
+            "Shader Compiler (shaderc)",
+            "Texture Compiler (texturec)",
+            "Texture Viewer (texturev)"
+        )}
+        The binaries are built from source, at the corresponding commit that was used to build the bgfx library. For example, the latest Windows x64 version of
+        shaderc can be found under {@code nightly/windows/x64/bgfx-tools/}.
         """
     )
 }
@@ -95,28 +96,6 @@ val bgfx_transform_t = struct(Module.BGFX, "BGFXTransform", nativeName = "bgfx_t
 
     float.p.member("data", "pointer to first 4x4 matrix")
     AutoSizeShl("4", "data")..uint16_t.member("num", "number of matrices")
-}
-
-val bgfx_hmd_eye_t = struct(Module.BGFX, "BGFXHmdEye", nativeName = "bgfx_hmd_eye_t", mutable = false) {
-    documentation = "Eye."
-
-    float.array("rotation", "eye rotation represented as quaternion", size = 4)
-    float.array("translation", "eye translation", size = 3)
-    float.array("fov", "field of view (up, down, left, right)", size = 4)
-    float.array("viewOffset", "eye view matrix translation adjustment", size = 3)
-    float.array("projection", "eye projection matrix", size = 16)
-    float.array("pixelsPerTanAngle", "number of pixels that fit in tan(angle) = 1.", size = 2)
-}
-
-val bgfx_hmd_t = struct(Module.BGFX, "BGFXHmd", nativeName = "bgfx_hmd_t", mutable = false, skipBuffer = true) {
-    documentation = "HMD info."
-
-    bgfx_hmd_eye_t.array("eye", "", size = 2)
-    uint16_t.member("width", "frame buffer width")
-    uint16_t.member("height", "frame buffer height")
-    uint32_t.member("deviceWidth", "device resolution width")
-    uint32_t.member("deviceHeight", "device resolution height")
-    uint8_t.member("flags", "status flags")
 }
 
 val bgfx_view_stats_t = struct(Module.BGFX, "BGFXViewStats", nativeName = "bgfx_view_stats_t", mutable = false) {
@@ -295,8 +274,8 @@ val bgfx_caps_limits_t = struct(Module.BGFX, "BGFXCapsLimits", nativeName = "bgf
     uint32_t.member("maxUniforms", "maximum number of uniform handles")
     uint32_t.member("maxOcclusionQueries", "maximum number of occlusion query handles")
     uint32_t.member("maxEncoders", "maximum number of encoder threads")
-    uint32_t.member("transientVbSize", "amount of transient vertex buffer used")
-    uint32_t.member("transientIbSize", "amount of transient index buffer used")
+    uint32_t.member("transientVbSize", "maximum transient vertex buffer size")
+    uint32_t.member("transientIbSize", "maximum transient index buffer size")
 }
 
 val bgfx_caps_t = struct(Module.BGFX, "BGFXCaps", nativeName = "bgfx_caps_t", mutable = false, skipBuffer = true) {
@@ -564,8 +543,8 @@ val bgfx_resolution_t = struct(Module.BGFX, "BGFXResolution", nativeName = "bgfx
 
 val bgfx_init_limits_t = struct(Module.BGFX, "BGFXInitLimits", nativeName = "bgfx_init_limits_t", skipBuffer = true)  {
     uint16_t.member("maxEncoders", "maximum number of encoder threads")
-    uint32_t.member("transientVbSize", "amount of transient vertex buffer used")
-    uint32_t.member("transientIbSize", "amount of transient index buffer used")
+    uint32_t.member("transientVbSize", "maximum transient vertex buffer size")
+    uint32_t.member("transientIbSize", "maximum transient index buffer size")
 }
 
 val bgfx_init_t = struct(Module.BGFX, "BGFXInit", nativeName = "bgfx_init_t", skipBuffer = true) {
@@ -577,6 +556,8 @@ val bgfx_init_t = struct(Module.BGFX, "BGFXInit", nativeName = "bgfx_init_t", sk
     ).links("RENDERER_TYPE_\\w+")
     uint16_t.member("vendorId", "vendor PCI id. If set to #PCI_ID_NONE it will select the first device.").links("PCI_ID_\\w+")
     uint16_t.member("deviceId", "device id. If set to 0 it will select first device, or device with matching id.")
+    bool.member("debug", "enable device for debugging")
+    bool.member("profile", "enable device for profiling")
 
     bgfx_resolution_t.member("resolution", "backbuffer resolution and reset parameters")
     bgfx_init_limits_t.member("limits", "")

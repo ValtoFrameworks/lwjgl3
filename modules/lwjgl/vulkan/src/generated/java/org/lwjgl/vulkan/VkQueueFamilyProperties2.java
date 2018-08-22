@@ -22,7 +22,7 @@ import static org.lwjgl.system.MemoryStack.*;
  * 
  * <ul>
  * <li>{@code sType} <b>must</b> be {@link VK11#VK_STRUCTURE_TYPE_QUEUE_FAMILY_PROPERTIES_2 STRUCTURE_TYPE_QUEUE_FAMILY_PROPERTIES_2}</li>
- * <li>{@code pNext} <b>must</b> be {@code NULL}</li>
+ * <li>{@code pNext} <b>must</b> be {@code NULL} or a pointer to a valid instance of {@link VkQueueFamilyCheckpointPropertiesNV}</li>
  * </ul>
  * 
  * <h5>See Also</h5>
@@ -39,18 +39,19 @@ import static org.lwjgl.system.MemoryStack.*;
  * 
  * <h3>Layout</h3>
  * 
- * <code><pre>
+ * <pre><code>
  * struct VkQueueFamilyProperties2 {
  *     VkStructureType sType;
  *     void * pNext;
  *     {@link VkQueueFamilyProperties VkQueueFamilyProperties} queueFamilyProperties;
- * }</pre></code>
+ * }</code></pre>
  */
 public class VkQueueFamilyProperties2 extends Struct implements NativeResource {
 
     /** The struct size in bytes. */
     public static final int SIZEOF;
 
+    /** The struct alignment in bytes. */
     public static final int ALIGNOF;
 
     /** The struct member offsets. */

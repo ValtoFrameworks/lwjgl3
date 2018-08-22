@@ -12,7 +12,7 @@ package org.lwjgl.vulkan;
  * 
  * <h5>Examples</h5>
  * 
- * <code><pre>
+ * <pre><code>
  *     // Create an image with
  *     // VkDedicatedAllocationImageCreateInfoNV::dedicatedAllocation
  *     // set to VK_TRUE
@@ -27,22 +27,22 @@ package org.lwjgl.vulkan;
  *     VkImageCreateInfo imageCreateInfo =
  *     {
  *         VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,    // sType
- *         &dedicatedImageInfo                     // pNext
+ *         &amp;dedicatedImageInfo                     // pNext
  *         // Other members set as usual
  *     };
  * 
  *     VkImage image;
  *     VkResult result = vkCreateImage(
  *         device,
- *         &imageCreateInfo,
+ *         &amp;imageCreateInfo,
  *         NULL,                       // pAllocator
- *         &image);
+ *         &amp;image);
  * 
  *     VkMemoryRequirements memoryRequirements;
  *     vkGetImageMemoryRequirements(
  *         device,
  *         image,
- *         &memoryRequirements);
+ *         &amp;memoryRequirements);
  * 
  *     // Allocate memory with VkDedicatedAllocationMemoryAllocateInfoNV::image
  *     // pointing to the image we are allocating the memory for
@@ -58,7 +58,7 @@ package org.lwjgl.vulkan;
  *     VkMemoryAllocateInfo memoryAllocateInfo =
  *     {
  *         VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO,                 // sType
- *         &dedicatedInfo,                                         // pNext
+ *         &amp;dedicatedInfo,                                         // pNext
  *         memoryRequirements.size,                                // allocationSize
  *         FindMemoryTypeIndex(memoryRequirements.memoryTypeBits), // memoryTypeIndex
  *     };
@@ -66,9 +66,9 @@ package org.lwjgl.vulkan;
  *     VkDeviceMemory memory;
  *     vkAllocateMemory(
  *         device,
- *         &memoryAllocateInfo,
+ *         &amp;memoryAllocateInfo,
  *         NULL,                       // pAllocator
- *         &memory);
+ *         &amp;memory);
  * 
  *     // Bind the image to the memory
  * 
@@ -76,7 +76,7 @@ package org.lwjgl.vulkan;
  *         device,
  *         image,
  *         memory,
- *         0);</pre></code>
+ *         0);</code></pre>
  * 
  * <dl>
  * <dt><b>Name String</b></dt>
@@ -90,6 +90,15 @@ package org.lwjgl.vulkan;
  * <dt><b>Extension and Version Dependencies</b></dt>
  * <dd><ul>
  * <li>Requires Vulkan 1.0</li>
+ * </ul></dd>
+ * <dt><b>Deprecation state</b></dt>
+ * <dd><ul>
+ * <li><em>Deprecated</em> by <a target="_blank" href="https://www.khronos.org/registry/vulkan/specs/1.0-extensions/html/vkspec.html#VK_KHR_dedicated_allocation">VK_KHR_dedicated_allocation</a> extension
+ * 
+ * <ul>
+ * <li>Which in turn was <em>promoted</em> to <a target="_blank" href="https://www.khronos.org/registry/vulkan/specs/1.0-extensions/html/vkspec.html#versions-1.1-promotions">Vulkan 1.1</a></li>
+ * </ul>
+ * </li>
  * </ul></dd>
  * <dt><b>Contact</b></dt>
  * <dd><ul>

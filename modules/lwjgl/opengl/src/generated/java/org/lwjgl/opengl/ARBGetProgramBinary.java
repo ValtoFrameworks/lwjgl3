@@ -12,8 +12,6 @@ import java.nio.*;
 import org.lwjgl.system.*;
 
 import static org.lwjgl.system.Checks.*;
-import static org.lwjgl.system.JNI.*;
-import static org.lwjgl.system.MemoryUtil.*;
 
 /**
  * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_get_program_binary.txt">ARB_get_program_binary</a> extension.
@@ -65,7 +63,7 @@ public class ARBGetProgramBinary {
      * @param bufSize the size of the buffer whose address is given by {@code binary}
      */
     public static void nglGetProgramBinary(int program, int bufSize, long length, long binaryFormat, long binary) {
-        GL41.nglGetProgramBinary(program, bufSize, length, binaryFormat, binary);
+        GL41C.nglGetProgramBinary(program, bufSize, length, binaryFormat, binary);
     }
 
     /**
@@ -77,11 +75,7 @@ public class ARBGetProgramBinary {
      * @param binary       an array into which the GL will return {@code program}'s binary representation
      */
     public static void glGetProgramBinary(@NativeType("GLuint") int program, @Nullable @NativeType("GLsizei *") IntBuffer length, @NativeType("GLenum *") IntBuffer binaryFormat, @NativeType("void *") ByteBuffer binary) {
-        if (CHECKS) {
-            checkSafe(length, 1);
-            check(binaryFormat, 1);
-        }
-        nglGetProgramBinary(program, binary.remaining(), memAddressSafe(length), memAddress(binaryFormat), memAddress(binary));
+        GL41C.glGetProgramBinary(program, length, binaryFormat, binary);
     }
 
     // --- [ glProgramBinary ] ---
@@ -92,7 +86,7 @@ public class ARBGetProgramBinary {
      * @param length the number of bytes contained in {@code binary}
      */
     public static void nglProgramBinary(int program, int binaryFormat, long binary, int length) {
-        GL41.nglProgramBinary(program, binaryFormat, binary, length);
+        GL41C.nglProgramBinary(program, binaryFormat, binary, length);
     }
 
     /**
@@ -103,7 +97,7 @@ public class ARBGetProgramBinary {
      * @param binary       an array containing the binary to be loaded into {@code program}
      */
     public static void glProgramBinary(@NativeType("GLuint") int program, @NativeType("GLenum") int binaryFormat, @NativeType("void const *") ByteBuffer binary) {
-        nglProgramBinary(program, binaryFormat, memAddress(binary), binary.remaining());
+        GL41C.glProgramBinary(program, binaryFormat, binary);
     }
 
     // --- [ glProgramParameteri ] ---
@@ -112,22 +106,16 @@ public class ARBGetProgramBinary {
      * Specifies the integer value of a program object parameter.
      *
      * @param program the name of a program object whose parameter to modify
-     * @param pname   the name of the parameter to modify. One of:<br><table><tr><td>{@link GL41#GL_PROGRAM_BINARY_RETRIEVABLE_HINT PROGRAM_BINARY_RETRIEVABLE_HINT}</td><td>{@link GL41#GL_PROGRAM_SEPARABLE PROGRAM_SEPARABLE}</td></tr></table>
+     * @param pname   the name of the parameter to modify. One of:<br><table><tr><td>{@link GL41C#GL_PROGRAM_BINARY_RETRIEVABLE_HINT PROGRAM_BINARY_RETRIEVABLE_HINT}</td><td>{@link GL41C#GL_PROGRAM_SEPARABLE PROGRAM_SEPARABLE}</td></tr></table>
      * @param value   the new value of the parameter specified by {@code pname} for {@code program}
      */
     public static void glProgramParameteri(@NativeType("GLuint") int program, @NativeType("GLenum") int pname, @NativeType("GLint") int value) {
-        GL41.glProgramParameteri(program, pname, value);
+        GL41C.glProgramParameteri(program, pname, value);
     }
 
     /** Array version of: {@link #glGetProgramBinary GetProgramBinary} */
     public static void glGetProgramBinary(@NativeType("GLuint") int program, @Nullable @NativeType("GLsizei *") int[] length, @NativeType("GLenum *") int[] binaryFormat, @NativeType("void *") ByteBuffer binary) {
-        long __functionAddress = GL.getICD().glGetProgramBinary;
-        if (CHECKS) {
-            check(__functionAddress);
-            checkSafe(length, 1);
-            check(binaryFormat, 1);
-        }
-        callPPPV(__functionAddress, program, binary.remaining(), length, binaryFormat, memAddress(binary));
+        GL41C.glGetProgramBinary(program, length, binaryFormat, binary);
     }
 
 }

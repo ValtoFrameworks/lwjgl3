@@ -17,7 +17,7 @@ val KHR_surface = "KHRSurface".nativeClassVK("KHR_surface", type = "instance", p
 
         <h5>Examples</h5>
         <div style="margin-left: 26px; border-left: 1px solid gray; padding-left: 14px;"><h5>Note</h5>
-        The example code for the {@code VK_KHR_surface} and {@link KHRSwapchain VK_KHR_swapchain} extensions was removed from the appendix after revision 1.0.29. This WSI example code was ported to the cube demo that is shipped with the official Khronos SDK, and is being kept up-to-date in that location (see: https://github.com/KhronosGroup/Vulkan-LoaderAndValidationLayers/blob/master/demos/cube.c).
+        The example code for the {@code VK_KHR_surface} and {@link KHRSwapchain VK_KHR_swapchain} extensions was removed from the appendix after revision 1.0.29. This WSI example code was ported to the cube demo that is shipped with the official Khronos SDK, and is being kept up-to-date in that location (see: https://github.com/KhronosGroup/Vulkan-Tools/blob/master/cube/cube.c).
         </div>
 
         <dl>
@@ -40,7 +40,8 @@ val KHR_surface = "KHRSurface".nativeClassVK("KHR_surface", type = "instance", p
 
             <dt><b>Contact</b></dt>
             <dd><ul>
-                <li>James Jones @cubanismo,Ian Elliott @ianelliottus</li>
+                <li>James Jones @cubanismo</li>
+                <li>Ian Elliott @ianelliottus</li>
             </ul></dd>
 
             <dt><b>Last Modified Date</b></dt>
@@ -191,7 +192,7 @@ val KHR_surface = "KHRSurface".nativeClassVK("KHR_surface", type = "instance", p
 
         For Opto-Electrical Transfer Function (OETF), unless otherwise specified, the values of <code>L</code> and <code>E</code> are defined as:
 
-        <code>L</code> - linear luminance of image 0 &le L &le; 1 for conventional colorimetry
+        <code>L</code> - linear luminance of image 0 &le; L &le; 1 for conventional colorimetry
 
         <code>E</code> - corresponding electrical signal (value stored in memory)
 
@@ -253,11 +254,11 @@ val KHR_surface = "KHRSurface".nativeClassVK("KHR_surface", type = "instance", p
         <h5>C Specification</h5>
         To destroy a {@code VkSurfaceKHR} object, call:
 
-        <code><pre>
+        <pre><code>
 ￿void vkDestroySurfaceKHR(
 ￿    VkInstance                                  instance,
 ￿    VkSurfaceKHR                                surface,
-￿    const VkAllocationCallbacks*                pAllocator);</pre></code>
+￿    const VkAllocationCallbacks*                pAllocator);</code></pre>
 
         <h5>Description</h5>
         Destroying a {@code VkSurfaceKHR} merely severs the connection between Vulkan and the native surface, and does not imply destroying the native surface, closing a window, or similar behavior.
@@ -299,12 +300,12 @@ val KHR_surface = "KHRSurface".nativeClassVK("KHR_surface", type = "instance", p
         <h5>C Specification</h5>
         To determine whether a queue family of a physical device supports presentation to a given surface, call:
 
-        <code><pre>
+        <pre><code>
 ￿VkResult vkGetPhysicalDeviceSurfaceSupportKHR(
 ￿    VkPhysicalDevice                            physicalDevice,
 ￿    uint32_t                                    queueFamilyIndex,
 ￿    VkSurfaceKHR                                surface,
-￿    VkBool32*                                   pSupported);</pre></code>
+￿    VkBool32*                                   pSupported);</code></pre>
 
         <h5>Valid Usage</h5>
         <ul>
@@ -349,11 +350,11 @@ val KHR_surface = "KHRSurface".nativeClassVK("KHR_surface", type = "instance", p
         <h5>C Specification</h5>
         To query the basic capabilities of a surface, needed in order to create a swapchain, call:
 
-        <code><pre>
+        <pre><code>
 ￿VkResult vkGetPhysicalDeviceSurfaceCapabilitiesKHR(
 ￿    VkPhysicalDevice                            physicalDevice,
 ￿    VkSurfaceKHR                                surface,
-￿    VkSurfaceCapabilitiesKHR*                   pSurfaceCapabilities);</pre></code>
+￿    VkSurfaceCapabilitiesKHR*                   pSurfaceCapabilities);</code></pre>
 
         <h5>Valid Usage (Implicit)</h5>
         <ul>
@@ -395,12 +396,12 @@ val KHR_surface = "KHRSurface".nativeClassVK("KHR_surface", type = "instance", p
         <h5>C Specification</h5>
         To query the supported swapchain format-color space pairs for a surface, call:
 
-        <code><pre>
+        <pre><code>
 ￿VkResult vkGetPhysicalDeviceSurfaceFormatsKHR(
 ￿    VkPhysicalDevice                            physicalDevice,
 ￿    VkSurfaceKHR                                surface,
 ￿    uint32_t*                                   pSurfaceFormatCount,
-￿    VkSurfaceFormatKHR*                         pSurfaceFormats);</pre></code>
+￿    VkSurfaceFormatKHR*                         pSurfaceFormats);</code></pre>
 
         <h5>Description</h5>
         If {@code pSurfaceFormats} is {@code NULL}, then the number of format pairs supported for the given {@code surface} is returned in {@code pSurfaceFormatCount}. The number of format pairs supported will be greater than or equal to 1. Otherwise, {@code pSurfaceFormatCount} <b>must</b> point to a variable set by the user to the number of elements in the {@code pSurfaceFormats} array, and on return the variable is overwritten with the number of structures actually written to {@code pSurfaceFormats}. If the value of {@code pSurfaceFormatCount} is less than the number of format pairs supported, at most {@code pSurfaceFormatCount} structures will be written. If {@code pSurfaceFormatCount} is smaller than the number of format pairs supported for the given {@code surface}, #INCOMPLETE will be returned instead of #SUCCESS to indicate that not all the available values were returned.
@@ -448,12 +449,12 @@ val KHR_surface = "KHRSurface".nativeClassVK("KHR_surface", type = "instance", p
         <h5>C Specification</h5>
         To query the supported presentation modes for a surface, call:
 
-        <code><pre>
+        <pre><code>
 ￿VkResult vkGetPhysicalDeviceSurfacePresentModesKHR(
 ￿    VkPhysicalDevice                            physicalDevice,
 ￿    VkSurfaceKHR                                surface,
 ￿    uint32_t*                                   pPresentModeCount,
-￿    VkPresentModeKHR*                           pPresentModes);</pre></code>
+￿    VkPresentModeKHR*                           pPresentModes);</code></pre>
 
         <h5>Description</h5>
         If {@code pPresentModes} is {@code NULL}, then the number of presentation modes supported for the given {@code surface} is returned in {@code pPresentModeCount}. Otherwise, {@code pPresentModeCount} <b>must</b> point to a variable set by the user to the number of elements in the {@code pPresentModes} array, and on return the variable is overwritten with the number of values actually written to {@code pPresentModes}. If the value of {@code pPresentModeCount} is less than the number of presentation modes supported, at most {@code pPresentModeCount} values will be written. If {@code pPresentModeCount} is smaller than the number of presentation modes supported for the given {@code surface}, #INCOMPLETE will be returned instead of #SUCCESS to indicate that not all the available values were returned.

@@ -39,7 +39,7 @@ val KHR_maintenance2 = "KHRMaintenance2".nativeClassVK("KHR_maintenance2", type 
 
         Subpass 0 writes to attachment 0, subpass 1 reads only the depth information from attachment 0 (using inputAttachmentRead) and writes to attachment 1.
 
-        <code><pre>
+        <pre><code>
 ￿    VkInputAttachmentAspectReferenceKHR references[] = {
 ￿        {
 ￿            .subpass = 1,
@@ -58,11 +58,11 @@ val KHR_maintenance2 = "KHRMaintenance2".nativeClassVK("KHR_maintenance2", type 
 ￿
 ￿    VkRenderPassCreateInfo createInfo = {
 ￿        ...
-￿        .pNext = &specifyAspects,
+￿        .pNext = &amp;specifyAspects,
 ￿        ...
 ￿    }
 ￿
-￿    vkCreateRenderPass(...);</pre></code>
+￿    vkCreateRenderPass(...);</code></pre>
 
         <dl>
             <dt><b>Name String</b></dt>
@@ -80,6 +80,11 @@ val KHR_maintenance2 = "KHRMaintenance2".nativeClassVK("KHR_maintenance2", type 
             <dt><b>Extension and Version Dependencies</b></dt>
             <dd><ul>
                 <li>Requires Vulkan 1.0</li>
+            </ul></dd>
+
+            <dt><b>Deprecation state</b></dt>
+            <dd><ul>
+                <li><em>Promoted</em> to <a target="_blank" href="https://www.khronos.org/registry/vulkan/specs/1.0-extensions/html/vkspec.html\#versions-1.1-promotions">Vulkan 1.1</a></li>
             </ul></dd>
 
             <dt><b>Contact</b></dt>

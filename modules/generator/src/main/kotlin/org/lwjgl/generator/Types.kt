@@ -221,7 +221,7 @@ open class TypeMapping(
     /** The native method argument type. */
     val nativeMethodType: Class<*>,
     /** The Java method argument type. */
-    protected val javaMethodType: Class<*>
+    private val javaMethodType: Class<*>
 ) {
 
     constructor(
@@ -241,7 +241,7 @@ open class TypeMapping(
         if (it.isEmpty())
             this.simpleName
         else
-            "${this.simpleName}<${it.indices.map { '?' }.joinToString(", ")}>"
+            "${this.simpleName}<${it.indices.map { _ -> '?' }.joinToString(", ")}>"
     }
 
     internal val nativeMethodName get() = nativeMethodType.javaName

@@ -65,6 +65,10 @@ import static org.lwjgl.system.MemoryUtil.*;
  * <li>Requires Vulkan 1.0</li>
  * <li>Requires {@link KHRDeviceGroupCreation VK_KHR_device_group_creation}</li>
  * </ul></dd>
+ * <dt><b>Deprecation state</b></dt>
+ * <dd><ul>
+ * <li><em>Promoted</em> to <a target="_blank" href="https://www.khronos.org/registry/vulkan/specs/1.0-extensions/html/vkspec.html#versions-1.1-promotions">Vulkan 1.1</a></li>
+ * </ul></dd>
  * <dt><b>Contact</b></dt>
  * <dd><ul>
  * <li>Jeff Bolz @jeffbolznv</li>
@@ -298,10 +302,10 @@ public class KHRDeviceGroup {
      * 
      * <p>To query these capabilities, call:</p>
      * 
-     * <code><pre>
+     * <pre><code>
      * VkResult vkGetDeviceGroupPresentCapabilitiesKHR(
      *     VkDevice                                    device,
-     *     VkDeviceGroupPresentCapabilitiesKHR*        pDeviceGroupPresentCapabilities);</pre></code>
+     *     VkDeviceGroupPresentCapabilitiesKHR*        pDeviceGroupPresentCapabilities);</code></pre>
      * 
      * <h5>Valid Usage (Implicit)</h5>
      * 
@@ -356,11 +360,11 @@ public class KHRDeviceGroup {
      * 
      * <p>To query the supported device group present modes for a particular surface, call:</p>
      * 
-     * <code><pre>
+     * <pre><code>
      * VkResult vkGetDeviceGroupSurfacePresentModesKHR(
      *     VkDevice                                    device,
      *     VkSurfaceKHR                                surface,
-     *     VkDeviceGroupPresentModeFlagsKHR*           pModes);</pre></code>
+     *     VkDeviceGroupPresentModeFlagsKHR*           pModes);</code></pre>
      * 
      * <h5>Description</h5>
      * 
@@ -432,12 +436,12 @@ public class KHRDeviceGroup {
      * 
      * <p>To query a set of rectangles used in presentation on the physical device, call:</p>
      * 
-     * <code><pre>
+     * <pre><code>
      * VkResult vkGetPhysicalDevicePresentRectanglesKHR(
      *     VkPhysicalDevice                            physicalDevice,
      *     VkSurfaceKHR                                surface,
      *     uint32_t*                                   pRectCount,
-     *     VkRect2D*                                   pRects);</pre></code>
+     *     VkRect2D*                                   pRects);</code></pre>
      * 
      * <h5>Description</h5>
      * 
@@ -514,11 +518,11 @@ public class KHRDeviceGroup {
      * 
      * <p>To acquire an available presentable image to use, and retrieve the index of that image, call:</p>
      * 
-     * <code><pre>
+     * <pre><code>
      * VkResult vkAcquireNextImage2KHR(
      *     VkDevice                                    device,
      *     const VkAcquireNextImageInfoKHR*            pAcquireInfo,
-     *     uint32_t*                                   pImageIndex);</pre></code>
+     *     uint32_t*                                   pImageIndex);</code></pre>
      * 
      * <h5>Valid Usage</h5>
      * 

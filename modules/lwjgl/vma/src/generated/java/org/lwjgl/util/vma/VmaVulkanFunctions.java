@@ -25,7 +25,7 @@ import org.lwjgl.vulkan.*;
  * 
  * <h3>Layout</h3>
  * 
- * <code><pre>
+ * <pre><code>
  * struct VmaVulkanFunctions {
  *     PFN_vkGetPhysicalDeviceProperties vkGetPhysicalDeviceProperties;
  *     PFN_vkGetPhysicalDeviceMemoryProperties vkGetPhysicalDeviceMemoryProperties;
@@ -43,13 +43,14 @@ import org.lwjgl.vulkan.*;
  *     PFN_vkDestroyImage vkDestroyImage;
  *     PFN_vkGetBufferMemoryRequirements2KHR vkGetBufferMemoryRequirements2KHR;
  *     PFN_vkGetImageMemoryRequirements2KHR vkGetImageMemoryRequirements2KHR;
- * }</pre></code>
+ * }</code></pre>
  */
 public class VmaVulkanFunctions extends Struct implements NativeResource {
 
     /** The struct size in bytes. */
     public static final int SIZEOF;
 
+    /** The struct alignment in bytes. */
     public static final int ALIGNOF;
 
     /** The struct member offsets. */
@@ -384,9 +385,9 @@ public class VmaVulkanFunctions extends Struct implements NativeResource {
     /** Unsafe version of {@link #vkDestroyImage(long) vkDestroyImage}. */
     public static void nvkDestroyImage(long struct, long value) { memPutAddress(struct + VmaVulkanFunctions.VKDESTROYIMAGE, check(value)); }
     /** Unsafe version of {@link #vkGetBufferMemoryRequirements2KHR(long) vkGetBufferMemoryRequirements2KHR}. */
-    public static void nvkGetBufferMemoryRequirements2KHR(long struct, long value) { memPutAddress(struct + VmaVulkanFunctions.VKGETBUFFERMEMORYREQUIREMENTS2KHR, check(value)); }
+    public static void nvkGetBufferMemoryRequirements2KHR(long struct, long value) { memPutAddress(struct + VmaVulkanFunctions.VKGETBUFFERMEMORYREQUIREMENTS2KHR, value); }
     /** Unsafe version of {@link #vkGetImageMemoryRequirements2KHR(long) vkGetImageMemoryRequirements2KHR}. */
-    public static void nvkGetImageMemoryRequirements2KHR(long struct, long value) { memPutAddress(struct + VmaVulkanFunctions.VKGETIMAGEMEMORYREQUIREMENTS2KHR, check(value)); }
+    public static void nvkGetImageMemoryRequirements2KHR(long struct, long value) { memPutAddress(struct + VmaVulkanFunctions.VKGETIMAGEMEMORYREQUIREMENTS2KHR, value); }
 
     /**
      * Validates pointer members that should not be {@code NULL}.
@@ -408,8 +409,6 @@ public class VmaVulkanFunctions extends Struct implements NativeResource {
         check(memGetAddress(struct + VmaVulkanFunctions.VKDESTROYBUFFER));
         check(memGetAddress(struct + VmaVulkanFunctions.VKCREATEIMAGE));
         check(memGetAddress(struct + VmaVulkanFunctions.VKDESTROYIMAGE));
-        check(memGetAddress(struct + VmaVulkanFunctions.VKGETBUFFERMEMORYREQUIREMENTS2KHR));
-        check(memGetAddress(struct + VmaVulkanFunctions.VKGETIMAGEMEMORYREQUIREMENTS2KHR));
     }
 
     /**
@@ -448,8 +447,8 @@ public class VmaVulkanFunctions extends Struct implements NativeResource {
             .vkDestroyBuffer(dc.vkDestroyBuffer)
             .vkCreateImage(dc.vkCreateImage)
             .vkDestroyImage(dc.vkDestroyImage)
-            .vkGetBufferMemoryRequirements2KHR(dc.vkGetBufferMemoryRequirements2KHR)
-            .vkGetImageMemoryRequirements2KHR(dc.vkGetImageMemoryRequirements2KHR);
+            .vkGetBufferMemoryRequirements2KHR(dc.vkGetBufferMemoryRequirements2 != NULL ? dc.vkGetBufferMemoryRequirements2 : dc.vkGetBufferMemoryRequirements2KHR)
+            .vkGetImageMemoryRequirements2KHR(dc.vkGetImageMemoryRequirements2 != NULL ? dc.vkGetImageMemoryRequirements2 : dc.vkGetImageMemoryRequirements2KHR);
     }
 
 }

@@ -79,11 +79,11 @@ enum class Module(
     ZSTD("binding.zstd", "org.lwjgl.util.zstd", arrayOverloads = false);
 
     companion object {
-        internal val CHECKS = !System.getProperty("binding.DISABLE_CHECKS", "false").toBoolean()
+        internal val CHECKS = !System.getProperty("binding.DISABLE_CHECKS", "false")!!.toBoolean()
     }
 
     val enabled
-        get() = key.startsWith("core") || System.getProperty(key, "false").toBoolean()
+        get() = key.startsWith("core") || System.getProperty(key, "false")!!.toBoolean()
 
     internal val java
         get() = name.let {
@@ -112,7 +112,7 @@ enum class Module(
 fun String.dependsOn(vararg modules: Module): String? = if (modules.any { it.enabled }) this else null
 
 fun main(args: Array<String>) {
-    if (args.size < 1)
+    if (args.isEmpty())
         throw IllegalArgumentException("Module root path not specified")
 
     if (!Files.isDirectory(Paths.get(args[0])))
@@ -317,10 +317,10 @@ class Generator(private val moduleRoot: String) {
             .filter { KOTLIN_PATH_MATCHER.matches(it) }
             .sorted()
             .also {
-                it.forEach {
+                it.forEach { path ->
                     try {
                         Class
-                            .forName("$packageName.${it.fileName.toString().substringBeforeLast('.').upperCaseFirst}Kt")
+                            .forName("$packageName.${path.fileName.toString().substringBeforeLast('.').upperCaseFirst}Kt")
                             .methods
                             .asSequence()
                             .consume()
@@ -422,8 +422,8 @@ class Generator(private val moduleRoot: String) {
 
         if (!nativeClass.skipNative) {
             generateNative(nativeClass) {
-                generateOutput(nativeClass, it) {
-                    it.generateNative()
+                generateOutput(nativeClass, it) { out ->
+                    out.generateNative()
                 }
             }
         } else
@@ -455,8 +455,8 @@ class Generator(private val moduleRoot: String) {
 
         if (target is GeneratorTargetNative && !target.skipNative) {
             generateNative(target) {
-                generateOutput(target, it) {
-                    it.generateNative()
+                generateOutput(target, it) { out ->
+                    out.generateNative()
                 }
             }
         }

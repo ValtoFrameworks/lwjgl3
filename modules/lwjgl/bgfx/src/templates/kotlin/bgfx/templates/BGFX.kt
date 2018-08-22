@@ -14,7 +14,7 @@ val BGFX = "BGFX".nativeClass(Module.BGFX, prefix = "BGFX", prefixMethod = "bgfx
     IntConstant(
         "API version",
 
-        "API_VERSION".."68"
+        "API_VERSION".."76"
     )
 
     ShortConstant(
@@ -385,9 +385,6 @@ val BGFX = "BGFX".nativeClass(Module.BGFX, prefix = "BGFX", prefixMethod = "bgfx
         "RESET_VSYNC"..0x00000080,
         "RESET_MAXANISOTROPY"..0x00000100,
         "RESET_CAPTURE"..0x00000200,
-        "RESET_HMD"..0x00000400,
-        "RESET_HMD_DEBUG"..0x00000800,
-        "RESET_HMD_RECENTER"..0x00001000,
         "RESET_FLUSH_AFTER_RENDER"..0x00002000,
         "RESET_FLIP_AFTER_RENDER"..0x00004000,
         "RESET_SRGB_BACKBUFFER"..0x00008000,
@@ -415,7 +412,6 @@ val BGFX = "BGFX".nativeClass(Module.BGFX, prefix = "BGFX", prefixMethod = "bgfx
         "CAPS_FRAGMENT_ORDERING"..0x0000000000000040L,
         "CAPS_GRAPHICS_DEBUGGER"..0x0000000000000080L,
         "CAPS_HIDPI"..0x0000000000000100L,
-        "CAPS_HMD"..0x0000000000000200L,
         "CAPS_INDEX32"..0x0000000000000400L,
         "CAPS_INSTANCING"..0x0000000000000800L,
         "CAPS_OCCLUSION_QUERY"..0x0000000000001000L,
@@ -430,7 +426,8 @@ val BGFX = "BGFX".nativeClass(Module.BGFX, prefix = "BGFX", prefixMethod = "bgfx
         "CAPS_TEXTURE_DIRECT_ACCESS"..0x0000000000200000L,
         "CAPS_TEXTURE_READ_BACK"..0x0000000000400000L,
         "CAPS_VERTEX_ATTRIB_HALF"..0x0000000000800000L,
-        "CAPS_VERTEX_ATTRIB_UINT10"..0x0000000000800000L
+        "CAPS_VERTEX_ATTRIB_UINT10"..0x0000000000800000L,
+        "CAPS_VERTEX_ID"..0x0000000001000000L
     )
 
     ShortConstant(
@@ -486,14 +483,6 @@ val BGFX = "BGFX".nativeClass(Module.BGFX, prefix = "BGFX", prefixMethod = "bgfx
         "PCI_ID_AMD"..0x1002.s,
         "PCI_ID_INTEL".."(short)0x8086",
         "PCI_ID_NVIDIA"..0x10de.s
-    )
-
-    ByteConstant(
-        "HMD",
-
-        "HMD_NONE"..0x00.b,
-        "HMD_DEVICE_RESOLUTION"..0x01.b,
-        "HMD_RENDERING"..0x02.b
     )
 
     val CubeMapSides = ByteConstant(
@@ -604,6 +593,15 @@ RGBA16S
         "TEXTURE_FORMAT_PTC14A".enum("PVRTC1 RGBA 4BPP"),
         "TEXTURE_FORMAT_PTC22".enum("PVRTC2 RGBA 2BPP"),
         "TEXTURE_FORMAT_PTC24".enum("PVRTC2 RGBA 4BPP"),
+        "TEXTURE_FORMAT_ATC".enum("ATC RGB 4BPP"),
+        "TEXTURE_FORMAT_ATCE".enum("ATCE RGBA 8 BPP explicit alpha"),
+        "TEXTURE_FORMAT_ATCI".enum("ATCI RGBA 8 BPP interpolated alpha"),
+        "TEXTURE_FORMAT_ASTC4x4".enum("ASTC 4x4 8.0 BPP"),
+        "TEXTURE_FORMAT_ASTC5x5".enum("ASTC 5x5 5.12 BPP"),
+        "TEXTURE_FORMAT_ASTC6x6".enum("ASTC 6x6 3.56 BPP"),
+        "TEXTURE_FORMAT_ASTC8x5".enum("ASTC 8x5 3.20 BPP"),
+        "TEXTURE_FORMAT_ASTC8x6".enum("ASTC 8x6 2.67 BPP"),
+        "TEXTURE_FORMAT_ASTC10x5".enum("ASTC 10x5 2.56 BPP"),
 
         "TEXTURE_FORMAT_UNKNOWN".enum,
 
@@ -723,6 +721,7 @@ RGBA16S
         "Topology conversion function ({@code bgfx_topology_convert_t}).",
 
         "TOPOLOGY_CONVERT_TRI_LIST_FLIP_WINDING".enum("Flip winding order of triangle list."),
+        "TOPOLOGY_CONVERT_TRI_STRIP_FLIP_WINDING".enum("Flip winding order of triangle strip."),
         "TOPOLOGY_CONVERT_TRI_LIST_TO_LINE_LIST".enum("Convert triangle list to line list."),
         "TOPOLOGY_CONVERT_TRI_STRIP_TO_TRI_LIST".enum("Convert triangle strip to triangle list."),
         "TOPOLOGY_CONVERT_LINE_STRIP_TO_LINE_LIST".enum("Convert line strip to line list."),
@@ -806,6 +805,26 @@ RGBA16S
             code must be implemented inside vertex shader.
             """
         )
+    )
+
+    void(
+        "vertex_decl_decode",
+        "Decodes attribute.",
+
+        bgfx_vertex_decl_t.const.p.IN("_decl", "the vertex declaration"),
+        bgfx_attrib_t.IN("_attrib", "the attribute to decode"),
+        Check(1)..uint8_t.p.OUT("_num", "number of elements"),
+        Check(1)..bgfx_attrib_type_t.p.OUT("_type", "element type"),
+        Check(1)..bool.p.OUT("_normalized", "normalized flag"),
+        Check(1)..bool.p.OUT("_asInt", "packaging flag")
+    )
+
+    bool(
+        "vertex_decl_has",
+        "Returns true if {@code _decl} contains attribute.",
+
+        bgfx_vertex_decl_t.const.p.IN("_decl", "the vertex declaration"),
+        bgfx_attrib_t.IN("_attr", "the attribute to query", Attrib)
     )
 
     void(
@@ -1018,11 +1037,6 @@ RGBA16S
         "Returns renderer capabilities."
     )
 
-    bgfx_hmd_t.const.p(
-        "get_hmd",
-        "Returns HMD info."
-    )
-
     bgfx_stats_t.const.p(
         "get_stats",
         """
@@ -1070,8 +1084,8 @@ RGBA16S
 
         MultiTypeAll..void.const.p.IN("_data", "the data to reference"),
         AutoSize("_data")..uint32_t.IN("_size", "the number of bytes to reference"),
-        bgfx_release_fn_t.IN("_releaseFn", "the release function"),
-        nullable..opaque_p.IN("_userData", "user data to pass to {@code _releaseFn}")
+        bgfx_release_fn_t.IN("_releaseFn", "callback function to release memory after use"),
+        nullable..opaque_p.IN("_userData", "user data to be passed to callback function")
     )
 
     void(
@@ -1358,7 +1372,11 @@ RGBA16S
         "Sets shader debug name.",
 
         bgfx_shader_handle_t.IN("_handle", "shader handle"),
-        charUTF8.const.p.IN("_name", "shader name")
+        charUTF8.const.p.IN("_name", "shader name"),
+        AutoSize("_name")..int32_t.IN(
+            "_len",
+            "shader name length (if length is {@code INT32_MAX}, it's expected that {@code _name} is zero terminated string)"
+        )
     )
 
     void(
@@ -1587,7 +1605,11 @@ RGBA16S
         "Sets texture debug name.",
 
         bgfx_texture_handle_t.IN("_handle", "texture handle"),
-        charUTF8.const.p.IN("_name", "texture name")
+        charUTF8.const.p.IN("_name", "texture name"),
+        AutoSize("_name")..int32_t.IN(
+            "_len",
+            "texture name length (if length is {@code INT32_MAX}, it's expected that {@code _name} is zero terminated string)"
+        )
     )
 
     opaque_p(
@@ -2103,6 +2125,17 @@ BGFX_STATE_BLEND_EQUATION_SEPARATE(_equationRGB, _equationA)""")}
     )
 
     void(
+        "set_vertex_count",
+        """
+        Set number of vertices for auto generated vertices use in conjuction with {@code gl_VertexID}.
+
+        Availability depends on: #CAPS_VERTEX_ID.
+        """,
+
+        uint32_t.IN("_numVertices", "number of vertices")
+    )
+
+    void(
         "set_instance_data_buffer",
         "Sets instance data buffer for draw primitive.",
 
@@ -2496,6 +2529,18 @@ BGFX_STATE_BLEND_EQUATION_SEPARATE(_equationRGB, _equationA)""")}
         bgfx_transient_vertex_buffer_t.const.p.IN("_tvb", "transient vertex buffer"),
         uint32_t.IN("_startVertex", "first vertex to render"),
         uint32_t.IN("_numVertices", "number of vertices to render")
+    )
+
+    void(
+        "encoder_set_vertex_count",
+        """
+        Set number of vertices for auto generated vertices use in conjuction with {@code gl_VertexID}.
+
+        Availability depends on: #CAPS_VERTEX_ID.
+        """,
+
+        bgfx_encoder_s.p.IN("_encoder", "the encoder"),
+        uint32_t.IN("_numVertices", "number of vertices")
     )
 
     void(

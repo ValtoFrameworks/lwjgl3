@@ -22,7 +22,7 @@ val tinyfiledialogs = "TinyFileDialogs".nativeClass(Module.TINYFD, prefix = "tin
             "message / question",
             "input / password",
             "save file",
-            "open file & multiple files",
+            "open file &amp; multiple files",
             "select folder",
             "color picker"
         )}
@@ -40,6 +40,16 @@ val tinyfiledialogs = "TinyFileDialogs".nativeClass(Module.TINYFD, prefix = "tin
         "Contains info about requirements."
     )
 
+    macro..Address..int.p(
+        "verbose",
+        "0 (default) or 1 : on unix, prints the command line calls."
+    )
+
+    macro..Address..int.p(
+        "silent",
+        "1 (default) or 0 : on unix, hide errors and warnings from called dialog."
+    )
+
     private..macro..Address..int.p(
         "winUtf8",
         "On windows string char can be 0:MBSC or 1:UTF-8. Unless your code is really prepared for UTF-8 on windows, leave this on MBSC."
@@ -50,7 +60,7 @@ val tinyfiledialogs = "TinyFileDialogs".nativeClass(Module.TINYFD, prefix = "tin
         """
         Can be modified at run time.
 
-        For unix & windows: 0 (graphic mode) or 1 (console mode).
+        For unix &amp; windows: 0 (graphic mode) or 1 (console mode).
 
         0: try to use a graphic solution, if it fails then it uses console mode.
         1: forces all dialogs into console mode even when the X server is present. It will use the package dialog or dialog.exe if installed. On windows it

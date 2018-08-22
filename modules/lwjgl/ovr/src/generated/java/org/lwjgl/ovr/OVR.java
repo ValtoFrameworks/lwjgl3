@@ -186,8 +186,8 @@ public class OVR {
      * 
      * <p>Prefer using this origin when your application requires the physical floor height to match the virtual floor height, such as standing experiences.
      * When used, all poses in {@link OVRTrackingState} are reported as an offset transform from the profile calibrated floor pose. Calling
-     * {@link #ovr_RecenterTrackingOrigin RecenterTrackingOrigin} will recenter the X & Z axes as well as yaw, but the Y-axis (i.e. height) will continue to be reported using the floor
-     * height as the origin for all poses.</p>
+     * {@link #ovr_RecenterTrackingOrigin RecenterTrackingOrigin} will recenter the X &amp; Z axes as well as yaw, but the Y-axis (i.e. height) will continue to be reported using the
+     * floor height as the origin for all poses.</p>
      * </li>
      * </ul>
      */
@@ -391,29 +391,52 @@ public class OVR {
         ovrMirrorOption_IncludeSystemGui     = 0x20;
 
     /**
-     * Button input types. ({@code ovrTouch})
+     * {@code ovrViewportStencilType}
      * 
      * <h5>Enum values:</h5>
      * 
      * <ul>
-     * <li>{@link #ovrButton_A Button_A} - Button A</li>
-     * <li>{@link #ovrButton_B Button_B} - Button B</li>
-     * <li>{@link #ovrButton_RThumb Button_RThumb} - Button RThumb</li>
-     * <li>{@link #ovrButton_RShoulder Button_RShoulder} - Button RShoulder</li>
-     * <li>{@link #ovrButton_X Button_X} - Button X</li>
-     * <li>{@link #ovrButton_Y Button_Y} - Button Y</li>
-     * <li>{@link #ovrButton_LThumb Button_LThumb} - Button LThumb</li>
-     * <li>{@link #ovrButton_LShoulder Button_LShoulder} - Button LShoulder</li>
-     * <li>{@link #ovrButton_Up Button_Up} - Button Up</li>
-     * <li>{@link #ovrButton_Down Button_Down} - Button Down</li>
-     * <li>{@link #ovrButton_Left Button_Left} - Button Left</li>
-     * <li>{@link #ovrButton_Right Button_Right} - Button Right</li>
-     * <li>{@link #ovrButton_Enter Button_Enter} - Button Enter</li>
-     * <li>{@link #ovrButton_Back Button_Back} - Button Back</li>
-     * <li>{@link #ovrButton_VolUp Button_VolUp} - Button VolUp</li>
-     * <li>{@link #ovrButton_VolDown Button_VolDown} - Button VolDown</li>
-     * <li>{@link #ovrButton_Home Button_Home} - Button Home</li>
-     * <li>{@link #ovrButton_Private Button_Private}</li>
+     * <li>{@link #ovrViewportStencil_HiddenArea ViewportStencil_HiddenArea} - Triangle mesh covering parts that are hidden to users.</li>
+     * <li>{@link #ovrViewportStencil_VisibleArea ViewportStencil_VisibleArea} - Triangle mesh covering parts that are visible to users.</li>
+     * <li>{@link #ovrViewportStencil_BorderLine ViewportStencil_BorderLine} - Line buffer that draws the boundary visible to users.</li>
+     * </ul>
+     */
+    public static final int
+        ovrViewportStencil_HiddenArea  = 0,
+        ovrViewportStencil_VisibleArea = 1,
+        ovrViewportStencil_BorderLine  = 2;
+
+    /**
+     * Describes button input types.({@code ovrButton})
+     * 
+     * <p>Button inputs are combined; that is they will be reported as pressed if they are pressed on either one of the two devices. The
+     * {@code ovrButton_Up/Down/Left/Right} map to both XBox D-Pad and directional buttons. The {@code ovrButton_Enter} and {@code ovrButton_Return} map to
+     * Start and Back controller buttons, respectively.</p>
+     * 
+     * <h5>Enum values:</h5>
+     * 
+     * <ul>
+     * <li>{@link #ovrButton_A Button_A} - A button on XBox controllers and right Touch controller. Select button on Oculus Remote.</li>
+     * <li>{@link #ovrButton_B Button_B} - B button on XBox controllers and right Touch controller. Back button on Oculus Remote.</li>
+     * <li>{@link #ovrButton_RThumb Button_RThumb} - Right thumbstick on XBox controllers and Touch controllers. Not present on Oculus Remote.</li>
+     * <li>{@link #ovrButton_RShoulder Button_RShoulder} - Right shoulder button on XBox controllers. Not present on Touch controllers or Oculus Remote.</li>
+     * <li>{@link #ovrButton_X Button_X} - X button on XBox controllers and left Touch controller. Not present on Oculus Remote.</li>
+     * <li>{@link #ovrButton_Y Button_Y} - Y button on XBox controllers and left Touch controller. Not present on Oculus Remote.</li>
+     * <li>{@link #ovrButton_LThumb Button_LThumb} - Left thumbstick on XBox controllers and Touch controllers. Not present on Oculus Remote.</li>
+     * <li>{@link #ovrButton_LShoulder Button_LShoulder} - Left shoulder button on XBox controllers. Not present on Touch controllers or Oculus Remote.</li>
+     * <li>{@link #ovrButton_Up Button_Up} - Up button on XBox controllers and Oculus Remote. Not present on Touch controllers.</li>
+     * <li>{@link #ovrButton_Down Button_Down} - Down button on XBox controllers and Oculus Remote. Not present on Touch controllers.</li>
+     * <li>{@link #ovrButton_Left Button_Left} - Left button on XBox controllers and Oculus Remote. Not present on Touch controllers.</li>
+     * <li>{@link #ovrButton_Right Button_Right} - Right button on XBox controllers and Oculus Remote. Not present on Touch controllers.</li>
+     * <li>{@link #ovrButton_Enter Button_Enter} - 
+     * Start on XBox 360 controller. Menu on XBox One controller and Left Touch controller. Should be referred to as the Menu button in user-facing
+     * documentation.
+     * </li>
+     * <li>{@link #ovrButton_Back Button_Back} - Back on Xbox 360 controller. View button on XBox One controller. Not present on Touch controllers or Oculus Remote.</li>
+     * <li>{@link #ovrButton_VolUp Button_VolUp} - Volume button on Oculus Remote. Not present on XBox or Touch controllers.</li>
+     * <li>{@link #ovrButton_VolDown Button_VolDown} - Volume button on Oculus Remote. Not present on XBox or Touch controllers.</li>
+     * <li>{@link #ovrButton_Home Button_Home} - Home button on XBox controllers. Oculus button on Touch controllers and Oculus Remote.</li>
+     * <li>{@link #ovrButton_Private Button_Private} - Bit mask of all buttons that are for private usage by Oculus</li>
      * <li>{@link #ovrButton_RMask Button_RMask} - Bit mask of all buttons on the right Touch controller</li>
      * <li>{@link #ovrButton_LMask Button_LMask} - Bit mask of all buttons on the left Touch controller</li>
      * </ul>
@@ -441,7 +464,9 @@ public class OVR {
         ovrButton_LMask     = ovrButton_X | ovrButton_Y | ovrButton_LThumb | ovrButton_LShoulder | ovrButton_Enter;
 
     /**
-     * Touch input types.
+     * Describes touch input types. ({@code ovrTouch})
+     * 
+     * <p>These values map to capacitive touch values reported {@link OVRInputState}{@code ::Touch}. Some of these values are mapped to button bits for consistency.</p>
      * 
      * <h5>Enum values:</h5>
      * 
@@ -568,8 +593,8 @@ public class OVR {
      * <li>{@link #ovrCameraStatus_None CameraStatus_None} - Initial state of camera.</li>
      * <li>{@link #ovrCameraStatus_Connected CameraStatus_Connected} - Bit set when the camera is connected to the system.</li>
      * <li>{@link #ovrCameraStatus_Calibrating CameraStatus_Calibrating} - Bit set when the camera is undergoing calibration.</li>
-     * <li>{@link #ovrCameraStatus_CalibrationFailed CameraStatus_CalibrationFailed} - Bit set when the camera has tried & failed calibration.</li>
-     * <li>{@link #ovrCameraStatus_Calibrated CameraStatus_Calibrated} - Bit set when the camera has tried & passed calibration.</li>
+     * <li>{@link #ovrCameraStatus_CalibrationFailed CameraStatus_CalibrationFailed} - Bit set when the camera has tried &amp; failed calibration.</li>
+     * <li>{@link #ovrCameraStatus_Calibrated CameraStatus_Calibrated} - Bit set when the camera has tried &amp; passed calibration.</li>
      * <li>{@link #ovrCameraStatus_Capturing CameraStatus_Capturing} - Bit set when the camera is capturing.</li>
      * </ul>
      */
@@ -699,14 +724,14 @@ public class OVR {
         ovrTextureLayout_Octilinear  = 1;
 
     /**
-     * Performance HUD enables the HMD user to see information critical to the real-time operation of the VR application such as latency timing, and CPU & GPU
-     * performance metrics.
+     * Performance HUD enables the HMD user to see information critical to the real-time operation of the VR application such as latency timing, and CPU &amp;
+     * GPU performance metrics.
      * 
      * <p>App can toggle performance HUD modes as such:</p>
      * 
-     * <code><pre>
+     * <pre><code>
      * ovrPerfHudMode PerfHudMode = ovrPerfHud_LatencyTiming;
-     * ovr_SetInt(session, OVR_PERF_HUD_MODE, (int)PerfHudMode);</pre></code>
+     * ovr_SetInt(session, OVR_PERF_HUD_MODE, (int)PerfHudMode);</code></pre>
      * 
      * <h5>Enum values:</h5>
      * 
@@ -717,7 +742,7 @@ public class OVR {
      * <li>{@link #ovrPerfHud_AppRenderTiming PerfHud_AppRenderTiming} - Shows render timing info for application</li>
      * <li>{@link #ovrPerfHud_CompRenderTiming PerfHud_CompRenderTiming} - Shows render timing info for OVR compositor</li>
      * <li>{@link #ovrPerfHud_AwsStats PerfHud_AwsStats} - Shows Async Spacewarp-specific info</li>
-     * <li>{@link #ovrPerfHud_VersionInfo PerfHud_VersionInfo} - Shows SDK & HMD version Info</li>
+     * <li>{@link #ovrPerfHud_VersionInfo PerfHud_VersionInfo} - Shows SDK &amp; HMD version Info</li>
      * </ul>
      */
     public static final int
@@ -734,9 +759,9 @@ public class OVR {
      * 
      * <p>App can toggle layer HUD modes as such:</p>
      * 
-     * <code><pre>
+     * <pre><code>
      * ovrLayerHudMode LayerHudMode = ovrLayerHud_Info;
-     * ovr_SetInt(Hmd, OVR_LAYER_HUD_MODE, (int)LayerHudMode);</pre></code>
+     * ovr_SetInt(Hmd, OVR_LAYER_HUD_MODE, (int)LayerHudMode);</code></pre>
      * 
      * <h5>Enum values:</h5>
      * 
@@ -756,9 +781,9 @@ public class OVR {
      * 
      * <p>App can toggle the debug HUD modes as such:</p>
      * 
-     * <code><pre>
+     * <pre><code>
      * ovrDebugHudStereoMode DebugHudMode = ovrDebugHudStereo_QuadWithCrosshair;
-     * ovr_SetInt(session, OVR_DEBUG_HUD_STEREO_MODE, (int)DebugHudMode);</pre></code>
+     * ovr_SetInt(session, OVR_DEBUG_HUD_STEREO_MODE, (int)DebugHudMode);</code></pre>
      * 
      * <p>The app can modify the visual properties of the stereo guide (i.e. quad, crosshair) using the {@link #ovr_SetFloatArray SetFloatArray} function. For a list of tweakable
      * properties, see the {@code OVR_DEBUG_HUD_STEREO_GUIDE_*} keys in {@link OVRKeys}.</p>
@@ -936,22 +961,22 @@ public class OVR {
      * after {@link #ovr_Initialize Initialize} and before the first call to {@link #ovr_Create Create}. Each value is limited to 20 characters. Key names such as 'EngineName:', 'EngineVersion:'
      * do not count towards this limit.</p>
      * 
-     * <code><pre>
+     * <pre><code>
      * EngineName: %s\n
      * EngineVersion: %s\n
      * EnginePluginName: %s\n
      * EnginePluginVersion: %s\n
-     * EngineEditor: <boolean> ('true' or 'false')\n</pre></code>
+     * EngineEditor: &lt;boolean&gt; ('true' or 'false')\n</code></pre>
      * 
      * <p>Example code:</p>
      * 
-     * <code><pre>
+     * <pre><code>
      * ovr_IdentifyClient(
      *     "EngineName: Unity\n" +
      *     "EngineVersion: 5.3.3\n" +
      *     "EnginePluginName: OVRPlugin\n" +
      *     "EnginePluginVersion: 1.2.0\n" +
-     *     "EngineEditor: true");</pre></code>
+     *     "EngineEditor: true");</code></pre>
      *
      * @param identity specifies one or more newline-delimited lines of optional info
      */
@@ -971,22 +996,22 @@ public class OVR {
      * after {@link #ovr_Initialize Initialize} and before the first call to {@link #ovr_Create Create}. Each value is limited to 20 characters. Key names such as 'EngineName:', 'EngineVersion:'
      * do not count towards this limit.</p>
      * 
-     * <code><pre>
+     * <pre><code>
      * EngineName: %s\n
      * EngineVersion: %s\n
      * EnginePluginName: %s\n
      * EnginePluginVersion: %s\n
-     * EngineEditor: <boolean> ('true' or 'false')\n</pre></code>
+     * EngineEditor: &lt;boolean&gt; ('true' or 'false')\n</code></pre>
      * 
      * <p>Example code:</p>
      * 
-     * <code><pre>
+     * <pre><code>
      * ovr_IdentifyClient(
      *     "EngineName: Unity\n" +
      *     "EngineVersion: 5.3.3\n" +
      *     "EnginePluginName: OVRPlugin\n" +
      *     "EnginePluginVersion: 1.2.0\n" +
-     *     "EngineEditor: true");</pre></code>
+     *     "EngineEditor: true");</code></pre>
      *
      * @param identity specifies one or more newline-delimited lines of optional info
      */
@@ -1264,9 +1289,9 @@ public class OVR {
      * 
      * <p>This function can emulate ovr_RecenterTrackingOrigin as such:</p>
      * 
-     * <code><pre>
+     * <pre><code>
      * ovrTrackingState ts = ovr_GetTrackingState(session, 0.0, ovrFalse);
-     * ovr_SpecifyTrackingOrigin(session, ts.HeadPose.ThePose);</pre></code>
+     * ovr_SpecifyTrackingOrigin(session, ts.HeadPose.ThePose);</code></pre>
      * 
      * <p>The roll and pitch orientation components are determined by gravity and cannot be redefined. If you are using {@code ovrTrackerPoses} then you will
      * need to call {@link #ovr_GetTrackerPose GetTrackerPose} after this, because the sensor position(s) will change as a result of this.</p>
@@ -1966,10 +1991,10 @@ public class OVR {
      * 
      * <p>Example code:</p>
      * 
-     * <code><pre>
+     * <pre><code>
      * ovrHmdDesc hmdDesc = ovr_GetHmdDesc(session);
      * ovrSizei eyeSizeLeft  = ovr_GetFovTextureSize(session, ovrEye_Left,  hmdDesc.DefaultEyeFov[ovrEye_Left],  1.0f);
-     * ovrSizei eyeSizeRight = ovr_GetFovTextureSize(session, ovrEye_Right, hmdDesc.DefaultEyeFov[ovrEye_Right], 1.0f);</pre></code>
+     * ovrSizei eyeSizeRight = ovr_GetFovTextureSize(session, ovrEye_Right, hmdDesc.DefaultEyeFov[ovrEye_Right], 1.0f);</code></pre>
      *
      * @param session               an {@code ovrSession} previously returned by {@link #ovr_Create Create}
      * @param eye                   which eye (left or right) to calculate for. One of:<br><table><tr><td>{@link #ovrEye_Left Eye_Left}</td><td>{@link #ovrEye_Right Eye_Right}</td></tr></table>
@@ -2007,6 +2032,21 @@ public class OVR {
         }
         novr_GetRenderDesc(session, eyeType, fov.address(), __result.address());
         return __result;
+    }
+
+    // --- [ ovr_GetViewportStencil ] ---
+
+    /** Unsafe version of: {@link #ovr_GetViewportStencil GetViewportStencil} */
+    public static native int novr_GetViewportStencil(long session, long viewportStencilDesc, long outMeshBuffer);
+
+    /** @param session an {@code ovrSession} previously returned by {@link #ovr_Create Create} */
+    @NativeType("ovrResult")
+    public static int ovr_GetViewportStencil(@NativeType("ovrSession") long session, @NativeType("ovrViewportStencilDesc const *") OVRViewportStencilDesc viewportStencilDesc, @NativeType("ovrViewportStencilMeshBuffer *") OVRViewportStencilMeshBuffer outMeshBuffer) {
+        if (CHECKS) {
+            check(session);
+            OVRViewportStencilMeshBuffer.validate(outMeshBuffer.address());
+        }
+        return novr_GetViewportStencil(session, viewportStencilDesc.address(), outMeshBuffer.address());
     }
 
     // --- [ ovr_WaitToBeginFrame ] ---
@@ -2098,12 +2138,12 @@ public class OVR {
      * 
      * <h3>Example code</h3>
      * 
-     * <code><pre>
+     * <pre><code>
      * ovrLayerEyeFov  layer0;
      * ovrLayerQuad    layer1;
      * ...
-     * ovrLayerHeader* layers[2] = { &layer0.Header, &layer1.Header };
-     * ovrResult result = ovr_EndFrame(session, frameIndex, nullptr, layers, 2);</pre></code>
+     * ovrLayerHeader* layers[2] = { &amp;layer0.Header, &amp;layer1.Header };
+     * ovrResult result = ovr_EndFrame(session, frameIndex, nullptr, layers, 2);</code></pre>
      *
      * @param session       an {@code ovrSession} previously returned by {@link #ovr_Create Create}
      * @param frameIndex    specifies the targeted application frame index. It must match what was passed to {@link #ovr_BeginFrame BeginFrame}.
@@ -2163,12 +2203,12 @@ public class OVR {
      * 
      * <h3>Example code</h3>
      * 
-     * <code><pre>
+     * <pre><code>
      * ovrLayerEyeFov  layer0;
      * ovrLayerQuad    layer1;
      * ...
-     * ovrLayerHeader* layers[2] = { &layer0.Header, &layer1.Header };
-     * ovrResult result = ovr_SubmitFrame(session, frameIndex, nullptr, layers, 2);</pre></code>
+     * ovrLayerHeader* layers[2] = { &amp;layer0.Header, &amp;layer1.Header };
+     * ovrResult result = ovr_SubmitFrame(session, frameIndex, nullptr, layers, 2);</code></pre>
      *
      * @param session       an {@code ovrSession} previously returned by {@link #ovr_Create Create}
      * @param frameIndex    the targeted application frame index, or 0 to refer to one frame after the last time {@link #ovr_SubmitFrame SubmitFrame} was called

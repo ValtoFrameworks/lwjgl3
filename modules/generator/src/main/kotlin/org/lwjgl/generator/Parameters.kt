@@ -32,7 +32,7 @@ class ReturnValue private constructor(override val nativeType: NativeType) : Qua
     // --- [ Helper functions & properties ] ---
 
     internal val isSpecial
-        get() = (hasUnsafe && nativeType !is ArrayType<*>) || nativeType.mapping === PrimitiveMapping.BOOLEAN4
+        get() = hasUnsafe || nativeType.mapping === PrimitiveMapping.BOOLEAN4
 
     internal val isVoid
         get() = nativeType.mapping === TypeMapping.VOID
@@ -93,7 +93,7 @@ class Parameter(
     // --- [ Helper functions & properties ] ----
 
     internal val isSpecial
-        get() = (hasUnsafe && nativeType !is ArrayType<*>) || when (nativeType.mapping) {
+        get() = hasUnsafe || when (nativeType.mapping) {
             PointerMapping.OPAQUE_POINTER -> (nativeType is ObjectType || !has(nullable)) && this !== JNI_ENV
             PrimitiveMapping.BOOLEAN4     -> true
             else                          -> false
@@ -122,7 +122,14 @@ class Parameter(
 
     override fun validate(modifier: ParameterModifier) = modifier.validate(this)
 
-    internal fun copyModifiers(other: Parameter): Parameter {
+    internal fun copy(nativeType: NativeType = this.nativeType) = Parameter(
+        nativeType,
+        name,
+        paramType,
+        documentation
+    ).copyModifiers(this)
+
+    private fun copyModifiers(other: Parameter): Parameter {
         if (other.hasModifiers())
             this._modifiers = HashMap(other.modifiers)
         return this

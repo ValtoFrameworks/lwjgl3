@@ -26,6 +26,15 @@ import static org.lwjgl.system.JNI.*;
  * <dd><ul>
  * <li>Requires Vulkan 1.0</li>
  * </ul></dd>
+ * <dt><b>Deprecation state</b></dt>
+ * <dd><ul>
+ * <li><em>Deprecated</em> by <a target="_blank" href="https://www.khronos.org/registry/vulkan/specs/1.0-extensions/html/vkspec.html#VK_KHR_external_memory_capabilities">VK_KHR_external_memory_capabilities</a> extension
+ * 
+ * <ul>
+ * <li>Which in turn was <em>promoted</em> to <a target="_blank" href="https://www.khronos.org/registry/vulkan/specs/1.0-extensions/html/vkspec.html#versions-1.1-promotions">Vulkan 1.1</a></li>
+ * </ul>
+ * </li>
+ * </ul></dd>
  * <dt><b>Contact</b></dt>
  * <dd><ul>
  * <li>James Jones @cubanismo</li>
@@ -124,7 +133,7 @@ public class NVExternalMemoryCapabilities {
      * 
      * <p>To determine the image capabilities compatible with an external memory handle type, call:</p>
      * 
-     * <code><pre>
+     * <pre><code>
      * VkResult vkGetPhysicalDeviceExternalImageFormatPropertiesNV(
      *     VkPhysicalDevice                            physicalDevice,
      *     VkFormat                                    format,
@@ -133,7 +142,7 @@ public class NVExternalMemoryCapabilities {
      *     VkImageUsageFlags                           usage,
      *     VkImageCreateFlags                          flags,
      *     VkExternalMemoryHandleTypeFlagsNV           externalHandleType,
-     *     VkExternalImageFormatPropertiesNV*          pExternalImageFormatProperties);</pre></code>
+     *     VkExternalImageFormatPropertiesNV*          pExternalImageFormatProperties);</code></pre>
      * 
      * <h5>Description</h5>
      * 

@@ -14,7 +14,7 @@ import java.util.*;
 
 import static org.lwjgl.glfw.Callbacks.*;
 import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL11C.*;
 import static org.lwjgl.system.MemoryStack.*;
 import static org.lwjgl.system.MemoryUtil.*;
 import static org.lwjgl.util.tinyfd.TinyFileDialogs.*;
@@ -126,6 +126,8 @@ public final class HelloTinyFD {
             glClear(GL_COLOR_BUFFER_BIT);
             glfwSwapBuffers(window);
         }
+
+        GL.setCapabilities(null);
 
         glfwFreeCallbacks(window);
         glfwDestroyWindow(window);

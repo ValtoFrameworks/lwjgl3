@@ -20,7 +20,13 @@ import static org.lwjgl.system.MemoryStack.*;
  * 
  * <h5>Description</h5>
  * 
- * <p>An instance of the {@link VkMemoryAllocateInfo} structure defines a memory import operation if the {@code pNext} chain contains an instance of one of the following structures:   <b> {@link VkImportMemoryWin32HandleInfoKHR} with non-zero {@code handleType}     value   </b> {@link VkImportMemoryFdInfoKHR} with a non-zero {@code handleType} value   * {@link VkImportMemoryHostPointerInfoEXT} with a non-zero {@code handleType}     value</p>
+ * <p>An instance of the {@link VkMemoryAllocateInfo} structure defines a memory import operation if the {@code pNext} chain contains an instance of one of the following structures:</p>
+ * 
+ * <ul>
+ * <li>{@link VkImportMemoryWin32HandleInfoKHR} with non-zero {@code handleType} value</li>
+ * <li>{@link VkImportMemoryFdInfoKHR} with a non-zero {@code handleType} value</li>
+ * <li>{@link VkImportMemoryHostPointerInfoEXT} with a non-zero {@code handleType} value</li>
+ * </ul>
  * 
  * <p>Importing memory <b>must</b> not modify the content of the memory. Implementations <b>must</b> ensure that importing memory does not enable the importing Vulkan instance to access any memory or resources in other Vulkan instances other than that corresponding to the memory object imported. Implementations <b>must</b> also ensure accessing imported memory which has not been initialized does not allow the importing Vulkan instance to obtain data from the exporting Vulkan instance or vice-versa.</p>
  * 
@@ -74,19 +80,20 @@ import static org.lwjgl.system.MemoryStack.*;
  * 
  * <h3>Layout</h3>
  * 
- * <code><pre>
+ * <pre><code>
  * struct VkMemoryAllocateInfo {
  *     VkStructureType sType;
  *     void const * pNext;
  *     VkDeviceSize allocationSize;
  *     uint32_t memoryTypeIndex;
- * }</pre></code>
+ * }</code></pre>
  */
 public class VkMemoryAllocateInfo extends Struct implements NativeResource {
 
     /** The struct size in bytes. */
     public static final int SIZEOF;
 
+    /** The struct alignment in bytes. */
     public static final int ALIGNOF;
 
     /** The struct member offsets. */

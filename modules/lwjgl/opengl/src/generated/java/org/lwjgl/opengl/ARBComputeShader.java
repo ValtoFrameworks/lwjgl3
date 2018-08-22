@@ -96,14 +96,14 @@ public class ARBComputeShader {
      * @param num_groups_z the number of work groups to be launched in the Z dimension
      */
     public static void glDispatchCompute(@NativeType("GLuint") int num_groups_x, @NativeType("GLuint") int num_groups_y, @NativeType("GLuint") int num_groups_z) {
-        GL43.glDispatchCompute(num_groups_x, num_groups_y, num_groups_z);
+        GL43C.glDispatchCompute(num_groups_x, num_groups_y, num_groups_z);
     }
 
     // --- [ glDispatchComputeIndirect ] ---
 
     /** Unsafe version of: {@link #glDispatchComputeIndirect DispatchComputeIndirect} */
     public static void nglDispatchComputeIndirect(long indirect) {
-        GL43.nglDispatchComputeIndirect(indirect);
+        GL43C.nglDispatchComputeIndirect(indirect);
     }
 
     /**
@@ -111,24 +111,24 @@ public class ARBComputeShader {
      * 
      * <p>The parameters addressed by indirect are packed a structure, which takes the form (in C):</p>
      * 
-     * <code><pre>
+     * <pre><code>
      * typedef struct {
      *     uint num_groups_x;
      *     uint num_groups_y;
      *     uint num_groups_z;
-     * } DispatchIndirectCommand;</pre></code>
+     * } DispatchIndirectCommand;</code></pre>
      * 
      * <p>A call to {@code glDispatchComputeIndirect} is equivalent, assuming no errors are generated, to:</p>
      * 
-     * <code><pre>
+     * <pre><code>
      * cmd = (const DispatchIndirectCommand *)indirect;
-     * glDispatchCompute(cmd->num_groups_x, cmd->num_groups_y, cmd->num_groups_z);</pre></code>
+     * glDispatchCompute(cmd-&gt;num_groups_x, cmd-&gt;num_groups_y, cmd-&gt;num_groups_z);</code></pre>
      *
-     * @param indirect the offset into the buffer object currently bound to the {@link GL43#GL_DISPATCH_INDIRECT_BUFFER DISPATCH_INDIRECT_BUFFER} buffer target at which the dispatch parameters are
+     * @param indirect the offset into the buffer object currently bound to the {@link GL43C#GL_DISPATCH_INDIRECT_BUFFER DISPATCH_INDIRECT_BUFFER} buffer target at which the dispatch parameters are
      *                 stored.
      */
     public static void glDispatchComputeIndirect(@NativeType("GLintptr") long indirect) {
-        nglDispatchComputeIndirect(indirect);
+        GL43C.glDispatchComputeIndirect(indirect);
     }
 
 }

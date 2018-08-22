@@ -34,7 +34,8 @@ import static org.lwjgl.system.MemoryUtil.*;
  * </ul></dd>
  * <dt><b>Contact</b></dt>
  * <dd><ul>
- * <li>Jesse Hall @critsec,Ian Elliott @ianelliottus</li>
+ * <li>Jesse Hall @critsec</li>
+ * <li>Ian Elliott @ianelliottus</li>
  * </ul></dd>
  * <dt><b>Last Modified Date</b></dt>
  * <dd>2015-11-28</dd>
@@ -103,12 +104,12 @@ public class KHRWaylandSurface {
      * 
      * <p>To create a {@code VkSurfaceKHR} object for a Wayland surface, call:</p>
      * 
-     * <code><pre>
+     * <pre><code>
      * VkResult vkCreateWaylandSurfaceKHR(
      *     VkInstance                                  instance,
      *     const VkWaylandSurfaceCreateInfoKHR*        pCreateInfo,
      *     const VkAllocationCallbacks*                pAllocator,
-     *     VkSurfaceKHR*                               pSurface);</pre></code>
+     *     VkSurfaceKHR*                               pSurface);</code></pre>
      * 
      * <h5>Valid Usage (Implicit)</h5>
      * 
@@ -159,11 +160,11 @@ public class KHRWaylandSurface {
      * 
      * <p>To determine whether a queue family of a physical device supports presentation to a Wayland compositor, call:</p>
      * 
-     * <code><pre>
+     * <pre><code>
      * VkBool32 vkGetPhysicalDeviceWaylandPresentationSupportKHR(
      *     VkPhysicalDevice                            physicalDevice,
      *     uint32_t                                    queueFamilyIndex,
-     *     struct wl_display*                          display);</pre></code>
+     *     struct wl_display*                          display);</code></pre>
      * 
      * <h5>Description</h5>
      * 

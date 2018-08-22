@@ -30,36 +30,36 @@ import static org.lwjgl.system.MemoryUtil.*;
  * 
  * <p>There are five functions, one for each image file format:</p>
  * 
- * <code><pre>
+ * <pre><code>
  * int stbi_write_png(char const *filename, int w, int h, int comp, const void *data, int stride_in_bytes);
  * int stbi_write_bmp(char const *filename, int w, int h, int comp, const void *data);
  * int stbi_write_tga(char const *filename, int w, int h, int comp, const void *data);
  * int stbi_write_hdr(char const *filename, int w, int h, int comp, const void *data);
  * int stbi_write_jpg(char const *filename, int w, int h, int comp, const float *data, int quality);
  * 
- * void stbi_flip_vertically_on_write(int flag); // flag is non-zero to flip data vertically</pre></code>
+ * void stbi_flip_vertically_on_write(int flag); // flag is non-zero to flip data vertically</code></pre>
  * 
  * <p>There are also five equivalent functions that use an arbitrary write function. You are expected to open/close your file-equivalent before and after
  * calling these:</p>
  * 
- * <code><pre>
+ * <pre><code>
  * int stbi_write_png_to_func(stbi_write_func *func, void *context, int w, int h, int comp, const void  *data, int stride_in_bytes);
  * int stbi_write_bmp_to_func(stbi_write_func *func, void *context, int w, int h, int comp, const void  *data);
  * int stbi_write_tga_to_func(stbi_write_func *func, void *context, int w, int h, int comp, const void  *data);
  * int stbi_write_hdr_to_func(stbi_write_func *func, void *context, int w, int h, int comp, const float *data);
- * int stbi_write_jpg_to_func(stbi_write_func *func, void *context, int x, int y, int comp, const void *data, int quality);</pre></code>
+ * int stbi_write_jpg_to_func(stbi_write_func *func, void *context, int x, int y, int comp, const void *data, int quality);</code></pre>
  * 
  * <p>where the callback is:</p>
  * 
- * <code><pre>
- * void stbi_write_func(void *context, void *data, int size);</pre></code>
+ * <pre><code>
+ * void stbi_write_func(void *context, void *data, int size);</code></pre>
  * 
  * <p>You can configure it with these global variables:</p>
  * 
- * <code><pre>
+ * <pre><code>
  * int stbi_write_tga_with_rle;             // defaults to true; set to 0 to disable RLE
  * int stbi_write_png_compression_level;    // defaults to 8; set to higher for more compression
- * int stbi_write_force_png_filter;         // defaults to -1; set to 0..5 to force a filter mode</pre></code>
+ * int stbi_write_force_png_filter;         // defaults to -1; set to 0..5 to force a filter mode</code></pre>
  * 
  * <p>The functions create an image file defined by the parameters. The image is a rectangle of pixels stored from left-to-right, top-to-bottom. Each pixel
  * contains {@code comp} channels of data stored interleaved with 8-bits per channel, in the following order: 1=Y, 2=YA, 3=RGB, 4=RGBA. (Y is monochrome
@@ -385,7 +385,7 @@ public class STBImageWrite {
      * @return 1 on success, 0 on failure
      */
     @NativeType("int")
-    public static boolean stbi_write_jpg(@NativeType("char const *") ByteBuffer filename, int w, int h, int comp, @NativeType("float const *") FloatBuffer data, int quality) {
+    public static boolean stbi_write_jpg(@NativeType("char const *") ByteBuffer filename, int w, int h, int comp, @NativeType("void const *") ByteBuffer data, int quality) {
         if (CHECKS) {
             checkNT1(filename);
             check(data, w * h * comp);
@@ -409,7 +409,7 @@ public class STBImageWrite {
      * @return 1 on success, 0 on failure
      */
     @NativeType("int")
-    public static boolean stbi_write_jpg(@NativeType("char const *") CharSequence filename, int w, int h, int comp, @NativeType("float const *") FloatBuffer data, int quality) {
+    public static boolean stbi_write_jpg(@NativeType("char const *") CharSequence filename, int w, int h, int comp, @NativeType("void const *") ByteBuffer data, int quality) {
         if (CHECKS) {
             check(data, w * h * comp);
         }
@@ -585,34 +585,6 @@ public class STBImageWrite {
         try {
             ByteBuffer filenameEncoded = stack.ASCII(filename);
             return nstbi_write_hdr(memAddress(filenameEncoded), w, h, comp, data) != 0;
-        } finally {
-            stack.setPointer(stackPointer);
-        }
-    }
-
-    /** Array version of: {@link #nstbi_write_jpg} */
-    public static native int nstbi_write_jpg(long filename, int w, int h, int comp, float[] data, int quality);
-
-    /** Array version of: {@link #stbi_write_jpg write_jpg} */
-    @NativeType("int")
-    public static boolean stbi_write_jpg(@NativeType("char const *") ByteBuffer filename, int w, int h, int comp, @NativeType("float const *") float[] data, int quality) {
-        if (CHECKS) {
-            checkNT1(filename);
-            check(data, w * h * comp);
-        }
-        return nstbi_write_jpg(memAddress(filename), w, h, comp, data, quality) != 0;
-    }
-
-    /** Array version of: {@link #stbi_write_jpg write_jpg} */
-    @NativeType("int")
-    public static boolean stbi_write_jpg(@NativeType("char const *") CharSequence filename, int w, int h, int comp, @NativeType("float const *") float[] data, int quality) {
-        if (CHECKS) {
-            check(data, w * h * comp);
-        }
-        MemoryStack stack = stackGet(); int stackPointer = stack.getPointer();
-        try {
-            ByteBuffer filenameEncoded = stack.ASCII(filename);
-            return nstbi_write_jpg(memAddress(filenameEncoded), w, h, comp, data, quality) != 0;
         } finally {
             stack.setPointer(stackPointer);
         }

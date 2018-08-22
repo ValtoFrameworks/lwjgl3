@@ -22,12 +22,6 @@ import static org.lwjgl.system.MemoryStack.*;
  * 
  * <p>This union is used where part of the API requires either color or depth/stencil clear values, depending on the attachment, and defines the initial clear values in the {@link VkRenderPassBeginInfo} structure.</p>
  * 
- * <h5>Valid Usage</h5>
- * 
- * <ul>
- * <li>{@code depthStencil} <b>must</b> be a valid {@link VkClearDepthStencilValue} structure</li>
- * </ul>
- * 
  * <h5>See Also</h5>
  * 
  * <p>{@link VkClearAttachment}, {@link VkClearColorValue}, {@link VkClearDepthStencilValue}, {@link VkRenderPassBeginInfo}</p>
@@ -41,17 +35,18 @@ import static org.lwjgl.system.MemoryStack.*;
  * 
  * <h3>Layout</h3>
  * 
- * <code><pre>
+ * <pre><code>
  * union VkClearValue {
  *     {@link VkClearColorValue VkClearColorValue} color;
  *     {@link VkClearDepthStencilValue VkClearDepthStencilValue} depthStencil;
- * }</pre></code>
+ * }</code></pre>
  */
 public class VkClearValue extends Struct implements NativeResource {
 
     /** The struct size in bytes. */
     public static final int SIZEOF;
 
+    /** The struct alignment in bytes. */
     public static final int ALIGNOF;
 
     /** The struct member offsets. */

@@ -31,6 +31,16 @@ val NV_external_memory_capabilities = "NVExternalMemoryCapabilities".nativeClass
                 <li>Requires Vulkan 1.0</li>
             </ul></dd>
 
+            <dt><b>Deprecation state</b></dt>
+            <dd><ul>
+                <li>
+                    <em>Deprecated</em> by <a target="_blank" href="https://www.khronos.org/registry/vulkan/specs/1.0-extensions/html/vkspec.html\#VK_KHR_external_memory_capabilities">VK_KHR_external_memory_capabilities</a> extension
+                    <ul>
+                        <li>Which in turn was <em>promoted</em> to <a target="_blank" href="https://www.khronos.org/registry/vulkan/specs/1.0-extensions/html/vkspec.html\#versions-1.1-promotions">Vulkan 1.1</a></li>
+                    </ul>
+                </li>
+            </ul></dd>
+
             <dt><b>Contact</b></dt>
             <dd><ul>
                 <li>James Jones @cubanismo</li>
@@ -118,7 +128,7 @@ val NV_external_memory_capabilities = "NVExternalMemoryCapabilities".nativeClass
         <h5>C Specification</h5>
         To determine the image capabilities compatible with an external memory handle type, call:
 
-        <code><pre>
+        <pre><code>
 ￿VkResult vkGetPhysicalDeviceExternalImageFormatPropertiesNV(
 ￿    VkPhysicalDevice                            physicalDevice,
 ￿    VkFormat                                    format,
@@ -127,7 +137,7 @@ val NV_external_memory_capabilities = "NVExternalMemoryCapabilities".nativeClass
 ￿    VkImageUsageFlags                           usage,
 ￿    VkImageCreateFlags                          flags,
 ￿    VkExternalMemoryHandleTypeFlagsNV           externalHandleType,
-￿    VkExternalImageFormatPropertiesNV*          pExternalImageFormatProperties);</pre></code>
+￿    VkExternalImageFormatPropertiesNV*          pExternalImageFormatProperties);</code></pre>
 
         <h5>Description</h5>
         If {@code externalHandleType} is 0, {@code pExternalImageFormatProperties}::imageFormatProperties will return the same values as a call to #GetPhysicalDeviceImageFormatProperties(), and the other members of {@code pExternalImageFormatProperties} will all be 0. Otherwise, they are filled in as described for ##VkExternalImageFormatPropertiesNV.

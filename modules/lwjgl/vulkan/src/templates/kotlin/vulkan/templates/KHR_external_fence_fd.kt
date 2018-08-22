@@ -81,10 +81,10 @@ val KHR_external_fence_fd = "KHRExternalFenceFd".nativeClassVK("KHR_external_fen
         <h5>C Specification</h5>
         To import a fence payload from a POSIX file descriptor, call:
 
-        <code><pre>
+        <pre><code>
 ￿VkResult vkImportFenceFdKHR(
 ￿    VkDevice                                    device,
-￿    const VkImportFenceFdInfoKHR*               pImportFenceFdInfo);</pre></code>
+￿    const VkImportFenceFdInfoKHR*               pImportFenceFdInfo);</code></pre>
 
         <h5>Description</h5>
         Importing a fence payload from a file descriptor transfers ownership of the file descriptor from the application to the Vulkan implementation. The application <b>must</b> not perform any operations on the file descriptor after a successful import.
@@ -132,22 +132,22 @@ val KHR_external_fence_fd = "KHRExternalFenceFd".nativeClassVK("KHR_external_fen
         <h5>C Specification</h5>
         To export a POSIX file descriptor representing the payload of a fence, call:
 
-        <code><pre>
+        <pre><code>
 ￿VkResult vkGetFenceFdKHR(
 ￿    VkDevice                                    device,
 ￿    const VkFenceGetFdInfoKHR*                  pGetFdInfo,
-￿    int*                                        pFd);</pre></code>
+￿    int*                                        pFd);</code></pre>
 
         <h5>Description</h5>
         Each call to #GetFenceFdKHR() <b>must</b> create a new file descriptor and transfer ownership of it to the application. To avoid leaking resources, the application <b>must</b> release ownership of the file descriptor when it is no longer needed.
 
         <div style="margin-left: 26px; border-left: 1px solid gray; padding-left: 14px;"><h5>Note</h5>
-        Ownership can be released in many ways. For example, the application can call fname:close() on the file descriptor, or transfer ownership back to Vulkan by using the file descriptor to import a fence payload.
+        Ownership can be released in many ways. For example, the application can call {@code close}() on the file descriptor, or transfer ownership back to Vulkan by using the file descriptor to import a fence payload.
         </div>
 
-        If {@code pGetFdInfo}{@code ::handleType} is #EXTERNAL_FENCE_HANDLE_TYPE_SYNC_FD_BIT and the fence is signaled at the time {@code vkGetFenceFdKHR} is called, {@code pFd} <b>may</b> return the value {@code -1} instead of a valid file descriptor.
+        If {@code pGetFdInfo}-&gt;{@code handleType} is #EXTERNAL_FENCE_HANDLE_TYPE_SYNC_FD_BIT and the fence is signaled at the time #GetFenceFdKHR() is called, {@code pFd} <b>may</b> return the value {@code -1} instead of a valid file descriptor.
 
-        Where supported by the operating system, the implementation <b>must</b> set the file descriptor to be closed automatically when an fname:execve system call is made.
+        Where supported by the operating system, the implementation <b>must</b> set the file descriptor to be closed automatically when an {@code execve} system call is made.
 
         Exporting a file descriptor from a fence <b>may</b> have side effects depending on the transference of the specified handle type, as described in <a target="_blank" href="https://www.khronos.org/registry/vulkan/specs/1.0-extensions/html/vkspec.html\#synchronization-fences-importing">Importing Fence State</a>.
 

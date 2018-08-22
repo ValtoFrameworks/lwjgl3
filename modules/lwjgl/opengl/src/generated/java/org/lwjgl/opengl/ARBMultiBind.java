@@ -14,8 +14,6 @@ import org.lwjgl.*;
 import org.lwjgl.system.*;
 
 import static org.lwjgl.system.Checks.*;
-import static org.lwjgl.system.JNI.*;
-import static org.lwjgl.system.MemoryUtil.*;
 
 /**
  * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_multi_bind.txt">ARB_multi_bind</a> extension.
@@ -57,7 +55,7 @@ public class ARBMultiBind {
      * @param count the number of bindings
      */
     public static void nglBindBuffersBase(int target, int first, int count, long buffers) {
-        GL44.nglBindBuffersBase(target, first, count, buffers);
+        GL44C.nglBindBuffersBase(target, first, count, buffers);
     }
 
     /**
@@ -65,14 +63,14 @@ public class ARBMultiBind {
      * corresponding to {@code target}. If {@code buffers} is not {@code NULL}, it specifies an array of {@code count} values, each of which must be zero or the name
      * of an existing buffer object. It is equivalent to:
      * 
-     * <code><pre>
-     * for ( i = 0; i < count; i++ ) {
+     * <pre><code>
+     * for ( i = 0; i &lt; count; i++ ) {
      *     if ( buffers == NULL ) {
      *         glBindBufferBase(target, first + i, 0);
      *     } else {
      *         glBindBufferBase(target, first + i, buffers[i]);
      *     }
-     * }</pre></code>
+     * }</code></pre>
      * 
      * <p>except that the single general buffer binding corresponding to {@code target} is unmodified, and that buffers will not be created if they do not exist.</p>
      *
@@ -81,7 +79,7 @@ public class ARBMultiBind {
      * @param buffers an array of zeros or names of existing buffers objects
      */
     public static void glBindBuffersBase(@NativeType("GLenum") int target, @NativeType("GLuint") int first, @Nullable @NativeType("GLuint const *") IntBuffer buffers) {
-        nglBindBuffersBase(target, first, remainingSafe(buffers), memAddressSafe(buffers));
+        GL44C.glBindBuffersBase(target, first, buffers);
     }
 
     // --- [ glBindBuffersRange ] ---
@@ -92,7 +90,7 @@ public class ARBMultiBind {
      * @param count the number of bindings
      */
     public static void nglBindBuffersRange(int target, int first, int count, long buffers, long offsets, long sizes) {
-        GL44.nglBindBuffersRange(target, first, count, buffers, offsets, sizes);
+        GL44C.nglBindBuffersRange(target, first, count, buffers, offsets, sizes);
     }
 
     /**
@@ -102,14 +100,14 @@ public class ARBMultiBind {
      * case, the offsets and sizes associated with the binding points are set to default values, ignoring {@code offsets} and {@code sizes}. It is equivalent
      * to:
      * 
-     * <code><pre>
-     * for ( i = 0; i < count; i++ ) {
+     * <pre><code>
+     * for ( i = 0; i &lt; count; i++ ) {
      *     if ( buffers == NULL ) {
      *         glBindBufferRange(target, first + i, 0, 0, 0);
      *     } else {
      *         glBindBufferRange(target, first + i, buffers[i], offsets[i], sizes[i]);
      *     }
-     * }</pre></code>
+     * }</code></pre>
      * 
      * <p>except that the single general buffer binding corresponding to {@code target} is unmodified, and that buffers will not be created if they do not exist.</p>
      * 
@@ -124,11 +122,7 @@ public class ARBMultiBind {
      * @param sizes   an array of sizes
      */
     public static void glBindBuffersRange(@NativeType("GLenum") int target, @NativeType("GLuint") int first, @Nullable @NativeType("GLuint const *") IntBuffer buffers, @Nullable @NativeType("GLintptr const *") PointerBuffer offsets, @Nullable @NativeType("GLsizeiptr const *") PointerBuffer sizes) {
-        if (CHECKS) {
-            checkSafe(offsets, remainingSafe(buffers));
-            checkSafe(sizes, remainingSafe(buffers));
-        }
-        nglBindBuffersRange(target, first, remainingSafe(buffers), memAddressSafe(buffers), memAddressSafe(offsets), memAddressSafe(sizes));
+        GL44C.glBindBuffersRange(target, first, buffers, offsets, sizes);
     }
 
     // --- [ glBindTextures ] ---
@@ -139,7 +133,7 @@ public class ARBMultiBind {
      * @param count the number of texture objects
      */
     public static void nglBindTextures(int first, int count, long textures) {
-        GL44.nglBindTextures(first, count, textures);
+        GL44C.nglBindTextures(first, count, textures);
     }
 
     /**
@@ -152,8 +146,8 @@ public class ARBMultiBind {
      * 
      * <p>{@code BindTextures} is equivalent to:</p>
      * 
-     * <code><pre>
-     * for ( i = 0; i < count; i++ ) {
+     * <pre><code>
+     * for ( i = 0; i &lt; count; i++ ) {
      *     uint texture;
      *     if ( textures == NULL ) {
      *         texture = 0;
@@ -169,7 +163,7 @@ public class ARBMultiBind {
      *             BindTexture(target, 0);
      *         }
      *     }
-     * }</pre></code>
+     * }</code></pre>
      * 
      * <p>except that the active texture selector retains its original value upon completion of the command, and that textures will not be created if they do not
      * exist.</p>
@@ -182,7 +176,7 @@ public class ARBMultiBind {
      * @param textures an array of zeros or names of existing texture objects
      */
     public static void glBindTextures(@NativeType("GLuint") int first, @Nullable @NativeType("GLuint const *") IntBuffer textures) {
-        nglBindTextures(first, remainingSafe(textures), memAddressSafe(textures));
+        GL44C.glBindTextures(first, textures);
     }
 
     // --- [ glBindSamplers ] ---
@@ -193,7 +187,7 @@ public class ARBMultiBind {
      * @param count the number of sampler objects
      */
     public static void nglBindSamplers(int first, int count, long samplers) {
-        GL44.nglBindSamplers(first, count, samplers);
+        GL44C.nglBindSamplers(first, count, samplers);
     }
 
     /**
@@ -203,14 +197,14 @@ public class ARBMultiBind {
      * 
      * <p>{@code BindSamplers} is equivalent to:</p>
      * 
-     * <code><pre>
-     * for ( i = 0; i < count; i++ ) {
+     * <pre><code>
+     * for ( i = 0; i &lt; count; i++ ) {
      *     if ( samplers == NULL ) {
      *         glBindSampler(first + i, 0);
      *     } else {
      *         glBindSampler(first + i, samplers[i]);
      *     }
-     * }</pre></code>
+     * }</code></pre>
      * 
      * <p>The values specified in {@code samplers} will be checked separately for each texture image unit. When a value for a specific texture image unit is
      * invalid, the state for that texture image unit will be unchanged and an error will be generated. However, state for other texture image units will still
@@ -220,7 +214,7 @@ public class ARBMultiBind {
      * @param samplers an array of zeros or names of existing sampler objects
      */
     public static void glBindSamplers(@NativeType("GLuint") int first, @Nullable @NativeType("GLuint const *") IntBuffer samplers) {
-        nglBindSamplers(first, remainingSafe(samplers), memAddressSafe(samplers));
+        GL44C.glBindSamplers(first, samplers);
     }
 
     // --- [ glBindImageTextures ] ---
@@ -231,7 +225,7 @@ public class ARBMultiBind {
      * @param count the number of image units
      */
     public static void nglBindImageTextures(int first, int count, long textures) {
-        GL44.nglBindImageTextures(first, count, textures);
+        GL44C.nglBindImageTextures(first, count, textures);
     }
 
     /**
@@ -250,14 +244,14 @@ public class ARBMultiBind {
      * 
      * <p>{@code BindImageTextures} is equivalent to:</p>
      * 
-     * <code><pre>
-     * for ( i = 0; i < count; i++ ) {
+     * <pre><code>
+     * for ( i = 0; i &lt; count; i++ ) {
      *     if ( textures == NULL || textures[i] = 0 ) {
      *         glBindImageTexture(first + i, 0, 0, FALSE, 0, READ_ONLY, R8);
      *     } else {
      *         glBindImageTexture(first + i, textures[i], 0, TRUE, 0, READ_WRITE, lookupInternalFormat(textures[i]));
      *     }
-     * }</pre></code>
+     * }</code></pre>
      * 
      * <p>where {@code lookupInternalFormat} returns the internal format of the specified texture object.</p>
      * 
@@ -269,7 +263,7 @@ public class ARBMultiBind {
      * @param textures an array of zeros or names of existing texture objects
      */
     public static void glBindImageTextures(@NativeType("GLuint") int first, @Nullable @NativeType("GLuint const *") IntBuffer textures) {
-        nglBindImageTextures(first, remainingSafe(textures), memAddressSafe(textures));
+        GL44C.glBindImageTextures(first, textures);
     }
 
     // --- [ glBindVertexBuffers ] ---
@@ -280,7 +274,7 @@ public class ARBMultiBind {
      * @param count the number of vertex buffer binding points
      */
     public static void nglBindVertexBuffers(int first, int count, long buffers, long offsets, long strides) {
-        GL44.nglBindVertexBuffers(first, count, buffers, offsets, strides);
+        GL44C.nglBindVertexBuffers(first, count, buffers, offsets, strides);
     }
 
     /**
@@ -293,14 +287,14 @@ public class ARBMultiBind {
      * 
      * <p>{@code BindVertexBuffers} is equivalent to:</p>
      * 
-     * <code><pre>
-     * for ( i = 0; i < count; i++ ) {
+     * <pre><code>
+     * for ( i = 0; i &lt; count; i++ ) {
      *     if ( buffers == NULL ) {
      *         glBindVertexBuffer(first + i, 0, 0, 16);
      *     } else {
      *         glBindVertexBuffer(first + i, buffers[i], offsets[i], strides[i]);
      *     }
-     * }</pre></code>
+     * }</code></pre>
      * 
      * <p>except that buffers will not be created if they do not exist.</p>
      * 
@@ -314,69 +308,37 @@ public class ARBMultiBind {
      * @param strides an array of stride values
      */
     public static void glBindVertexBuffers(@NativeType("GLuint") int first, @Nullable @NativeType("GLuint const *") IntBuffer buffers, @Nullable @NativeType("GLintptr const *") PointerBuffer offsets, @Nullable @NativeType("GLsizei const *") IntBuffer strides) {
-        if (CHECKS) {
-            checkSafe(offsets, remainingSafe(buffers));
-            checkSafe(strides, remainingSafe(buffers));
-        }
-        nglBindVertexBuffers(first, remainingSafe(buffers), memAddressSafe(buffers), memAddressSafe(offsets), memAddressSafe(strides));
+        GL44C.glBindVertexBuffers(first, buffers, offsets, strides);
     }
 
     /** Array version of: {@link #glBindBuffersBase BindBuffersBase} */
     public static void glBindBuffersBase(@NativeType("GLenum") int target, @NativeType("GLuint") int first, @Nullable @NativeType("GLuint const *") int[] buffers) {
-        long __functionAddress = GL.getICD().glBindBuffersBase;
-        if (CHECKS) {
-            check(__functionAddress);
-        }
-        callPV(__functionAddress, target, first, lengthSafe(buffers), buffers);
+        GL44C.glBindBuffersBase(target, first, buffers);
     }
 
     /** Array version of: {@link #glBindBuffersRange BindBuffersRange} */
     public static void glBindBuffersRange(@NativeType("GLenum") int target, @NativeType("GLuint") int first, @Nullable @NativeType("GLuint const *") int[] buffers, @Nullable @NativeType("GLintptr const *") PointerBuffer offsets, @Nullable @NativeType("GLsizeiptr const *") PointerBuffer sizes) {
-        long __functionAddress = GL.getICD().glBindBuffersRange;
-        if (CHECKS) {
-            check(__functionAddress);
-            checkSafe(offsets, lengthSafe(buffers));
-            checkSafe(sizes, lengthSafe(buffers));
-        }
-        callPPPV(__functionAddress, target, first, lengthSafe(buffers), buffers, memAddressSafe(offsets), memAddressSafe(sizes));
+        GL44C.glBindBuffersRange(target, first, buffers, offsets, sizes);
     }
 
     /** Array version of: {@link #glBindTextures BindTextures} */
     public static void glBindTextures(@NativeType("GLuint") int first, @Nullable @NativeType("GLuint const *") int[] textures) {
-        long __functionAddress = GL.getICD().glBindTextures;
-        if (CHECKS) {
-            check(__functionAddress);
-        }
-        callPV(__functionAddress, first, lengthSafe(textures), textures);
+        GL44C.glBindTextures(first, textures);
     }
 
     /** Array version of: {@link #glBindSamplers BindSamplers} */
     public static void glBindSamplers(@NativeType("GLuint") int first, @Nullable @NativeType("GLuint const *") int[] samplers) {
-        long __functionAddress = GL.getICD().glBindSamplers;
-        if (CHECKS) {
-            check(__functionAddress);
-        }
-        callPV(__functionAddress, first, lengthSafe(samplers), samplers);
+        GL44C.glBindSamplers(first, samplers);
     }
 
     /** Array version of: {@link #glBindImageTextures BindImageTextures} */
     public static void glBindImageTextures(@NativeType("GLuint") int first, @Nullable @NativeType("GLuint const *") int[] textures) {
-        long __functionAddress = GL.getICD().glBindImageTextures;
-        if (CHECKS) {
-            check(__functionAddress);
-        }
-        callPV(__functionAddress, first, lengthSafe(textures), textures);
+        GL44C.glBindImageTextures(first, textures);
     }
 
     /** Array version of: {@link #glBindVertexBuffers BindVertexBuffers} */
     public static void glBindVertexBuffers(@NativeType("GLuint") int first, @Nullable @NativeType("GLuint const *") int[] buffers, @Nullable @NativeType("GLintptr const *") PointerBuffer offsets, @Nullable @NativeType("GLsizei const *") int[] strides) {
-        long __functionAddress = GL.getICD().glBindVertexBuffers;
-        if (CHECKS) {
-            check(__functionAddress);
-            checkSafe(offsets, lengthSafe(buffers));
-            checkSafe(strides, lengthSafe(buffers));
-        }
-        callPPPV(__functionAddress, first, lengthSafe(buffers), buffers, memAddressSafe(offsets), strides);
+        GL44C.glBindVertexBuffers(first, buffers, offsets, strides);
     }
 
 }

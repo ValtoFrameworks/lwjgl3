@@ -22,7 +22,7 @@ import static org.lwjgl.system.MemoryUtil.*;
  * 
  * <div style="margin-left: 26px; border-left: 1px solid gray; padding-left: 14px;"><h5>Note</h5>
  * 
- * <p>The example code for the {@link KHRSurface VK_KHR_surface} and {@code VK_KHR_swapchain} extensions was removed from the appendix after revision 1.0.29. This WSI example code was ported to the cube demo that is shipped with the official Khronos SDK, and is being kept up-to-date in that location (see: https://github.com/KhronosGroup/Vulkan-LoaderAndValidationLayers/blob/master/demos/cube.c).</p>
+ * <p>The example code for the {@link KHRSurface VK_KHR_surface} and {@code VK_KHR_swapchain} extensions was removed from the appendix after revision 1.0.29. This WSI example code was ported to the cube demo that is shipped with the official Khronos SDK, and is being kept up-to-date in that location (see: https://github.com/KhronosGroup/Vulkan-Tools/blob/master/cube/cube.c).</p>
  * </div>
  * 
  * <dl>
@@ -41,7 +41,8 @@ import static org.lwjgl.system.MemoryUtil.*;
  * </ul></dd>
  * <dt><b>Contact</b></dt>
  * <dd><ul>
- * <li>James Jones @cubanismo,Ian Elliott @ianelliottus</li>
+ * <li>James Jones @cubanismo</li>
+ * <li>Ian Elliott @ianelliottus</li>
  * </ul></dd>
  * <dt><b>Last Modified Date</b></dt>
  * <dd>2017-10-06</dd>
@@ -214,12 +215,12 @@ public class KHRSwapchain {
      * 
      * <p>To create a swapchain, call:</p>
      * 
-     * <code><pre>
+     * <pre><code>
      * VkResult vkCreateSwapchainKHR(
      *     VkDevice                                    device,
      *     const VkSwapchainCreateInfoKHR*             pCreateInfo,
      *     const VkAllocationCallbacks*                pAllocator,
-     *     VkSwapchainKHR*                             pSwapchain);</pre></code>
+     *     VkSwapchainKHR*                             pSwapchain);</code></pre>
      * 
      * <h5>Valid Usage (Implicit)</h5>
      * 
@@ -290,11 +291,11 @@ public class KHRSwapchain {
      * 
      * <p>To destroy a swapchain object call:</p>
      * 
-     * <code><pre>
+     * <pre><code>
      * void vkDestroySwapchainKHR(
      *     VkDevice                                    device,
      *     VkSwapchainKHR                              swapchain,
-     *     const VkAllocationCallbacks*                pAllocator);</pre></code>
+     *     const VkAllocationCallbacks*                pAllocator);</code></pre>
      * 
      * <h5>Description</h5>
      * 
@@ -359,12 +360,12 @@ public class KHRSwapchain {
      * 
      * <p>To obtain the array of presentable images associated with a swapchain, call:</p>
      * 
-     * <code><pre>
+     * <pre><code>
      * VkResult vkGetSwapchainImagesKHR(
      *     VkDevice                                    device,
      *     VkSwapchainKHR                              swapchain,
      *     uint32_t*                                   pSwapchainImageCount,
-     *     VkImage*                                    pSwapchainImages);</pre></code>
+     *     VkImage*                                    pSwapchainImages);</code></pre>
      * 
      * <h5>Description</h5>
      * 
@@ -427,14 +428,14 @@ public class KHRSwapchain {
      * 
      * <p>To acquire an available presentable image to use, and retrieve the index of that image, call:</p>
      * 
-     * <code><pre>
+     * <pre><code>
      * VkResult vkAcquireNextImageKHR(
      *     VkDevice                                    device,
      *     VkSwapchainKHR                              swapchain,
      *     uint64_t                                    timeout,
      *     VkSemaphore                                 semaphore,
      *     VkFence                                     fence,
-     *     uint32_t*                                   pImageIndex);</pre></code>
+     *     uint32_t*                                   pImageIndex);</code></pre>
      * 
      * <h5>Valid Usage</h5>
      * 
@@ -522,10 +523,10 @@ public class KHRSwapchain {
      * 
      * <p>After queueing all rendering commands and transitioning the image to the correct layout, to queue an image for presentation, call:</p>
      * 
-     * <code><pre>
+     * <pre><code>
      * VkResult vkQueuePresentKHR(
      *     VkQueue                                     queue,
-     *     const VkPresentInfoKHR*                     pPresentInfo);</pre></code>
+     *     const VkPresentInfoKHR*                     pPresentInfo);</code></pre>
      * 
      * <h5>Description</h5>
      * 
@@ -625,10 +626,10 @@ public class KHRSwapchain {
      * 
      * <p>To query these capabilities, call:</p>
      * 
-     * <code><pre>
+     * <pre><code>
      * VkResult vkGetDeviceGroupPresentCapabilitiesKHR(
      *     VkDevice                                    device,
-     *     VkDeviceGroupPresentCapabilitiesKHR*        pDeviceGroupPresentCapabilities);</pre></code>
+     *     VkDeviceGroupPresentCapabilitiesKHR*        pDeviceGroupPresentCapabilities);</code></pre>
      * 
      * <h5>Valid Usage (Implicit)</h5>
      * 
@@ -683,11 +684,11 @@ public class KHRSwapchain {
      * 
      * <p>To query the supported device group present modes for a particular surface, call:</p>
      * 
-     * <code><pre>
+     * <pre><code>
      * VkResult vkGetDeviceGroupSurfacePresentModesKHR(
      *     VkDevice                                    device,
      *     VkSurfaceKHR                                surface,
-     *     VkDeviceGroupPresentModeFlagsKHR*           pModes);</pre></code>
+     *     VkDeviceGroupPresentModeFlagsKHR*           pModes);</code></pre>
      * 
      * <h5>Description</h5>
      * 
@@ -759,12 +760,12 @@ public class KHRSwapchain {
      * 
      * <p>To query a set of rectangles used in presentation on the physical device, call:</p>
      * 
-     * <code><pre>
+     * <pre><code>
      * VkResult vkGetPhysicalDevicePresentRectanglesKHR(
      *     VkPhysicalDevice                            physicalDevice,
      *     VkSurfaceKHR                                surface,
      *     uint32_t*                                   pRectCount,
-     *     VkRect2D*                                   pRects);</pre></code>
+     *     VkRect2D*                                   pRects);</code></pre>
      * 
      * <h5>Description</h5>
      * 
@@ -841,11 +842,11 @@ public class KHRSwapchain {
      * 
      * <p>To acquire an available presentable image to use, and retrieve the index of that image, call:</p>
      * 
-     * <code><pre>
+     * <pre><code>
      * VkResult vkAcquireNextImage2KHR(
      *     VkDevice                                    device,
      *     const VkAcquireNextImageInfoKHR*            pAcquireInfo,
-     *     uint32_t*                                   pImageIndex);</pre></code>
+     *     uint32_t*                                   pImageIndex);</code></pre>
      * 
      * <h5>Valid Usage</h5>
      * 

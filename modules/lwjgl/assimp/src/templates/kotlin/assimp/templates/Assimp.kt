@@ -129,7 +129,7 @@ val Assimp = "Assimp".nativeClass(Module.ASSIMP, prefix = "ai", prefixConstant =
         SCENEGRAPH
         ${ul(
             "Collapse the scene graph, transform everything to world coordinates",
-            "Optimize meshes & nodes for fewer drawcalls"
+            "Optimize meshes &amp; nodes for fewer drawcalls"
         )}
 
         OTHER
@@ -1219,7 +1219,7 @@ val Assimp = "Assimp".nativeClass(Module.ASSIMP, prefix = "ai", prefixConstant =
         """,
 
         aiScene.const.p.IN("pIn", "Valid scene to be copied"),
-        ReturnParam..Check(1)..aiScene.p.p.OUT("pOut", "Receives a modifyable copy of the scene. Use #FreeScene() to delete it again.")
+        ReturnParam..Check(1)..aiScene.p.p.OUT("pOut", "Receives a modifiable copy of the scene. Use #FreeScene() to delete it again.")
     )
 
     void(
@@ -2147,6 +2147,7 @@ aiAttachLogStream(&c);""")}
         "AI_MATKEY_GLTF_ALPHACUTOFF".."\$mat.gltf.alphaCutoff",
         "AI_MATKEY_GLTF_PBRSPECULARGLOSSINESS".."\$mat.gltf.pbrSpecularGlossiness",
         "AI_MATKEY_GLTF_PBRSPECULARGLOSSINESS_GLOSSINESS_FACTOR".."\$mat.gltf.pbrMetallicRoughness.glossinessFactor",
+        "AI_MATKEY_GLTF_UNLIT".."\$mat.gltf.unlit",
 
         "_AI_MATKEY_GLTF_TEXTURE_TEXCOORD_BASE".."\$tex.file.texCoord",
         "_AI_MATKEY_GLTF_MAPPINGNAME_BASE".."\$tex.mappingname",
@@ -2308,6 +2309,18 @@ aiAttachLogStream(&c);""")}
         Check(1)..nullable..unsigned_int.p.OUT("flags", "Receives the texture flags."),
 
         returnDoc = "#Return_SUCCESS on success, otherwise something else. Have fun."
+    )
+
+    aiMaterial.p(
+        "CreateAndRegisterDefaultMaterial",
+        "Helper function to get all values pertaining to a particular texture slot from a material structure.",
+
+        returnDoc = "pointer to the default material"
+    )
+
+    void(
+        "ReleaseDefaultMaterial",
+        "Helper function to release the default material instance, the instance will not be destroyed."
     )
 
     // mesh.h
@@ -2821,7 +2834,9 @@ x1""")}
             it uses that.
             """,
             0x10000000
-        )
+        ),
+
+        "Process_ForceGenNormals".enum("", 0x20000000)
     )
 
     EnumConstant(

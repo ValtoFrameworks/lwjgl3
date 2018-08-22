@@ -30,23 +30,24 @@ import static org.lwjgl.system.MemoryStack.*;
  * <ul>
  * <li>{@code sType} &ndash; the type of this structure.</li>
  * <li>{@code pNext} &ndash; {@code NULL} or a pointer to an extension-specific structure.</li>
- * <li>{@code validationCache} &ndash; the validation cache object from which the results of prior validation attempts will be written, and to which new validation results for this VkShaderModule will be written (if not already present).</li>
+ * <li>{@code validationCache} &ndash; the validation cache object from which the results of prior validation attempts will be written, and to which new validation results for this {@code VkShaderModule} will be written (if not already present).</li>
  * </ul>
  * 
  * <h3>Layout</h3>
  * 
- * <code><pre>
+ * <pre><code>
  * struct VkShaderModuleValidationCacheCreateInfoEXT {
  *     VkStructureType sType;
  *     void const * pNext;
  *     VkValidationCacheEXT validationCache;
- * }</pre></code>
+ * }</code></pre>
  */
 public class VkShaderModuleValidationCacheCreateInfoEXT extends Struct implements NativeResource {
 
     /** The struct size in bytes. */
     public static final int SIZEOF;
 
+    /** The struct alignment in bytes. */
     public static final int ALIGNOF;
 
     /** The struct member offsets. */

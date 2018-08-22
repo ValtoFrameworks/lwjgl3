@@ -16,7 +16,7 @@ val NV_dedicated_allocation = "NVDedicatedAllocation".nativeClassVK("NV_dedicate
         This extension adds a few small structures to resource creation and memory allocation: a new structure that flags whether am image/buffer will have a dedicated allocation, and a structure indicating the image or buffer that an allocation will be bound to.
 
         <h5>Examples</h5>
-        <code><pre>
+        <pre><code>
 ￿    // Create an image with
 ￿    // VkDedicatedAllocationImageCreateInfoNV::dedicatedAllocation
 ￿    // set to VK_TRUE
@@ -31,22 +31,22 @@ val NV_dedicated_allocation = "NVDedicatedAllocation".nativeClassVK("NV_dedicate
 ￿    VkImageCreateInfo imageCreateInfo =
 ￿    {
 ￿        VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,    // sType
-￿        &dedicatedImageInfo                     // pNext
+￿        &amp;dedicatedImageInfo                     // pNext
 ￿        // Other members set as usual
 ￿    };
 ￿
 ￿    VkImage image;
 ￿    VkResult result = vkCreateImage(
 ￿        device,
-￿        &imageCreateInfo,
+￿        &amp;imageCreateInfo,
 ￿        NULL,                       // pAllocator
-￿        &image);
+￿        &amp;image);
 ￿
 ￿    VkMemoryRequirements memoryRequirements;
 ￿    vkGetImageMemoryRequirements(
 ￿        device,
 ￿        image,
-￿        &memoryRequirements);
+￿        &amp;memoryRequirements);
 ￿
 ￿    // Allocate memory with VkDedicatedAllocationMemoryAllocateInfoNV::image
 ￿    // pointing to the image we are allocating the memory for
@@ -62,7 +62,7 @@ val NV_dedicated_allocation = "NVDedicatedAllocation".nativeClassVK("NV_dedicate
 ￿    VkMemoryAllocateInfo memoryAllocateInfo =
 ￿    {
 ￿        VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO,                 // sType
-￿        &dedicatedInfo,                                         // pNext
+￿        &amp;dedicatedInfo,                                         // pNext
 ￿        memoryRequirements.size,                                // allocationSize
 ￿        FindMemoryTypeIndex(memoryRequirements.memoryTypeBits), // memoryTypeIndex
 ￿    };
@@ -70,9 +70,9 @@ val NV_dedicated_allocation = "NVDedicatedAllocation".nativeClassVK("NV_dedicate
 ￿    VkDeviceMemory memory;
 ￿    vkAllocateMemory(
 ￿        device,
-￿        &memoryAllocateInfo,
+￿        &amp;memoryAllocateInfo,
 ￿        NULL,                       // pAllocator
-￿        &memory);
+￿        &amp;memory);
 ￿
 ￿    // Bind the image to the memory
 ￿
@@ -80,7 +80,7 @@ val NV_dedicated_allocation = "NVDedicatedAllocation".nativeClassVK("NV_dedicate
 ￿        device,
 ￿        image,
 ￿        memory,
-￿        0);</pre></code>
+￿        0);</code></pre>
 
         <dl>
             <dt><b>Name String</b></dt>
@@ -98,6 +98,16 @@ val NV_dedicated_allocation = "NVDedicatedAllocation".nativeClassVK("NV_dedicate
             <dt><b>Extension and Version Dependencies</b></dt>
             <dd><ul>
                 <li>Requires Vulkan 1.0</li>
+            </ul></dd>
+
+            <dt><b>Deprecation state</b></dt>
+            <dd><ul>
+                <li>
+                    <em>Deprecated</em> by <a target="_blank" href="https://www.khronos.org/registry/vulkan/specs/1.0-extensions/html/vkspec.html\#VK_KHR_dedicated_allocation">VK_KHR_dedicated_allocation</a> extension
+                    <ul>
+                        <li>Which in turn was <em>promoted</em> to <a target="_blank" href="https://www.khronos.org/registry/vulkan/specs/1.0-extensions/html/vkspec.html\#versions-1.1-promotions">Vulkan 1.1</a></li>
+                    </ul>
+                </li>
             </ul></dd>
 
             <dt><b>Contact</b></dt>

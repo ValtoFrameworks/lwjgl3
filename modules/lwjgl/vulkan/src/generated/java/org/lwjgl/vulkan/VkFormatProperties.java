@@ -25,7 +25,9 @@ import static org.lwjgl.system.MemoryStack.*;
  * <p>If no format feature flags are supported, the format itself is not supported, and images of that format cannot be created.</p>
  * </div>
  * 
- * <p>If {@code format} is a block-compression format, then buffers <b>must</b> not support any features for the format.</p>
+ * <p>If {@code format} is a block-compression format, then {@code bufferFeatures} <b>must</b> not support any features for the format.</p>
+ * 
+ * <p>If {@code format} is a multi-plane format then {@code linearTilingFeatures} and {@code optimalTilingFeatures} <b>must</b> not contain {@link VK11#VK_FORMAT_FEATURE_DISJOINT_BIT FORMAT_FEATURE_DISJOINT_BIT}.</p>
  * 
  * <h5>See Also</h5>
  * 
@@ -41,18 +43,19 @@ import static org.lwjgl.system.MemoryStack.*;
  * 
  * <h3>Layout</h3>
  * 
- * <code><pre>
+ * <pre><code>
  * struct VkFormatProperties {
  *     VkFormatFeatureFlags linearTilingFeatures;
  *     VkFormatFeatureFlags optimalTilingFeatures;
  *     VkFormatFeatureFlags bufferFeatures;
- * }</pre></code>
+ * }</code></pre>
  */
 public class VkFormatProperties extends Struct implements NativeResource {
 
     /** The struct size in bytes. */
     public static final int SIZEOF;
 
+    /** The struct alignment in bytes. */
     public static final int ALIGNOF;
 
     /** The struct member offsets. */

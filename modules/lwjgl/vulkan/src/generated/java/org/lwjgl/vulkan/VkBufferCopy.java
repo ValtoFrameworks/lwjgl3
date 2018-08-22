@@ -18,6 +18,16 @@ import static org.lwjgl.system.MemoryStack.*;
 /**
  * Structure specifying a buffer copy operation.
  * 
+ * <h5>Valid Usage</h5>
+ * 
+ * <ul>
+ * <li>The {@code size} <b>must</b> be greater than 0</li>
+ * </ul>
+ * 
+ * <h5>See Also</h5>
+ * 
+ * <p>{@link VK10#vkCmdCopyBuffer CmdCopyBuffer}</p>
+ * 
  * <h3>Member documentation</h3>
  * 
  * <ul>
@@ -28,18 +38,19 @@ import static org.lwjgl.system.MemoryStack.*;
  * 
  * <h3>Layout</h3>
  * 
- * <code><pre>
+ * <pre><code>
  * struct VkBufferCopy {
  *     VkDeviceSize srcOffset;
  *     VkDeviceSize dstOffset;
  *     VkDeviceSize size;
- * }</pre></code>
+ * }</code></pre>
  */
 public class VkBufferCopy extends Struct implements NativeResource {
 
     /** The struct size in bytes. */
     public static final int SIZEOF;
 
+    /** The struct alignment in bytes. */
     public static final int ALIGNOF;
 
     /** The struct member offsets. */

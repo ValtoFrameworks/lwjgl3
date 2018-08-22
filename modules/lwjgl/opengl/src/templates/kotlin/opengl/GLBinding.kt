@@ -17,6 +17,10 @@ val NativeClass.capName: String
         "${prefixTemplate}_$templateName"
     }
 
+private val CORE_PATTERN = "GL\\d\\dC".toRegex()
+val NativeClass.isCore: Boolean
+    get() = CORE_PATTERN.matches(templateName)
+
 private const val CAPABILITIES_CLASS = "GLCapabilities"
 
 private object BufferOffsetTransform : FunctionTransform<Parameter>, SkipCheckFunctionTransform {
@@ -36,15 +40,7 @@ val GLBinding = Generator.register(object : APIBinding(
         classes
             .asSequence()
             .filter { it.hasNativeFunctions }
-            .flatMap {
-                if (it.templateName.startsWith("GL")) {
-                    it.functions.asSequence().sortedBy {
-                        if (it.has<DeprecatedGL>()) 1 else 0
-                    }
-                } else {
-                    it.functions.asSequence()
-                }
-            }
+            .flatMap { it.functions.asSequence() }
             .filter { !it.has<Reuse>() }
             .toList()
     }
@@ -111,18 +107,20 @@ val GLBinding = Generator.register(object : APIBinding(
         if (documentation.isEmpty())
             println("$t/** $injectedJavaDoc */")
         else {
-            print("$t/**\n$t * <p>$injectedJavaDoc</p>\n$t * \n")
             if (documentation.indexOf('\n') == -1) {
+                println("$t/**")
                 print("$t * ")
-                println(documentation.substring("$t/** ".length, documentation.length - 3))
-                println("$t */")
+                print(documentation.substring("$t/** ".length, documentation.length - " */".length))
             } else {
-                println(documentation.substring("$t/**\n".length))
+                print(documentation.substring(0, documentation.length - "\n$t */".length))
             }
+            print("\n$t * ")
+            print("\n$t * @see $injectedJavaDoc")
+            println("\n$t */")
         }
     }
 
-    private val Iterable<Func>.hasDeprecated: Boolean
+    private val Sequence<Func>.hasDeprecated: Boolean
         get() = this.any { it has DeprecatedGL }
 
     override fun shouldCheckFunctionAddress(function: Func): Boolean = function.nativeClass.templateName != "GL11" || function has DeprecatedGL
@@ -134,6 +132,10 @@ val GLBinding = Generator.register(object : APIBinding(
     private val EXTENSION_NAME = "[A-Za-z0-9_]+".toRegex()
 
     override fun PrintWriter.generateFunctionSetup(nativeClass: NativeClass) {
+        if (nativeClass.isCore) {
+            return
+        }
+
         val hasDeprecated = nativeClass.functions.hasDeprecated
 
         print("\n${t}static boolean isAvailable($CAPABILITIES_CLASS caps")
@@ -183,10 +185,12 @@ val GLBinding = Generator.register(object : APIBinding(
             .map(Func::name)
             .joinToString(",\n$t$t", prefix = "$t$t", postfix = ";\n"))
 
-        classes.forEach {
-            println(it.getCapabilityJavadoc())
-            println("${t}public final boolean ${it.capName};")
-        }
+        classes.asSequence()
+            .filter { !it.isCore }
+            .forEach {
+                println(it.getCapabilityJavadoc())
+                println("${t}public final boolean ${it.capName};")
+            }
 
         println("""
     /** When true, deprecated functions are not available. */
@@ -207,6 +211,9 @@ val GLBinding = Generator.register(object : APIBinding(
         })
 
         for (extension in classes) {
+            if (extension.isCore) {
+                continue
+            }
             val capName = extension.capName
             if (extension.hasNativeFunctions) {
                 print("\n$t$t$capName = ext.contains(\"$capName\") && checkExtension(\"$capName\", ${if (capName == extension.className) "$packageName.${extension.className}" else extension.className}.isAvailable(this")

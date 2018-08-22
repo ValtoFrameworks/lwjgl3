@@ -28,7 +28,7 @@ ENABLE_WARNINGS()""")
 
         Block functions produce and decode raw zstd blocks, without frame metadata.
 
-        Frame metadata cost is typically ~18 bytes, which can be non-negligible for very small blocks (< 100 bytes). User will have to take in charge required
+        Frame metadata cost is typically ~18 bytes, which can be non-negligible for very small blocks (&lt; 100 bytes). User will have to take in charge required
         information to regenerate data, such as compressed and content sizes.
 
         A few rules to respect:
@@ -92,7 +92,6 @@ ENABLE_WARNINGS()""")
         "SEARCHLOG_MIN".."1",
         "SEARCHLENGTH_MAX".."7",
         "SEARCHLENGTH_MIN".."3",
-        "TARGETLENGTH_MIN".."1",
         "LDM_MINMATCH_MIN".."4",
         "LDM_MINMATCH_MAX".."4096",
         "LDM_BUCKETSIZELOG_MAX".."8",
@@ -160,13 +159,12 @@ ENABLE_WARNINGS()""")
             Update all compression parameters according to pre-defined {@code cLevel} table.
 
             Default level is {@code ZSTD_CLEVEL_DEFAULT==3}.
-            Special: value 0 means "do not change {@code cLevel}".
+            Special: value 0 means default, which is controlled by #CLEVEL_DEFAULT.
 
             Notes:
             ${ol(
                 "it's possible to pass a negative compression level by casting it to unsigned type.",
-                "setting a level sets all default values of other compression parameters.",
-                "setting compressionLevel automatically updates #p_compressLiterals."
+                "setting a level sets all default values of other compression parameters."
             )}
             """,
             "100"
@@ -225,7 +223,7 @@ ENABLE_WARNINGS()""")
             """
             Impact of this field depends on strategy.
 
-            For strategies {@code btopt} & {@code btultra}:
+            For strategies {@code btopt} &amp; {@code btultra}:
             ${ul(
                 "Length of Match considered \"good enough\" to stop search.",
                 "Larger values make compression stronger, and slower."
@@ -351,18 +349,20 @@ ENABLE_WARNINGS()""")
             """),
 
         /* experimental parameters - no stability guaranteed */
-        "p_compressLiterals".enum(
+        "p_forceMaxWindow".enum("Force back-reference distances to remain &lt; windowSize, even when referencing into Dictionary content (default:0)", "1100"),
+        "p_forceAttachDict".enum(
             """
-            Control huffman compression of literals (enabled) by default.
+            ZSTD supports usage of a {@code CDict} in-place (avoiding having to copy the compression tables from the {@code CDict} into the working context).
+            Using a {@code CDict} in this way saves an initial setup step, but comes at the cost of more work per byte of input. ZSTD has a simple internal
+            heuristic that guesses which strategy will be faster. You can use this flag to override that guess.
 
-            Disabling it improves speed and decreases compression ratio by a large amount.
+            Note that the by-reference, in-place strategy is only used when reusing a compression context with compatible compression parameters. (If
+            incompatible / uninitialized, the working context needs to be cleared anyways, which is about as expensive as overwriting it with the dictionary
+            context, so there's no savings in using the CDict by-ref.)
 
-            Note : this setting is automatically updated when changing compression level. Positive compression levels set {@code ZSTD_p_compressLiterals} to 1.
-            Negative compression levels set {@code ZSTD_p_compressLiterals} to 0.
-            """,
-            "1000"
-        ),
-        "p_forceMaxWindow".enum("Force back-reference distances to remain &lt; windowSize, even when referencing into Dictionary content (default:0)", "1100")
+            Values greater than 0 force attaching the dict. Values less than 0 force copying the dict. 0 selects the default heuristic-guided behavior.
+            """
+        )
     ).javaDocLinks
 
     val endDirectives = EnumConstant(
@@ -795,7 +795,7 @@ ENABLE_WARNINGS()""")
 
         returnDoc =
         """
-        if 0, {@code zfhPtr} is correctly filled. If >0, {@code srcSize} is too small, value is wanted {@code srcSize} amount, or an error code, which can be
+        if 0, {@code zfhPtr} is correctly filled. If &gt;0, {@code srcSize} is too small, value is wanted {@code srcSize} amount, or an error code, which can be
         tested using #isError().
         """
     )

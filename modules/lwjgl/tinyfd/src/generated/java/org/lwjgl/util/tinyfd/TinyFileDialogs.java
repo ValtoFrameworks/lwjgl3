@@ -24,7 +24,7 @@ import static org.lwjgl.system.MemoryUtil.*;
  * <li>message / question</li>
  * <li>input / password</li>
  * <li>save file</li>
- * <li>open file & multiple files</li>
+ * <li>open file &amp; multiple files</li>
  * <li>select folder</li>
  * <li>color picker</li>
  * </ul>
@@ -68,6 +68,32 @@ public class TinyFileDialogs {
     /** Contains info about requirements. */
     public static final String tinyfd_needs = tinyfd_needs();
 
+    // --- [ tinyfd_verbose ] ---
+
+    private static native long ntinyfd_verbose();
+
+    @NativeType("int *")
+    private static IntBuffer tinyfd_verbose() {
+        long __result = ntinyfd_verbose();
+        return memIntBuffer(__result, 1);
+    }
+
+    /** 0 (default) or 1 : on unix, prints the command line calls. */
+    public static final IntBuffer tinyfd_verbose = tinyfd_verbose();
+
+    // --- [ tinyfd_silent ] ---
+
+    private static native long ntinyfd_silent();
+
+    @NativeType("int *")
+    private static IntBuffer tinyfd_silent() {
+        long __result = ntinyfd_silent();
+        return memIntBuffer(__result, 1);
+    }
+
+    /** 1 (default) or 0 : on unix, hide errors and warnings from called dialog. */
+    public static final IntBuffer tinyfd_silent = tinyfd_silent();
+
     // --- [ tinyfd_winUtf8 ] ---
 
     private static native long ntinyfd_winUtf8();
@@ -91,7 +117,7 @@ public class TinyFileDialogs {
     /**
      * Can be modified at run time.
      * 
-     * <p>For unix & windows: 0 (graphic mode) or 1 (console mode).</p>
+     * <p>For unix &amp; windows: 0 (graphic mode) or 1 (console mode).</p>
      * 
      * <p>0: try to use a graphic solution, if it fails then it uses console mode.
      * 1: forces all dialogs into console mode even when the X server is present. It will use the package dialog or dialog.exe if installed. On windows it

@@ -46,7 +46,8 @@ ENABLE_WARNINGS()""")
     IntConstant(
         "",
 
-        "MAX_ATTRIBUTES".."128"
+        "MAX_HEADER_ATTRIBUTES".."1024",
+        "MAX_CUSTOM_ATTRIBUTES".."128"
     )
 
     IntConstant(
@@ -111,6 +112,13 @@ ENABLE_WARNINGS()""")
         EXRImage.p.IN("exr_image", "")
     )
 
+    void(
+        "FreeEXRErrorMessage",
+        "Free's error message",
+
+        Unsafe..char.const.p.IN("msg", "")
+    )
+
     int(
         "ParseEXRVersionFromFile",
         "Parse EXR version header of a file.",
@@ -130,7 +138,11 @@ ENABLE_WARNINGS()""")
 
     int(
         "ParseEXRHeaderFromFile",
-        "Parse single-part OpenEXR header from a file and initialize ##EXRHeader.",
+        """
+        Parse single-part OpenEXR header from a file and initialize ##EXRHeader.
+
+        When there was an error message, Application must free {@code err} with #FreeEXRErrorMessage().
+        """,
 
         EXRHeader.p.OUT("header", ""),
         EXRVersion.const.p.IN("version", ""),
@@ -140,7 +152,11 @@ ENABLE_WARNINGS()""")
 
     int(
         "ParseEXRHeaderFromMemory",
-        "Parse single-part OpenEXR header from a memory and initialize ##EXRHeader.",
+        """
+        Parse single-part OpenEXR header from a memory and initialize ##EXRHeader.
+
+        When there was an error message, Application must free {@code err} with #FreeEXRErrorMessage().
+        """,
 
         EXRHeader.p.OUT("header", ""),
         EXRVersion.const.p.IN("version", ""),
@@ -151,7 +167,11 @@ ENABLE_WARNINGS()""")
 
     int(
         "ParseEXRMultipartHeaderFromFile",
-        "Parse multi-part OpenEXR headers from a file and initialize ##EXRHeader* array.",
+        """
+        Parse multi-part OpenEXR headers from a file and initialize ##EXRHeader* array.
+
+        When there was an error message, Application must free {@code err} with #FreeEXRErrorMessage().
+        """,
 
         Check(1)..EXRHeader.p.p.p.OUT("headers", ""),
         Check(1)..int.p.OUT("num_headers", ""),
@@ -162,7 +182,11 @@ ENABLE_WARNINGS()""")
 
     int(
         "ParseEXRMultipartHeaderFromMemory",
-        "Parse multi-part OpenEXR headers from a memory and initialize ##EXRHeader* array.",
+        """
+        Parse multi-part OpenEXR headers from a memory and initialize ##EXRHeader* array.
+
+        When there was an error message, Application must free {@code err} with #FreeEXRErrorMessage().
+        """,
 
         Check(1)..EXRHeader.p.p.p.OUT("headers", ""),
         Check(1)..int.p.OUT("num_headers", ""),
@@ -179,7 +203,7 @@ ENABLE_WARNINGS()""")
 
         Application must setup #ParseEXRHeaderFromFile() before calling this function.
 
-        Application can free EXRImage using #FreeEXRImage().
+        Application can free EXRImage using #FreeEXRImage(). When there was an error message, Application must free {@code err} with #FreeEXRErrorMessage().
         """,
 
         EXRImage.p.OUT("image", ""),
@@ -197,7 +221,7 @@ ENABLE_WARNINGS()""")
 
         Application must setup ##EXRHeader with #ParseEXRHeaderFromMemory() before calling this function.
 
-        Application can free EXRImage using #FreeEXRImage().
+        Application can free EXRImage using #FreeEXRImage(). When there was an error message, Application must free {@code err} with #FreeEXRErrorMessage().
         """,
 
         EXRImage.p.OUT("image", ""),
@@ -216,7 +240,7 @@ ENABLE_WARNINGS()""")
 
         Application must setup #ParseEXRMultipartHeaderFromFile() before calling this function.
 
-        Application can free EXRImage using #FreeEXRImage().
+        Application can free EXRImage using #FreeEXRImage(). When there was an error message, Application must free {@code err} with #FreeEXRErrorMessage().
         """,
 
         EXRImage.p.OUT("images", ""),
@@ -235,7 +259,7 @@ ENABLE_WARNINGS()""")
 
         Application must setup ##EXRHeader* array with #ParseEXRMultipartHeaderFromMemory() before calling this function.
 
-        Application can free EXRImage using #FreeEXRImage().
+        Application can free EXRImage using #FreeEXRImage(). When there was an error message, Application must free {@code err} with #FreeEXRErrorMessage().
         """,
 
         EXRImage.p.OUT("images", ""),
@@ -250,7 +274,11 @@ ENABLE_WARNINGS()""")
 
     int(
         "SaveEXRImageToFile",
-        "Saves multi-channel, single-frame OpenEXR image to a file.",
+        """
+        Saves multi-channel, single-frame OpenEXR image to a file.
+
+        When there was an error message, Application must free {@code err} with #FreeEXRErrorMessage().
+        """,
 
         EXRImage.const.p.IN("image", ""),
         EXRHeader.const.p.IN("exr_header", ""),
@@ -266,6 +294,8 @@ ENABLE_WARNINGS()""")
         Saves multi-channel, single-frame OpenEXR image to a memory.
 
         Image is compressed using {@code EXRImage.compression} value.
+
+        When there was an error message, Application must free {@code err} with #FreeEXRErrorMessage().
         """,
 
         EXRImage.const.p.IN("image", ""),
@@ -282,6 +312,8 @@ ENABLE_WARNINGS()""")
         Loads single-frame OpenEXR deep image.
 
         Application must free memory of variables in {@code DeepImage(image, offset_table)}.
+
+        When there was an error message, Application must free {@code err} with #FreeEXRErrorMessage().
         """,
 
         DeepImage.p.OUT("out_image", ""),

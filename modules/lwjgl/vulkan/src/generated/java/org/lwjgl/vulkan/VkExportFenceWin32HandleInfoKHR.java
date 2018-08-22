@@ -39,7 +39,7 @@ import org.lwjgl.system.windows.*;
  * <h5>Valid Usage</h5>
  * 
  * <ul>
- * <li>If {@link VkExportFenceCreateInfo}{@code ::handleTypes} does not include {@link VK11#VK_EXTERNAL_FENCE_HANDLE_TYPE_OPAQUE_WIN32_BIT EXTERNAL_FENCE_HANDLE_TYPE_OPAQUE_WIN32_BIT}, VkExportFenceWin32HandleInfoKHR <b>must</b> not be in the {@code pNext} chain of {@link VkFenceCreateInfo}.</li>
+ * <li>If {@link VkExportFenceCreateInfo}{@code ::handleTypes} does not include {@link VK11#VK_EXTERNAL_FENCE_HANDLE_TYPE_OPAQUE_WIN32_BIT EXTERNAL_FENCE_HANDLE_TYPE_OPAQUE_WIN32_BIT}, {@link VkExportFenceWin32HandleInfoKHR} <b>must</b> not be in the {@code pNext} chain of {@link VkFenceCreateInfo}.</li>
  * </ul>
  * 
  * <h5>Valid Usage (Implicit)</h5>
@@ -61,20 +61,21 @@ import org.lwjgl.system.windows.*;
  * 
  * <h3>Layout</h3>
  * 
- * <code><pre>
+ * <pre><code>
  * struct VkExportFenceWin32HandleInfoKHR {
  *     VkStructureType sType;
  *     void const * pNext;
  *     {@link SECURITY_ATTRIBUTES SECURITY_ATTRIBUTES const} * pAttributes;
  *     DWORD dwAccess;
  *     LPCWSTR name;
- * }</pre></code>
+ * }</code></pre>
  */
 public class VkExportFenceWin32HandleInfoKHR extends Struct implements NativeResource {
 
     /** The struct size in bytes. */
     public static final int SIZEOF;
 
+    /** The struct alignment in bytes. */
     public static final int ALIGNOF;
 
     /** The struct member offsets. */

@@ -20,8 +20,8 @@ import static org.lwjgl.system.MemoryUtil.*;
  * <p>This extension provides a set of new features to the OpenGL Shading Language and related APIs to support capabilities of new GPUs. Shaders using the
  * new functionality provided by this extension should enable this functionality via the construct</p>
  * 
- * <code><pre>
- * \#extension GL_NV_gpu_shader5 : require (or enable)</pre></code>
+ * <pre><code>
+ * \#extension GL_NV_gpu_shader5 : require (or enable)</code></pre>
  * 
  * <p>This extension was developed concurrently with the ARB_gpu_shader5 extension, and provides a superset of the features provided there. The features
  * common to both extensions are documented in the ARB_gpu_shader5 specification; this document describes only the addition language features not
@@ -248,22 +248,12 @@ public class NVGPUShader5 {
     }
 
     public static void glGetUniformui64vNV(@NativeType("GLuint") int program, @NativeType("GLint") int location, @NativeType("GLuint64EXT *") LongBuffer params) {
-        if (CHECKS) {
-            check(params, 1);
-        }
-        nglGetUniformui64vNV(program, location, memAddress(params));
+        NVShaderBufferLoad.glGetUniformui64vNV(program, location, params);
     }
 
     @NativeType("void")
     public static long glGetUniformui64NV(@NativeType("GLuint") int program, @NativeType("GLint") int location) {
-        MemoryStack stack = stackGet(); int stackPointer = stack.getPointer();
-        try {
-            LongBuffer params = stack.callocLong(1);
-            nglGetUniformui64vNV(program, location, memAddress(params));
-            return params.get(0);
-        } finally {
-            stack.setPointer(stackPointer);
-        }
+        return NVShaderBufferLoad.glGetUniformui64NV(program, location);
     }
 
     // --- [ glProgramUniform1i64NV ] ---
@@ -446,12 +436,7 @@ public class NVGPUShader5 {
 
     /** Array version of: {@link #glGetUniformui64vNV GetUniformui64vNV} */
     public static void glGetUniformui64vNV(@NativeType("GLuint") int program, @NativeType("GLint") int location, @NativeType("GLuint64EXT *") long[] params) {
-        long __functionAddress = GL.getICD().glGetUniformui64vNV;
-        if (CHECKS) {
-            check(__functionAddress);
-            check(params, 1);
-        }
-        callPV(__functionAddress, program, location, params);
+        NVShaderBufferLoad.glGetUniformui64vNV(program, location, params);
     }
 
     /** Array version of: {@link #glProgramUniform1i64vNV ProgramUniform1i64vNV} */

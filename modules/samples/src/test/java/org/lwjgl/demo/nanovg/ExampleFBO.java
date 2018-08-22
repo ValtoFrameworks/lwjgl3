@@ -18,7 +18,7 @@ import static org.lwjgl.glfw.Callbacks.*;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.nanovg.NanoVG.*;
 import static org.lwjgl.nanovg.NanoVGGL3.*;
-import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL11C.*;
 import static org.lwjgl.system.MemoryUtil.*;
 
 /*
@@ -253,6 +253,8 @@ public final class ExampleFBO extends Demo {
         System.out.format("Average Frame Time: %.2f ms\n", getGraphAverage(fps) * 1000.0f);
         System.out.format("          CPU Time: %.2f ms\n", getGraphAverage(cpuGraph) * 1000.0f);
         System.out.format("          GPU Time: %.2f ms\n", getGraphAverage(gpuGraph) * 1000.0f);
+
+        GL.setCapabilities(null);
 
         glfwFreeCallbacks(window);
         glfwTerminate();

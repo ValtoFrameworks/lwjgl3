@@ -10,9 +10,6 @@ import java.nio.*;
 import org.lwjgl.system.*;
 
 import static org.lwjgl.system.Checks.*;
-import static org.lwjgl.system.JNI.*;
-import static org.lwjgl.system.MemoryStack.*;
-import static org.lwjgl.system.MemoryUtil.*;
 
 /**
  * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_vertex_array_object.txt">ARB_vertex_array_object</a> extension.
@@ -51,7 +48,7 @@ public class ARBVertexArrayObject {
      * @param array the name of the vertex array to bind
      */
     public static void glBindVertexArray(@NativeType("GLuint") int array) {
-        GL30.glBindVertexArray(array);
+        GL30C.glBindVertexArray(array);
     }
 
     // --- [ glDeleteVertexArrays ] ---
@@ -62,7 +59,7 @@ public class ARBVertexArrayObject {
      * @param n the number of vertex array objects to be deleted
      */
     public static void nglDeleteVertexArrays(int n, long arrays) {
-        GL30.nglDeleteVertexArrays(n, arrays);
+        GL30C.nglDeleteVertexArrays(n, arrays);
     }
 
     /**
@@ -71,18 +68,12 @@ public class ARBVertexArrayObject {
      * @param arrays an array containing the n names of the objects to be deleted
      */
     public static void glDeleteVertexArrays(@NativeType("GLuint const *") IntBuffer arrays) {
-        nglDeleteVertexArrays(arrays.remaining(), memAddress(arrays));
+        GL30C.glDeleteVertexArrays(arrays);
     }
 
     /** Deletes vertex array objects. */
     public static void glDeleteVertexArrays(@NativeType("GLuint const *") int array) {
-        MemoryStack stack = stackGet(); int stackPointer = stack.getPointer();
-        try {
-            IntBuffer arrays = stack.ints(array);
-            nglDeleteVertexArrays(1, memAddress(arrays));
-        } finally {
-            stack.setPointer(stackPointer);
-        }
+        GL30C.glDeleteVertexArrays(array);
     }
 
     // --- [ glGenVertexArrays ] ---
@@ -93,7 +84,7 @@ public class ARBVertexArrayObject {
      * @param n the number of vertex array object names to generate
      */
     public static void nglGenVertexArrays(int n, long arrays) {
-        GL30.nglGenVertexArrays(n, arrays);
+        GL30C.nglGenVertexArrays(n, arrays);
     }
 
     /**
@@ -102,20 +93,13 @@ public class ARBVertexArrayObject {
      * @param arrays a buffer in which the generated vertex array object names are stored
      */
     public static void glGenVertexArrays(@NativeType("GLuint *") IntBuffer arrays) {
-        nglGenVertexArrays(arrays.remaining(), memAddress(arrays));
+        GL30C.glGenVertexArrays(arrays);
     }
 
     /** Generates vertex array object names. */
     @NativeType("void")
     public static int glGenVertexArrays() {
-        MemoryStack stack = stackGet(); int stackPointer = stack.getPointer();
-        try {
-            IntBuffer arrays = stack.callocInt(1);
-            nglGenVertexArrays(1, memAddress(arrays));
-            return arrays.get(0);
-        } finally {
-            stack.setPointer(stackPointer);
-        }
+        return GL30C.glGenVertexArrays();
     }
 
     // --- [ glIsVertexArray ] ---
@@ -127,25 +111,17 @@ public class ARBVertexArrayObject {
      */
     @NativeType("GLboolean")
     public static boolean glIsVertexArray(@NativeType("GLuint") int array) {
-        return GL30.glIsVertexArray(array);
+        return GL30C.glIsVertexArray(array);
     }
 
     /** Array version of: {@link #glDeleteVertexArrays DeleteVertexArrays} */
     public static void glDeleteVertexArrays(@NativeType("GLuint const *") int[] arrays) {
-        long __functionAddress = GL.getICD().glDeleteVertexArrays;
-        if (CHECKS) {
-            check(__functionAddress);
-        }
-        callPV(__functionAddress, arrays.length, arrays);
+        GL30C.glDeleteVertexArrays(arrays);
     }
 
     /** Array version of: {@link #glGenVertexArrays GenVertexArrays} */
     public static void glGenVertexArrays(@NativeType("GLuint *") int[] arrays) {
-        long __functionAddress = GL.getICD().glGenVertexArrays;
-        if (CHECKS) {
-            check(__functionAddress);
-        }
-        callPV(__functionAddress, arrays.length, arrays);
+        GL30C.glGenVertexArrays(arrays);
     }
 
 }

@@ -10,9 +10,6 @@ import java.nio.*;
 import org.lwjgl.system.*;
 
 import static org.lwjgl.system.Checks.*;
-import static org.lwjgl.system.JNI.*;
-import static org.lwjgl.system.MemoryStack.*;
-import static org.lwjgl.system.MemoryUtil.*;
 
 /**
  * Native bindings to the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_invalidate_subdata.txt">ARB_invalidate_subdata</a> extension.
@@ -77,7 +74,7 @@ public class ARBInvalidateSubdata {
      * @param depth   the depth of the region to be invalidated
      */
     public static void glInvalidateTexSubImage(@NativeType("GLuint") int texture, @NativeType("GLint") int level, @NativeType("GLint") int xoffset, @NativeType("GLint") int yoffset, @NativeType("GLint") int zoffset, @NativeType("GLsizei") int width, @NativeType("GLsizei") int height, @NativeType("GLsizei") int depth) {
-        GL43.glInvalidateTexSubImage(texture, level, xoffset, yoffset, zoffset, width, height, depth);
+        GL43C.glInvalidateTexSubImage(texture, level, xoffset, yoffset, zoffset, width, height, depth);
     }
 
     // --- [ glInvalidateTexImage ] ---
@@ -89,7 +86,7 @@ public class ARBInvalidateSubdata {
      * @param level   the level of detail of the texture object to invalidate
      */
     public static void glInvalidateTexImage(@NativeType("GLuint") int texture, @NativeType("GLint") int level) {
-        GL43.glInvalidateTexImage(texture, level);
+        GL43C.glInvalidateTexImage(texture, level);
     }
 
     // --- [ glInvalidateBufferSubData ] ---
@@ -102,7 +99,7 @@ public class ARBInvalidateSubdata {
      * @param length the length of the range within the buffer's data store to be invalidated
      */
     public static void glInvalidateBufferSubData(@NativeType("GLuint") int buffer, @NativeType("GLintptr") long offset, @NativeType("GLsizeiptr") long length) {
-        GL43.glInvalidateBufferSubData(buffer, offset, length);
+        GL43C.glInvalidateBufferSubData(buffer, offset, length);
     }
 
     // --- [ glInvalidateBufferData ] ---
@@ -113,7 +110,7 @@ public class ARBInvalidateSubdata {
      * @param buffer the name of a buffer object whose data store to invalidate
      */
     public static void glInvalidateBufferData(@NativeType("GLuint") int buffer) {
-        GL43.glInvalidateBufferData(buffer);
+        GL43C.glInvalidateBufferData(buffer);
     }
 
     // --- [ glInvalidateFramebuffer ] ---
@@ -124,7 +121,7 @@ public class ARBInvalidateSubdata {
      * @param numAttachments the number of entries in the {@code attachments} array
      */
     public static void nglInvalidateFramebuffer(int target, int numAttachments, long attachments) {
-        GL43.nglInvalidateFramebuffer(target, numAttachments, attachments);
+        GL43C.nglInvalidateFramebuffer(target, numAttachments, attachments);
     }
 
     /**
@@ -134,7 +131,7 @@ public class ARBInvalidateSubdata {
      * @param attachments the address of an array identifying the attachments to be invalidated
      */
     public static void glInvalidateFramebuffer(@NativeType("GLenum") int target, @NativeType("GLenum const *") IntBuffer attachments) {
-        nglInvalidateFramebuffer(target, attachments.remaining(), memAddress(attachments));
+        GL43C.glInvalidateFramebuffer(target, attachments);
     }
 
     /**
@@ -143,13 +140,7 @@ public class ARBInvalidateSubdata {
      * @param target the target to which the framebuffer is attached. One of:<br><table><tr><td>{@link GL30#GL_FRAMEBUFFER FRAMEBUFFER}</td><td>{@link GL30#GL_DRAW_FRAMEBUFFER DRAW_FRAMEBUFFER}</td><td>{@link GL30#GL_READ_FRAMEBUFFER READ_FRAMEBUFFER}</td></tr></table>
      */
     public static void glInvalidateFramebuffer(@NativeType("GLenum") int target, @NativeType("GLenum const *") int attachment) {
-        MemoryStack stack = stackGet(); int stackPointer = stack.getPointer();
-        try {
-            IntBuffer attachments = stack.ints(attachment);
-            nglInvalidateFramebuffer(target, 1, memAddress(attachments));
-        } finally {
-            stack.setPointer(stackPointer);
-        }
+        GL43C.glInvalidateFramebuffer(target, attachment);
     }
 
     // --- [ glInvalidateSubFramebuffer ] ---
@@ -160,7 +151,7 @@ public class ARBInvalidateSubdata {
      * @param numAttachments the number of entries in the {@code attachments} array
      */
     public static void nglInvalidateSubFramebuffer(int target, int numAttachments, long attachments, int x, int y, int width, int height) {
-        GL43.nglInvalidateSubFramebuffer(target, numAttachments, attachments, x, y, width, height);
+        GL43C.nglInvalidateSubFramebuffer(target, numAttachments, attachments, x, y, width, height);
     }
 
     /**
@@ -174,7 +165,7 @@ public class ARBInvalidateSubdata {
      * @param height      the height of the region to be invalidated
      */
     public static void glInvalidateSubFramebuffer(@NativeType("GLenum") int target, @NativeType("GLenum const *") IntBuffer attachments, @NativeType("GLint") int x, @NativeType("GLint") int y, @NativeType("GLsizei") int width, @NativeType("GLsizei") int height) {
-        nglInvalidateSubFramebuffer(target, attachments.remaining(), memAddress(attachments), x, y, width, height);
+        GL43C.glInvalidateSubFramebuffer(target, attachments, x, y, width, height);
     }
 
     /**
@@ -187,31 +178,17 @@ public class ARBInvalidateSubdata {
      * @param height the height of the region to be invalidated
      */
     public static void glInvalidateSubFramebuffer(@NativeType("GLenum") int target, @NativeType("GLenum const *") int attachment, @NativeType("GLint") int x, @NativeType("GLint") int y, @NativeType("GLsizei") int width, @NativeType("GLsizei") int height) {
-        MemoryStack stack = stackGet(); int stackPointer = stack.getPointer();
-        try {
-            IntBuffer attachments = stack.ints(attachment);
-            nglInvalidateSubFramebuffer(target, 1, memAddress(attachments), x, y, width, height);
-        } finally {
-            stack.setPointer(stackPointer);
-        }
+        GL43C.glInvalidateSubFramebuffer(target, attachment, x, y, width, height);
     }
 
     /** Array version of: {@link #glInvalidateFramebuffer InvalidateFramebuffer} */
     public static void glInvalidateFramebuffer(@NativeType("GLenum") int target, @NativeType("GLenum const *") int[] attachments) {
-        long __functionAddress = GL.getICD().glInvalidateFramebuffer;
-        if (CHECKS) {
-            check(__functionAddress);
-        }
-        callPV(__functionAddress, target, attachments.length, attachments);
+        GL43C.glInvalidateFramebuffer(target, attachments);
     }
 
     /** Array version of: {@link #glInvalidateSubFramebuffer InvalidateSubFramebuffer} */
     public static void glInvalidateSubFramebuffer(@NativeType("GLenum") int target, @NativeType("GLenum const *") int[] attachments, @NativeType("GLint") int x, @NativeType("GLint") int y, @NativeType("GLsizei") int width, @NativeType("GLsizei") int height) {
-        long __functionAddress = GL.getICD().glInvalidateSubFramebuffer;
-        if (CHECKS) {
-            check(__functionAddress);
-        }
-        callPV(__functionAddress, target, attachments.length, attachments, x, y, width, height);
+        GL43C.glInvalidateSubFramebuffer(target, attachments, x, y, width, height);
     }
 
 }

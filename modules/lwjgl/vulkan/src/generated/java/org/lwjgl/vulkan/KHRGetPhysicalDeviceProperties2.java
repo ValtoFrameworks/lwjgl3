@@ -26,7 +26,7 @@ import static org.lwjgl.system.MemoryUtil.*;
  * 
  * <h5>Examples</h5>
  * 
- * <code><pre>
+ * <pre><code>
  *     // Get features with a hypothetical future extension.
  *     VkHypotheticalExtensionFeaturesKHR hypotheticalFeatures =
  *     {
@@ -37,11 +37,11 @@ import static org.lwjgl.system.MemoryUtil.*;
  *     VkPhysicalDeviceFeatures2KHR features =
  *     {
  *         VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2_KHR,                       // sType
- *         &hypotheticalFeatures,                                                  // pNext
+ *         &amp;hypotheticalFeatures,                                                  // pNext
  *     };
  * 
  *     // After this call, features and hypotheticalFeatures have been filled out.
- *     vkGetPhysicalDeviceFeatures2KHR(physicalDevice, &features);
+ *     vkGetPhysicalDeviceFeatures2KHR(physicalDevice, &amp;features);
  * 
  *     // Properties/limits can be chained and queried similarly.
  * 
@@ -55,7 +55,7 @@ import static org.lwjgl.system.MemoryUtil.*;
  *     VkPhysicalDeviceFeatures2KHR enabledFeatures =
  *     {
  *         VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2_KHR,                       // sType
- *         &enabledHypotheticalFeatures,                                           // pNext
+ *         &amp;enabledHypotheticalFeatures,                                           // pNext
  *     };
  * 
  *     enabledFeatures.features.xyz = VK_TRUE;
@@ -64,13 +64,13 @@ import static org.lwjgl.system.MemoryUtil.*;
  *     VkDeviceCreateInfo deviceCreateInfo =
  *     {
  *         VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO,                                   // sType
- *         &enabledFeatures,                                                       // pNext
+ *         &amp;enabledFeatures,                                                       // pNext
  *         ...
  *         NULL,                                                                   // pEnabledFeatures
  *     }
  * 
  *     VkDevice device;
- *     vkCreateDevice(physicalDevice, &deviceCreateInfo, NULL, &device);</pre></code>
+ *     vkCreateDevice(physicalDevice, &amp;deviceCreateInfo, NULL, &amp;device);</code></pre>
  * 
  * <dl>
  * <dt><b>Name String</b></dt>
@@ -84,6 +84,10 @@ import static org.lwjgl.system.MemoryUtil.*;
  * <dt><b>Extension and Version Dependencies</b></dt>
  * <dd><ul>
  * <li>Requires Vulkan 1.0</li>
+ * </ul></dd>
+ * <dt><b>Deprecation state</b></dt>
+ * <dd><ul>
+ * <li><em>Promoted</em> to <a target="_blank" href="https://www.khronos.org/registry/vulkan/specs/1.0-extensions/html/vkspec.html#versions-1.1-promotions">Vulkan 1.1</a></li>
  * </ul></dd>
  * <dt><b>Contact</b></dt>
  * <dd><ul>
