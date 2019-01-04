@@ -63,19 +63,16 @@ ENABLE_WARNINGS()""")
         Compression is guaranteed to succeed if {@code dstCapacity} &ge; #compressBound(){@code (srcSize)}`
         """,
 
-        char.const.p.IN("src", ""),
-        char.p.OUT("dst", ""),
-        AutoSize("src")..int.IN("srcSize", "max supported value is #MAX_INPUT_SIZE"),
-        AutoSize("dst")..int.IN("dstCapacity", ""),
-        int.IN("compressionLevel", "any value between 1 and #CLEVEL_MAX will work. Values &gt; #CLEVEL_MAX behave the same as #CLEVEL_MAX."),
+        char.const.p("src", ""),
+        char.p("dst", ""),
+        AutoSize("src")..int("srcSize", "max supported value is #MAX_INPUT_SIZE"),
+        AutoSize("dst")..int("dstCapacity", ""),
+        int("compressionLevel", "any value between 1 and #CLEVEL_MAX will work. Values &gt; #CLEVEL_MAX behave the same as #CLEVEL_MAX."),
 
         returnDoc = "the number of bytes written into {@code dst} or 0 if compression fails"
     )
 
-    int(
-        "sizeofStateHC",
-        ""
-    )
+    int("sizeofStateHC", "", void())
 
     int(
         "compress_HC_extStateHC",
@@ -86,12 +83,12 @@ ENABLE_WARNINGS()""")
         properly).
         """,
 
-        Unsafe..void.p.OUT("state", ""),
-        char.const.p.IN("src", ""),
-        char.p.OUT("dst", ""),
-        AutoSize("src")..int.IN("srcSize", ""),
-        AutoSize("dst")..int.IN("maxDstSize", ""),
-        int.IN("compressionLevel", "")
+        Unsafe..void.p("state", ""),
+        char.const.p("src", ""),
+        char.p("dst", ""),
+        AutoSize("src")..int("srcSize", ""),
+        AutoSize("dst")..int("maxDstSize", ""),
+        int("compressionLevel", "")
     )
 
     LZ4_streamHC_t.p(
@@ -100,63 +97,64 @@ ENABLE_WARNINGS()""")
         Creates memory for LZ4 HC streaming state.
 
         Newly created states are automatically initialized. Existing states can be re-used several times, using #resetStreamHC().
-        """
+        """,
+        void()
     )
 
     int(
         "freeStreamHC",
         "Releases memory for LZ4 HC streaming state.",
 
-        LZ4_streamHC_t.p.IN("streamHCPtr", "")
+        LZ4_streamHC_t.p("streamHCPtr", "")
     )
 
     void(
         "resetStreamHC",
         "",
 
-        LZ4_streamHC_t.p.IN("streamHCPtr", ""),
-        int.IN("compressionLevel", "")
+        LZ4_streamHC_t.p("streamHCPtr", ""),
+        int("compressionLevel", "")
     )
 
     int(
         "loadDictHC",
         "",
 
-        LZ4_streamHC_t.p.IN("streamHCPtr", ""),
-        char.const.p.IN("dictionary", ""),
-        AutoSize("dictionary")..int.IN("dictSize", "")
+        LZ4_streamHC_t.p("streamHCPtr", ""),
+        char.const.p("dictionary", ""),
+        AutoSize("dictionary")..int("dictSize", "")
     )
 
     int(
         "compress_HC_continue",
         "",
 
-        LZ4_streamHC_t.p.IN("streamHCPtr", ""),
-        char.const.p.IN("src", ""),
-        char.p.OUT("dst", ""),
-        AutoSize("src")..int.IN("srcSize", ""),
-        AutoSize("dst")..int.IN("maxDstSize", "")
+        LZ4_streamHC_t.p("streamHCPtr", ""),
+        char.const.p("src", ""),
+        char.p("dst", ""),
+        AutoSize("src")..int("srcSize", ""),
+        AutoSize("dst")..int("maxDstSize", "")
     )
 
     int(
         "saveDictHC",
         "",
 
-        LZ4_streamHC_t.p.IN("streamHCPtr", ""),
-        char.p.OUT("safeBuffer", ""),
-        AutoSize("safeBuffer")..int.IN("maxDictSize", "")
+        LZ4_streamHC_t.p("streamHCPtr", ""),
+        char.p("safeBuffer", ""),
+        AutoSize("safeBuffer")..int("maxDictSize", "")
     )
 
     int(
         "compress_HC_destSize",
         "Will try to compress as much data from {@code src} as possible that can fit into {@code targetDstSize} budget.",
 
-        Unsafe..void.p.OUT("LZ4HC_Data", ""),
-        char.const.p.IN("src", ""),
-        char.p.OUT("dst", ""),
-        AutoSize("src")..Check(1)..int.p.INOUT("srcSizePtr", "value will be updated to indicate how much bytes were read from {@code src}"),
-        AutoSize("dst")..int.IN("targetDstSize", ""),
-        int.IN("compressionLevel", ""),
+        Unsafe..void.p("LZ4HC_Data", ""),
+        char.const.p("src", ""),
+        char.p("dst", ""),
+        AutoSize("src")..Check(1)..int.p("srcSizePtr", "value will be updated to indicate how much bytes were read from {@code src}"),
+        AutoSize("dst")..int("targetDstSize", ""),
+        int("compressionLevel", ""),
 
         returnDoc = "the number of bytes written into {@code dst} or 0 if compression fails"
     )
@@ -165,11 +163,11 @@ ENABLE_WARNINGS()""")
         "compress_HC_continue_destSize",
         "Similar as #compress_HC_continue(), but will read a variable nb of bytes from {@code src} to fit into {@code targetDstSize} budget.",
 
-        LZ4_streamHC_t.p.IN("LZ4_streamHCPtr", ""),
-        char.const.p.IN("src", ""),
-        char.p.OUT("dst", ""),
-        AutoSize("src")..Check(1)..int.p.INOUT("srcSizePtr", "value will be updated to indicate how much bytes were read from {@code src}"),
-        AutoSize("dst")..int.IN("targetDstSize", ""),
+        LZ4_streamHC_t.p("LZ4_streamHCPtr", ""),
+        char.const.p("src", ""),
+        char.p("dst", ""),
+        AutoSize("src")..Check(1)..int.p("srcSizePtr", "value will be updated to indicate how much bytes were read from {@code src}"),
+        AutoSize("dst")..int("targetDstSize", ""),
 
         returnDoc = "the number of bytes written into {@code dst} or 0 if compression fails"
     )
@@ -178,8 +176,8 @@ ENABLE_WARNINGS()""")
         "setCompressionLevel",
         "It's possible to change compression level between 2 invocations of {@code LZ4_compress_HC_continue*()}.",
 
-        LZ4_streamHC_t.p.IN("LZ4_streamHCPtr", ""),
-        int.IN("compressionLevel", "")
+        LZ4_streamHC_t.p("LZ4_streamHCPtr", ""),
+        int("compressionLevel", "")
     )
 
     void(
@@ -190,8 +188,8 @@ ENABLE_WARNINGS()""")
         Only works at highest compression settings (level &ge; #CLEVEL_OPT_MIN)
         """,
 
-        LZ4_streamHC_t.p.IN("LZ4_streamHCPtr", ""),
-        intb.IN("favor", ""),
+        LZ4_streamHC_t.p("LZ4_streamHCPtr", ""),
+        intb("favor", ""),
 
         since = "version 1.8.2 (experimental)"
     )
@@ -217,8 +215,8 @@ ENABLE_WARNINGS()""")
         )}
         """,
 
-        LZ4_streamHC_t.p.IN("LZ4_streamHCPtr", ""),
-        int.IN("compressionLevel", "")
+        LZ4_streamHC_t.p("LZ4_streamHCPtr", ""),
+        int("compressionLevel", "")
     )
 
     int(
@@ -231,12 +229,12 @@ ENABLE_WARNINGS()""")
         the provided state with a call to #resetStreamHC_fast() while #compress_HC_extStateHC() starts with a call to #resetStreamHC().
         """,
 
-        Unsafe..void.p.OUT("state", ""),
-        char.p.const.IN("src", ""),
-        char.p.OUT("dst", ""),
-        AutoSize("src")..int.IN("srcSize", ""),
-        AutoSize("dst")..int.IN("dstCapacity", ""),
-        int.IN("compressionLevel", "")
+        Unsafe..void.p("state", ""),
+        char.p.const("src", ""),
+        char.p("dst", ""),
+        AutoSize("src")..int("srcSize", ""),
+        AutoSize("dst")..int("dstCapacity", ""),
+        int("compressionLevel", "")
     )
 
     void(
@@ -260,7 +258,7 @@ ENABLE_WARNINGS()""")
         through the lifetime of the stream session.
         """,
 
-        LZ4_streamHC_t.p.IN("working_stream", ""),
-        nullable..LZ4_streamHC_t.p.const.IN("dictionary_stream", "")
+        LZ4_streamHC_t.p("working_stream", ""),
+        nullable..LZ4_streamHC_t.p.const("dictionary_stream", "")
     )
 }

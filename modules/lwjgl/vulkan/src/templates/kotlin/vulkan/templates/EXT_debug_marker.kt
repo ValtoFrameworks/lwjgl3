@@ -130,7 +130,7 @@ val EXT_debug_marker = "EXTDebugMarker".nativeClassVK("EXT_debug_marker", type =
 
             <dt><b>Contact</b></dt>
             <dd><ul>
-                <li>Baldur Karlsson @baldurk</li>
+                <li>Baldur Karlsson <a target="_blank" href="https://github.com/KhronosGroup/Vulkan-Docs/issues/new?title=VK_EXT_debug_marker:%20&amp;body=@baldurk%20">baldurk</a></li>
             </ul></dd>
 
             <dt><b>Last Modified Date</b></dt>
@@ -211,8 +211,8 @@ val EXT_debug_marker = "EXTDebugMarker".nativeClassVK("EXT_debug_marker", type =
         ##VkDebugMarkerObjectTagInfoEXT
         """,
 
-        VkDevice.IN("device", "the device that created the object."),
-        VkDebugMarkerObjectTagInfoEXT.const.p.IN("pTagInfo", "a pointer to an instance of the ##VkDebugMarkerObjectTagInfoEXT structure specifying the parameters of the tag to attach to the object.")
+        VkDevice("device", "the device that created the object."),
+        VkDebugMarkerObjectTagInfoEXT.const.p("pTagInfo", "a pointer to an instance of the ##VkDebugMarkerObjectTagInfoEXT structure specifying the parameters of the tag to attach to the object.")
     )
 
     VkResult(
@@ -257,8 +257,8 @@ val EXT_debug_marker = "EXTDebugMarker".nativeClassVK("EXT_debug_marker", type =
         ##VkDebugMarkerObjectNameInfoEXT
         """,
 
-        VkDevice.IN("device", "the device that created the object."),
-        VkDebugMarkerObjectNameInfoEXT.const.p.IN("pNameInfo", "a pointer to an instance of the ##VkDebugMarkerObjectNameInfoEXT structure specifying the parameters of the name to set on the object.")
+        VkDevice("device", "the device that created the object."),
+        VkDebugMarkerObjectNameInfoEXT.const.p("pNameInfo", "a pointer to an instance of the ##VkDebugMarkerObjectNameInfoEXT structure specifying the parameters of the name to set on the object.")
     )
 
     void(
@@ -297,8 +297,8 @@ val EXT_debug_marker = "EXTDebugMarker".nativeClassVK("EXT_debug_marker", type =
         ##VkDebugMarkerMarkerInfoEXT
         """,
 
-        VkCommandBuffer.IN("commandBuffer", "the command buffer into which the command is recorded."),
-        VkDebugMarkerMarkerInfoEXT.const.p.IN("pMarkerInfo", "a pointer to an instance of the ##VkDebugMarkerMarkerInfoEXT structure specifying the parameters of the marker region to open.")
+        VkCommandBuffer("commandBuffer", "the command buffer into which the command is recorded."),
+        VkDebugMarkerMarkerInfoEXT.const.p("pMarkerInfo", "a pointer to an instance of the ##VkDebugMarkerMarkerInfoEXT structure specifying the parameters of the marker region to open.")
     )
 
     void(
@@ -314,11 +314,11 @@ val EXT_debug_marker = "EXTDebugMarker".nativeClassVK("EXT_debug_marker", type =
 ￿    VkCommandBuffer                             commandBuffer);</code></pre>
 
         <h5>Description</h5>
-        An application <b>may</b> open a marker region in one command buffer and close it in another, or otherwise split marker regions across multiple command buffers or multiple queue submissions. When viewed from the linear series of submissions to a single queue, the calls to #CmdDebugMarkerBeginEXT() and #CmdDebugMarkerEndEXT() <b>must</b> be matched and balanced.
+        An application <b>may</b> open a marker region in one command buffer and close it in another, or otherwise split marker regions across multiple command buffers or multiple queue submissions. When viewed from the linear series of submissions to a single queue, the calls to {@code vkCmdDebugMarkerBeginEXT} and {@code vkCmdDebugMarkerEndEXT} <b>must</b> be matched and balanced.
 
         <h5>Valid Usage</h5>
         <ul>
-            <li>There <b>must</b> be an outstanding #CmdDebugMarkerBeginEXT() command prior to the #CmdDebugMarkerEndEXT() on the queue that {@code commandBuffer} is submitted to</li>
+            <li>There <b>must</b> be an outstanding #CmdDebugMarkerBeginEXT() command prior to the {@code vkCmdDebugMarkerEndEXT} on the queue that {@code commandBuffer} is submitted to</li>
             <li>If {@code commandBuffer} is a secondary command buffer, there <b>must</b> be an outstanding #CmdDebugMarkerBeginEXT() command recorded to {@code commandBuffer} that has not previously been ended by a call to #CmdDebugMarkerEndEXT().</li>
         </ul>
 
@@ -341,7 +341,7 @@ val EXT_debug_marker = "EXTDebugMarker".nativeClassVK("EXT_debug_marker", type =
         </table>
         """,
 
-        VkCommandBuffer.IN("commandBuffer", "the command buffer into which the command is recorded.")
+        VkCommandBuffer("commandBuffer", "the command buffer into which the command is recorded.")
     )
 
     void(
@@ -380,7 +380,7 @@ val EXT_debug_marker = "EXTDebugMarker".nativeClassVK("EXT_debug_marker", type =
         ##VkDebugMarkerMarkerInfoEXT
         """,
 
-        VkCommandBuffer.IN("commandBuffer", "the command buffer into which the command is recorded."),
-        VkDebugMarkerMarkerInfoEXT.const.p.IN("pMarkerInfo", "a pointer to an instance of the ##VkDebugMarkerMarkerInfoEXT structure specifying the parameters of the marker to insert.")
+        VkCommandBuffer("commandBuffer", "the command buffer into which the command is recorded."),
+        VkDebugMarkerMarkerInfoEXT.const.p("pMarkerInfo", "a pointer to an instance of the ##VkDebugMarkerMarkerInfoEXT structure specifying the parameters of the marker to insert.")
     )
 }

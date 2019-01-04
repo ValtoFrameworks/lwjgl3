@@ -36,7 +36,7 @@ public class JEmalloc {
     public static final int JEMALLOC_VERSION_MAJOR = 5;
 
     /** The minor version. */
-    public static final int JEMALLOC_VERSION_MINOR = 1;
+    public static final int JEMALLOC_VERSION_MINOR = 2;
 
     /** The bugfix version. */
     public static final int JEMALLOC_VERSION_BUGFIX = 0;
@@ -45,7 +45,7 @@ public class JEmalloc {
     public static final int JEMALLOC_VERSION_NREV = 0;
 
     /** The globally unique identifier (git commit hash). */
-    public static final String JEMALLOC_VERSION_GID = "61efbda7098de6fe64c362d309824864308c36d4";
+    public static final String JEMALLOC_VERSION_GID = "c4063ce439523d382f2dfbbc5bf6da657e6badb0";
 
     /** The version string. */
     public static final String JEMALLOC_VERSION = JEMALLOC_VERSION_MAJOR + "." + JEMALLOC_VERSION_MINOR + "." + JEMALLOC_VERSION_BUGFIX + "-" + JEMALLOC_VERSION_NREV + "-g" + JEMALLOC_VERSION_GID;
@@ -632,8 +632,9 @@ public class JEmalloc {
         }
         MemoryStack stack = stackGet(); int stackPointer = stack.getPointer();
         try {
-            ByteBuffer nameEncoded = stack.ASCII(name);
-            return nje_mallctl(memAddress(nameEncoded), memAddressSafe(oldp), memAddressSafe(oldlenp), memAddressSafe(newp), remainingSafe(newp));
+            stack.nASCII(name, true);
+            long nameEncoded = stack.getPointerAddress();
+            return nje_mallctl(nameEncoded, memAddressSafe(oldp), memAddressSafe(oldlenp), memAddressSafe(newp), remainingSafe(newp));
         } finally {
             stack.setPointer(stackPointer);
         }
@@ -729,8 +730,9 @@ public class JEmalloc {
         }
         MemoryStack stack = stackGet(); int stackPointer = stack.getPointer();
         try {
-            ByteBuffer nameEncoded = stack.ASCII(name);
-            return nje_mallctlnametomib(memAddress(nameEncoded), memAddress(mibp), memAddress(miblenp));
+            stack.nASCII(name, true);
+            long nameEncoded = stack.getPointerAddress();
+            return nje_mallctlnametomib(nameEncoded, memAddress(mibp), memAddress(miblenp));
         } finally {
             stack.setPointer(stackPointer);
         }
@@ -808,8 +810,9 @@ public class JEmalloc {
     public static void je_malloc_stats_print(@Nullable @NativeType("void (*) (void *, char const *)") MallocMessageCallbackI write_cb, @NativeType("void *") long cbopaque, @Nullable @NativeType("char const *") CharSequence opts) {
         MemoryStack stack = stackGet(); int stackPointer = stack.getPointer();
         try {
-            ByteBuffer optsEncoded = stack.ASCIISafe(opts);
-            nje_malloc_stats_print(memAddressSafe(write_cb), cbopaque, memAddressSafe(optsEncoded));
+            stack.nASCIISafe(opts, true);
+            long optsEncoded = opts == null ? NULL : stack.getPointerAddress();
+            nje_malloc_stats_print(memAddressSafe(write_cb), cbopaque, optsEncoded);
         } finally {
             stack.setPointer(stackPointer);
         }

@@ -34,14 +34,14 @@ import static org.lwjgl.system.MemoryStack.*;
  * <p>To copy both the depth and stencil aspects of a depth/stencil format, two entries in {@code pRegions} <b>can</b> be used, where one specifies the depth aspect in {@code imageSubresource}, and the other specifies the stencil aspect.</p>
  * </div>
  * 
- * <p>Because depth or stencil aspect buffer to image copies <b>may</b> require format conversions on some implementations, they are not supported on queues that do not support graphics. When copying to a depth aspect, the data in buffer memory <b>must</b> be in the the range <code>[0,1]</code> or undefined results occur.</p>
+ * <p>Because depth or stencil aspect buffer to image copies <b>may</b> require format conversions on some implementations, they are not supported on queues that do not support graphics.</p>
  * 
  * <p>Copies are done layer by layer starting with image layer {@code baseArrayLayer} member of {@code imageSubresource}. {@code layerCount} layers are copied from the source image or to the destination image.</p>
  * 
  * <h5>Valid Usage</h5>
  * 
  * <ul>
- * <li>If the calling command&#8217;s {@code VkImage} parameter&#8217;s format is not a depth/stencil format or a <a target="_blank" href="https://www.khronos.org/registry/vulkan/specs/1.0-extensions/html/vkspec.html#features-formats-requiring-sampler-ycbcr-conversion">multi-planar format</a>, then {@code bufferOffset} <b>must</b> be a multiple of the format&#8217;s element size</li>
+ * <li>If the calling command&#8217;s {@code VkImage} parameter&#8217;s format is not a depth/stencil format or a <a target="_blank" href="https://www.khronos.org/registry/vulkan/specs/1.0-extensions/html/vkspec.html#features-formats-requiring-sampler-ycbcr-conversion">multi-planar format</a>, then {@code bufferOffset} <b>must</b> be a multiple of the format&#8217;s texel block size.</li>
  * <li>If the calling command&#8217;s {@code VkImage} parameter&#8217;s format is a <a target="_blank" href="https://www.khronos.org/registry/vulkan/specs/1.0-extensions/html/vkspec.html#features-formats-requiring-sampler-ycbcr-conversion">multi-planar format</a>, then {@code bufferOffset} <b>must</b> be a multiple of the element size of the compatible format for the format and the {@code aspectMask} of the {@code imageSubresource} as defined in <a target="_blank" href="https://www.khronos.org/registry/vulkan/specs/1.0-extensions/html/vkspec.html#features-formats-compatible-planes">the “Compatible formats of planes of multi-planar formats” section</a></li>
  * <li>{@code bufferOffset} <b>must</b> be a multiple of 4</li>
  * <li>{@code bufferRowLength} <b>must</b> be 0, or greater than or equal to the {@code width} member of {@code imageExtent}</li>
@@ -62,7 +62,6 @@ import static org.lwjgl.system.MemoryStack.*;
  * <li>If the calling command&#8217;s {@code VkImage} parameter&#8217;s format is a <a target="_blank" href="https://www.khronos.org/registry/vulkan/specs/1.0-extensions/html/vkspec.html#features-formats-requiring-sampler-ycbcr-conversion">multi-planar format</a>, then the {@code aspectMask} member of {@code imageSubresource} <b>must</b> be {@link VK11#VK_IMAGE_ASPECT_PLANE_0_BIT IMAGE_ASPECT_PLANE_0_BIT}, {@link VK11#VK_IMAGE_ASPECT_PLANE_1_BIT IMAGE_ASPECT_PLANE_1_BIT}, or {@link VK11#VK_IMAGE_ASPECT_PLANE_2_BIT IMAGE_ASPECT_PLANE_2_BIT} (with {@link VK11#VK_IMAGE_ASPECT_PLANE_2_BIT IMAGE_ASPECT_PLANE_2_BIT} valid only for image formats with three planes)</li>
  * <li>The {@code aspectMask} member of {@code imageSubresource} <b>must</b> only have a single bit set</li>
  * <li>If the calling command&#8217;s {@code VkImage} parameter is of {@code VkImageType} {@link VK10#VK_IMAGE_TYPE_3D IMAGE_TYPE_3D}, the {@code baseArrayLayer} and {@code layerCount} members of {@code imageSubresource} <b>must</b> be 0 and 1, respectively</li>
- * <li>When copying to the depth aspect of an image subresource, the data in the source buffer <b>must</b> be in the range <code>[0,1]</code></li>
  * </ul>
  * 
  * <h5>Valid Usage (Implicit)</h5>
@@ -79,7 +78,7 @@ import static org.lwjgl.system.MemoryStack.*;
  * 
  * <ul>
  * <li>{@code bufferOffset} &ndash; the offset in bytes from the start of the buffer object where the image data is copied from or to.</li>
- * <li>{@code bufferRowLength} &ndash; {@code bufferRowLength} and {@code bufferImageHeight} specify the data in buffer memory as a subregion of a larger two- or three-dimensional image, and control the addressing calculations of data in buffer memory. If either of these values is zero, that aspect of the buffer memory is considered to be tightly packed according to the {@code imageExtent}.</li>
+ * <li>{@code bufferRowLength} &ndash; {@code bufferRowLength} and {@code bufferImageHeight} specify in texels a subregion of a larger two- or three-dimensional image in buffer memory, and control the addressing calculations. If either of these values is zero, that aspect of the buffer memory is considered to be tightly packed according to the {@code imageExtent}.</li>
  * <li>{@code bufferImageHeight} &ndash; see {@code bufferRowLength}</li>
  * <li>{@code imageSubresource} &ndash; a {@link VkImageSubresourceLayers} used to specify the specific image subresources of the image used for the source or destination image data.</li>
  * <li>{@code imageOffset} &ndash; selects the initial {@code x}, {@code y}, {@code z} offsets in texels of the sub-region of the source or destination image data.</li>
@@ -136,10 +135,6 @@ public class VkBufferImageCopy extends Struct implements NativeResource {
         IMAGEEXTENT = layout.offsetof(5);
     }
 
-    VkBufferImageCopy(long address, @Nullable ByteBuffer container) {
-        super(address, container);
-    }
-
     /**
      * Creates a {@link VkBufferImageCopy} instance at the current position of the specified {@link ByteBuffer} container. Changes to the buffer's content will be
      * visible to the struct instance and vice versa.
@@ -147,7 +142,7 @@ public class VkBufferImageCopy extends Struct implements NativeResource {
      * <p>The created instance holds a strong reference to the container object.</p>
      */
     public VkBufferImageCopy(ByteBuffer container) {
-        this(memAddress(container), __checkContainer(container, SIZEOF));
+        super(memAddress(container), __checkContainer(container, SIZEOF));
     }
 
     @Override
@@ -223,28 +218,29 @@ public class VkBufferImageCopy extends Struct implements NativeResource {
 
     /** Returns a new {@link VkBufferImageCopy} instance allocated with {@link MemoryUtil#memAlloc memAlloc}. The instance must be explicitly freed. */
     public static VkBufferImageCopy malloc() {
-        return create(nmemAllocChecked(SIZEOF));
+        return wrap(VkBufferImageCopy.class, nmemAllocChecked(SIZEOF));
     }
 
     /** Returns a new {@link VkBufferImageCopy} instance allocated with {@link MemoryUtil#memCalloc memCalloc}. The instance must be explicitly freed. */
     public static VkBufferImageCopy calloc() {
-        return create(nmemCallocChecked(1, SIZEOF));
+        return wrap(VkBufferImageCopy.class, nmemCallocChecked(1, SIZEOF));
     }
 
     /** Returns a new {@link VkBufferImageCopy} instance allocated with {@link BufferUtils}. */
     public static VkBufferImageCopy create() {
-        return new VkBufferImageCopy(BufferUtils.createByteBuffer(SIZEOF));
+        ByteBuffer container = BufferUtils.createByteBuffer(SIZEOF);
+        return wrap(VkBufferImageCopy.class, memAddress(container), container);
     }
 
     /** Returns a new {@link VkBufferImageCopy} instance for the specified memory address. */
     public static VkBufferImageCopy create(long address) {
-        return new VkBufferImageCopy(address, null);
+        return wrap(VkBufferImageCopy.class, address);
     }
 
     /** Like {@link #create(long) create}, but returns {@code null} if {@code address} is {@code NULL}. */
     @Nullable
     public static VkBufferImageCopy createSafe(long address) {
-        return address == NULL ? null : create(address);
+        return address == NULL ? null : wrap(VkBufferImageCopy.class, address);
     }
 
     /**
@@ -253,7 +249,7 @@ public class VkBufferImageCopy extends Struct implements NativeResource {
      * @param capacity the buffer capacity
      */
     public static VkBufferImageCopy.Buffer malloc(int capacity) {
-        return create(__malloc(capacity, SIZEOF), capacity);
+        return wrap(Buffer.class, nmemAllocChecked(__checkMalloc(capacity, SIZEOF)), capacity);
     }
 
     /**
@@ -262,7 +258,7 @@ public class VkBufferImageCopy extends Struct implements NativeResource {
      * @param capacity the buffer capacity
      */
     public static VkBufferImageCopy.Buffer calloc(int capacity) {
-        return create(nmemCallocChecked(capacity, SIZEOF), capacity);
+        return wrap(Buffer.class, nmemCallocChecked(capacity, SIZEOF), capacity);
     }
 
     /**
@@ -271,7 +267,8 @@ public class VkBufferImageCopy extends Struct implements NativeResource {
      * @param capacity the buffer capacity
      */
     public static VkBufferImageCopy.Buffer create(int capacity) {
-        return new Buffer(__create(capacity, SIZEOF));
+        ByteBuffer container = __create(capacity, SIZEOF);
+        return wrap(Buffer.class, memAddress(container), capacity, container);
     }
 
     /**
@@ -281,13 +278,13 @@ public class VkBufferImageCopy extends Struct implements NativeResource {
      * @param capacity the buffer capacity
      */
     public static VkBufferImageCopy.Buffer create(long address, int capacity) {
-        return new Buffer(address, capacity);
+        return wrap(Buffer.class, address, capacity);
     }
 
     /** Like {@link #create(long, int) create}, but returns {@code null} if {@code address} is {@code NULL}. */
     @Nullable
     public static VkBufferImageCopy.Buffer createSafe(long address, int capacity) {
-        return address == NULL ? null : create(address, capacity);
+        return address == NULL ? null : wrap(Buffer.class, address, capacity);
     }
 
     // -----------------------------------
@@ -308,7 +305,7 @@ public class VkBufferImageCopy extends Struct implements NativeResource {
      * @param stack the stack from which to allocate
      */
     public static VkBufferImageCopy mallocStack(MemoryStack stack) {
-        return create(stack.nmalloc(ALIGNOF, SIZEOF));
+        return wrap(VkBufferImageCopy.class, stack.nmalloc(ALIGNOF, SIZEOF));
     }
 
     /**
@@ -317,7 +314,7 @@ public class VkBufferImageCopy extends Struct implements NativeResource {
      * @param stack the stack from which to allocate
      */
     public static VkBufferImageCopy callocStack(MemoryStack stack) {
-        return create(stack.ncalloc(ALIGNOF, 1, SIZEOF));
+        return wrap(VkBufferImageCopy.class, stack.ncalloc(ALIGNOF, 1, SIZEOF));
     }
 
     /**
@@ -345,7 +342,7 @@ public class VkBufferImageCopy extends Struct implements NativeResource {
      * @param capacity the buffer capacity
      */
     public static VkBufferImageCopy.Buffer mallocStack(int capacity, MemoryStack stack) {
-        return create(stack.nmalloc(ALIGNOF, capacity * SIZEOF), capacity);
+        return wrap(Buffer.class, stack.nmalloc(ALIGNOF, capacity * SIZEOF), capacity);
     }
 
     /**
@@ -355,17 +352,17 @@ public class VkBufferImageCopy extends Struct implements NativeResource {
      * @param capacity the buffer capacity
      */
     public static VkBufferImageCopy.Buffer callocStack(int capacity, MemoryStack stack) {
-        return create(stack.ncalloc(ALIGNOF, capacity, SIZEOF), capacity);
+        return wrap(Buffer.class, stack.ncalloc(ALIGNOF, capacity, SIZEOF), capacity);
     }
 
     // -----------------------------------
 
     /** Unsafe version of {@link #bufferOffset}. */
-    public static long nbufferOffset(long struct) { return memGetLong(struct + VkBufferImageCopy.BUFFEROFFSET); }
+    public static long nbufferOffset(long struct) { return UNSAFE.getLong(null, struct + VkBufferImageCopy.BUFFEROFFSET); }
     /** Unsafe version of {@link #bufferRowLength}. */
-    public static int nbufferRowLength(long struct) { return memGetInt(struct + VkBufferImageCopy.BUFFERROWLENGTH); }
+    public static int nbufferRowLength(long struct) { return UNSAFE.getInt(null, struct + VkBufferImageCopy.BUFFERROWLENGTH); }
     /** Unsafe version of {@link #bufferImageHeight}. */
-    public static int nbufferImageHeight(long struct) { return memGetInt(struct + VkBufferImageCopy.BUFFERIMAGEHEIGHT); }
+    public static int nbufferImageHeight(long struct) { return UNSAFE.getInt(null, struct + VkBufferImageCopy.BUFFERIMAGEHEIGHT); }
     /** Unsafe version of {@link #imageSubresource}. */
     public static VkImageSubresourceLayers nimageSubresource(long struct) { return VkImageSubresourceLayers.create(struct + VkBufferImageCopy.IMAGESUBRESOURCE); }
     /** Unsafe version of {@link #imageOffset}. */
@@ -374,11 +371,11 @@ public class VkBufferImageCopy extends Struct implements NativeResource {
     public static VkExtent3D nimageExtent(long struct) { return VkExtent3D.create(struct + VkBufferImageCopy.IMAGEEXTENT); }
 
     /** Unsafe version of {@link #bufferOffset(long) bufferOffset}. */
-    public static void nbufferOffset(long struct, long value) { memPutLong(struct + VkBufferImageCopy.BUFFEROFFSET, value); }
+    public static void nbufferOffset(long struct, long value) { UNSAFE.putLong(null, struct + VkBufferImageCopy.BUFFEROFFSET, value); }
     /** Unsafe version of {@link #bufferRowLength(int) bufferRowLength}. */
-    public static void nbufferRowLength(long struct, int value) { memPutInt(struct + VkBufferImageCopy.BUFFERROWLENGTH, value); }
+    public static void nbufferRowLength(long struct, int value) { UNSAFE.putInt(null, struct + VkBufferImageCopy.BUFFERROWLENGTH, value); }
     /** Unsafe version of {@link #bufferImageHeight(int) bufferImageHeight}. */
-    public static void nbufferImageHeight(long struct, int value) { memPutInt(struct + VkBufferImageCopy.BUFFERIMAGEHEIGHT, value); }
+    public static void nbufferImageHeight(long struct, int value) { UNSAFE.putInt(null, struct + VkBufferImageCopy.BUFFERIMAGEHEIGHT, value); }
     /** Unsafe version of {@link #imageSubresource(VkImageSubresourceLayers) imageSubresource}. */
     public static void nimageSubresource(long struct, VkImageSubresourceLayers value) { memCopy(value.address(), struct + VkBufferImageCopy.IMAGESUBRESOURCE, VkImageSubresourceLayers.SIZEOF); }
     /** Unsafe version of {@link #imageOffset(VkOffset3D) imageOffset}. */
@@ -390,6 +387,8 @@ public class VkBufferImageCopy extends Struct implements NativeResource {
 
     /** An array of {@link VkBufferImageCopy} structs. */
     public static class Buffer extends StructBuffer<VkBufferImageCopy, Buffer> implements NativeResource {
+
+        private static final VkBufferImageCopy ELEMENT_FACTORY = VkBufferImageCopy.create(-1L);
 
         /**
          * Creates a new {@link VkBufferImageCopy.Buffer} instance backed by the specified container.
@@ -418,18 +417,8 @@ public class VkBufferImageCopy extends Struct implements NativeResource {
         }
 
         @Override
-        protected Buffer newBufferInstance(long address, @Nullable ByteBuffer container, int mark, int pos, int lim, int cap) {
-            return new Buffer(address, container, mark, pos, lim, cap);
-        }
-
-        @Override
-        protected VkBufferImageCopy newInstance(long address) {
-            return new VkBufferImageCopy(address, container);
-        }
-
-        @Override
-        public int sizeof() {
-            return SIZEOF;
+        protected VkBufferImageCopy getElementFactory() {
+            return ELEMENT_FACTORY;
         }
 
         /** Returns the value of the {@code bufferOffset} field. */

@@ -34,7 +34,9 @@ public class TinyEXR {
         TINYEXR_ERROR_CANT_OPEN_FILE       = -6,
         TINYEXR_ERROR_UNSUPPORTED_FORMAT   = -7,
         TINYEXR_ERROR_INVALID_HEADER       = -8,
-        TINYEXR_ERROR_UNSUPPORTED_FEATURE  = -9;
+        TINYEXR_ERROR_UNSUPPORTED_FEATURE  = -9,
+        TINYEXR_ERROR_CANT_WRITE_FILE      = -10,
+        TINYEXR_ERROR_SERIALZATION_FAILED  = -11;
 
     /** Pixel types. */
     public static final int
@@ -115,9 +117,6 @@ public class TinyEXR {
 
     /** Free's internal data of {@link EXRImage} struct */
     public static int FreeEXRImage(@NativeType("EXRImage *") EXRImage exr_image) {
-        if (CHECKS) {
-            EXRImage.validate(exr_image.address());
-        }
         return nFreeEXRImage(exr_image.address());
     }
 
@@ -148,8 +147,9 @@ public class TinyEXR {
     public static int ParseEXRVersionFromFile(@NativeType("EXRVersion *") EXRVersion version, @NativeType("char const *") CharSequence filename) {
         MemoryStack stack = stackGet(); int stackPointer = stack.getPointer();
         try {
-            ByteBuffer filenameEncoded = stack.ASCII(filename);
-            return nParseEXRVersionFromFile(version.address(), memAddress(filenameEncoded));
+            stack.nASCII(filename, true);
+            long filenameEncoded = stack.getPointerAddress();
+            return nParseEXRVersionFromFile(version.address(), filenameEncoded);
         } finally {
             stack.setPointer(stackPointer);
         }
@@ -194,8 +194,9 @@ public class TinyEXR {
         }
         MemoryStack stack = stackGet(); int stackPointer = stack.getPointer();
         try {
-            ByteBuffer filenameEncoded = stack.ASCII(filename);
-            return nParseEXRHeaderFromFile(header.address(), version.address(), memAddress(filenameEncoded), memAddress(err));
+            stack.nASCII(filename, true);
+            long filenameEncoded = stack.getPointerAddress();
+            return nParseEXRHeaderFromFile(header.address(), version.address(), filenameEncoded, memAddress(err));
         } finally {
             stack.setPointer(stackPointer);
         }
@@ -251,8 +252,9 @@ public class TinyEXR {
         }
         MemoryStack stack = stackGet(); int stackPointer = stack.getPointer();
         try {
-            ByteBuffer filenameEncoded = stack.ASCII(filename);
-            return nParseEXRMultipartHeaderFromFile(memAddress(headers), memAddress(num_headers), version.address(), memAddress(filenameEncoded), memAddress(err));
+            stack.nASCII(filename, true);
+            long filenameEncoded = stack.getPointerAddress();
+            return nParseEXRMultipartHeaderFromFile(memAddress(headers), memAddress(num_headers), version.address(), filenameEncoded, memAddress(err));
         } finally {
             stack.setPointer(stackPointer);
         }
@@ -316,8 +318,9 @@ public class TinyEXR {
         }
         MemoryStack stack = stackGet(); int stackPointer = stack.getPointer();
         try {
-            ByteBuffer filenameEncoded = stack.ASCII(filename);
-            return nLoadEXRImageFromFile(image.address(), header.address(), memAddress(filenameEncoded), memAddress(err));
+            stack.nASCII(filename, true);
+            long filenameEncoded = stack.getPointerAddress();
+            return nLoadEXRImageFromFile(image.address(), header.address(), filenameEncoded, memAddress(err));
         } finally {
             stack.setPointer(stackPointer);
         }
@@ -384,8 +387,9 @@ public class TinyEXR {
         }
         MemoryStack stack = stackGet(); int stackPointer = stack.getPointer();
         try {
-            ByteBuffer filenameEncoded = stack.ASCII(filename);
-            return nLoadEXRMultipartImageFromFile(images.address(), memAddress(headers), images.remaining(), memAddress(filenameEncoded), memAddress(err));
+            stack.nASCII(filename, true);
+            long filenameEncoded = stack.getPointerAddress();
+            return nLoadEXRMultipartImageFromFile(images.address(), memAddress(headers), images.remaining(), filenameEncoded, memAddress(err));
         } finally {
             stack.setPointer(stackPointer);
         }
@@ -450,8 +454,9 @@ public class TinyEXR {
         }
         MemoryStack stack = stackGet(); int stackPointer = stack.getPointer();
         try {
-            ByteBuffer filenameEncoded = stack.ASCII(filename);
-            return nSaveEXRImageToFile(image.address(), exr_header.address(), memAddress(filenameEncoded), memAddress(err));
+            stack.nASCII(filename, true);
+            long filenameEncoded = stack.getPointerAddress();
+            return nSaveEXRImageToFile(image.address(), exr_header.address(), filenameEncoded, memAddress(err));
         } finally {
             stack.setPointer(stackPointer);
         }
@@ -469,7 +474,7 @@ public class TinyEXR {
      * 
      * <p>When there was an error message, Application must free {@code err} with {@link #FreeEXRErrorMessage}.</p>
      *
-     * @return the number of bytes if success or negative value and may set error string in {@code err} when there's an error
+     * @return the number of bytes if success or zero and may set error string in {@code err} when there's an error
      */
     @NativeType("size_t")
     public static long SaveEXRImageToMemory(@NativeType("EXRImage const *") EXRImage image, @NativeType("EXRHeader const *") EXRHeader exr_header, @NativeType("unsigned char **") PointerBuffer memory, @NativeType("char const **") PointerBuffer err) {
@@ -519,8 +524,9 @@ public class TinyEXR {
         }
         MemoryStack stack = stackGet(); int stackPointer = stack.getPointer();
         try {
-            ByteBuffer filenameEncoded = stack.ASCII(filename);
-            return nLoadDeepEXR(out_image.address(), memAddress(filenameEncoded), memAddress(err));
+            stack.nASCII(filename, true);
+            long filenameEncoded = stack.getPointerAddress();
+            return nLoadDeepEXR(out_image.address(), filenameEncoded, memAddress(err));
         } finally {
             stack.setPointer(stackPointer);
         }

@@ -42,7 +42,7 @@ val KHR_external_fence_capabilities = "KHRExternalFenceCapabilities".nativeClass
 
             <dt><b>Contact</b></dt>
             <dd><ul>
-                <li>Jesse Hall @critsec</li>
+                <li>Jesse Hall <a target="_blank" href="https://github.com/KhronosGroup/Vulkan-Docs/issues/new?title=VK_KHR_external_fence_capabilities:%20&amp;body=@critsec%20">critsec</a></li>
             </ul></dd>
 
             <dt><b>Last Modified Date</b></dt>
@@ -112,8 +112,8 @@ val KHR_external_fence_capabilities = "KHRExternalFenceCapabilities".nativeClass
         "GetPhysicalDeviceExternalFencePropertiesKHR",
         "See #GetPhysicalDeviceExternalFenceProperties().",
 
-        VkPhysicalDevice.IN("physicalDevice", "the physical device from which to query the fence capabilities."),
-        VkPhysicalDeviceExternalFenceInfo.const.p.IN("pExternalFenceInfo", "points to an instance of the ##VkPhysicalDeviceExternalFenceInfo structure, describing the parameters that would be consumed by #CreateFence()."),
-        VkExternalFenceProperties.p.OUT("pExternalFenceProperties", "points to an instance of the ##VkExternalFenceProperties structure in which capabilities are returned.")
+        VkPhysicalDevice("physicalDevice", "the physical device from which to query the fence capabilities."),
+        VkPhysicalDeviceExternalFenceInfo.const.p("pExternalFenceInfo", "points to an instance of the ##VkPhysicalDeviceExternalFenceInfo structure, describing the parameters that would be consumed by #CreateFence()."),
+        VkExternalFenceProperties.p("pExternalFenceProperties", "points to an instance of the ##VkExternalFenceProperties structure in which capabilities are returned.")
     )
 }

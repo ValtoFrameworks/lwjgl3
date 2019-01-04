@@ -43,7 +43,7 @@ val NV_external_memory_capabilities = "NVExternalMemoryCapabilities".nativeClass
 
             <dt><b>Contact</b></dt>
             <dd><ul>
-                <li>James Jones @cubanismo</li>
+                <li>James Jones <a target="_blank" href="https://github.com/KhronosGroup/Vulkan-Docs/issues/new?title=VK_NV_external_memory_capabilities:%20&amp;body=@cubanismo%20">cubanismo</a></li>
             </ul></dd>
 
             <dt><b>Last Modified Date</b></dt>
@@ -86,7 +86,7 @@ val NV_external_memory_capabilities = "NVExternalMemoryCapabilities".nativeClass
         <ul>
             <li>#EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_WIN32_KMT_BIT_NV specifies a handle to memory returned by #GetMemoryWin32HandleNV().</li>
             <li>#EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_WIN32_BIT_NV specifies a handle to memory returned by #GetMemoryWin32HandleNV(), or one duplicated from such a handle using {@code DuplicateHandle()}.</li>
-            <li>#EXTERNAL_MEMORY_HANDLE_TYPE_D3D11_IMAGE_BIT_NV specifies a valid NT handle to memory returned by {@code IDXGIResource1::ftext:CreateSharedHandle()}, or a handle duplicated from such a handle using {@code DuplicateHandle()}.</li>
+            <li>#EXTERNAL_MEMORY_HANDLE_TYPE_D3D11_IMAGE_BIT_NV specifies a valid NT handle to memory returned by {@code IDXGIResource1::{@code CreateSharedHandle}()}, or a handle duplicated from such a handle using {@code DuplicateHandle()}.</li>
             <li>#EXTERNAL_MEMORY_HANDLE_TYPE_D3D11_IMAGE_KMT_BIT_NV specifies a handle to memory returned by {@code IDXGIResource::GetSharedHandle()}.</li>
         </ul>
 
@@ -174,13 +174,13 @@ val NV_external_memory_capabilities = "NVExternalMemoryCapabilities".nativeClass
         ##VkExternalImageFormatPropertiesNV
         """,
 
-        VkPhysicalDevice.IN("physicalDevice", "the physical device from which to query the image capabilities"),
-        VkFormat.IN("format", "the image format, corresponding to ##VkImageCreateInfo{@code ::format}."),
-        VkImageType.IN("type", "the image type, corresponding to ##VkImageCreateInfo{@code ::imageType}."),
-        VkImageTiling.IN("tiling", "the image tiling, corresponding to ##VkImageCreateInfo{@code ::tiling}."),
-        VkImageUsageFlags.IN("usage", "the intended usage of the image, corresponding to ##VkImageCreateInfo{@code ::usage}."),
-        VkImageCreateFlags.IN("flags", "a bitmask describing additional parameters of the image, corresponding to ##VkImageCreateInfo{@code ::flags}."),
-        VkExternalMemoryHandleTypeFlagsNV.IN("externalHandleType", "either one of the bits from {@code VkExternalMemoryHandleTypeFlagBitsNV}, or 0."),
-        VkExternalImageFormatPropertiesNV.p.OUT("pExternalImageFormatProperties", "points to an instance of the ##VkExternalImageFormatPropertiesNV structure in which capabilities are returned.")
+        VkPhysicalDevice("physicalDevice", "the physical device from which to query the image capabilities"),
+        VkFormat("format", "the image format, corresponding to ##VkImageCreateInfo{@code ::format}."),
+        VkImageType("type", "the image type, corresponding to ##VkImageCreateInfo{@code ::imageType}."),
+        VkImageTiling("tiling", "the image tiling, corresponding to ##VkImageCreateInfo{@code ::tiling}."),
+        VkImageUsageFlags("usage", "the intended usage of the image, corresponding to ##VkImageCreateInfo{@code ::usage}."),
+        VkImageCreateFlags("flags", "a bitmask describing additional parameters of the image, corresponding to ##VkImageCreateInfo{@code ::flags}."),
+        VkExternalMemoryHandleTypeFlagsNV("externalHandleType", "either one of the bits from {@code VkExternalMemoryHandleTypeFlagBitsNV}, or 0."),
+        VkExternalImageFormatPropertiesNV.p("pExternalImageFormatProperties", "points to an instance of the ##VkExternalImageFormatPropertiesNV structure in which capabilities are returned.")
     )
 }

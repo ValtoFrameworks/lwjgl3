@@ -32,7 +32,7 @@ import static org.lwjgl.system.JNI.*;
  * </ul></dd>
  * <dt><b>Contact</b></dt>
  * <dd><ul>
- * <li>Daniel Rakos @drakos-amd</li>
+ * <li>Daniel Rakos <a target="_blank" href="https://github.com/KhronosGroup/Vulkan-Docs/issues/new?title=VK_EXT_sample_locations:%20&amp;body=@drakos-amd%20">drakos-amd</a></li>
  * </ul></dd>
  * <dt><b>Last Modified Date</b></dt>
  * <dd>2017-08-02</dd>
@@ -117,7 +117,7 @@ public class EXTSampleLocations {
      * 
      * <p>The custom sample locations used for rasterization when {@link VkPipelineSampleLocationsStateCreateInfoEXT}{@code ::sampleLocationsEnable} is {@link VK10#VK_TRUE TRUE} are specified by the {@link VkPipelineSampleLocationsStateCreateInfoEXT}{@code ::sampleLocationsInfo} property of the bound graphics pipeline, if the pipeline was not created with {@link #VK_DYNAMIC_STATE_SAMPLE_LOCATIONS_EXT DYNAMIC_STATE_SAMPLE_LOCATIONS_EXT} enabled.</p>
      * 
-     * <p>Otherwise, the sample locations used for rasterization are set by calling {@link #vkCmdSetSampleLocationsEXT CmdSetSampleLocationsEXT}:</p>
+     * <p>Otherwise, the sample locations used for rasterization are set by calling {@code vkCmdSetSampleLocationsEXT}:</p>
      * 
      * <pre><code>
      * void vkCmdSetSampleLocationsEXT(

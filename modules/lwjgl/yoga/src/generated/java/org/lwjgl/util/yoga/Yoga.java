@@ -641,6 +641,17 @@ public class Yoga {
         nYGNodeSetContext(node, context);
     }
 
+    // --- [ YGConfigSetPrintTreeFlag ] ---
+
+    public static native void nYGConfigSetPrintTreeFlag(long config, boolean enabled);
+
+    public static void YGConfigSetPrintTreeFlag(@NativeType("YGConfigRef") long config, @NativeType("bool") boolean enabled) {
+        if (CHECKS) {
+            check(config);
+        }
+        nYGConfigSetPrintTreeFlag(config, enabled);
+    }
+
     // --- [ YGNodeGetMeasureFunc ] ---
 
     public static native long nYGNodeGetMeasureFunc(long node);
@@ -1774,8 +1785,9 @@ public class Yoga {
         }
         MemoryStack stack = stackGet(); int stackPointer = stack.getPointer();
         try {
-            ByteBuffer messageEncoded = stack.UTF8(message);
-            nYGLog(node, level, memAddress(messageEncoded));
+            stack.nUTF8(message, true);
+            long messageEncoded = stack.getPointerAddress();
+            nYGLog(node, level, messageEncoded);
         } finally {
             stack.setPointer(stackPointer);
         }
@@ -1799,8 +1811,9 @@ public class Yoga {
         }
         MemoryStack stack = stackGet(); int stackPointer = stack.getPointer();
         try {
-            ByteBuffer messageEncoded = stack.UTF8(message);
-            nYGLogWithConfig(config, level, memAddress(messageEncoded));
+            stack.nUTF8(message, true);
+            long messageEncoded = stack.getPointerAddress();
+            nYGLogWithConfig(config, level, messageEncoded);
         } finally {
             stack.setPointer(stackPointer);
         }
@@ -1820,8 +1833,9 @@ public class Yoga {
     public static void YGAssert(@NativeType("bool") boolean condition, @NativeType("char const *") CharSequence message) {
         MemoryStack stack = stackGet(); int stackPointer = stack.getPointer();
         try {
-            ByteBuffer messageEncoded = stack.UTF8(message);
-            nYGAssert(condition, memAddress(messageEncoded));
+            stack.nUTF8(message, true);
+            long messageEncoded = stack.getPointerAddress();
+            nYGAssert(condition, messageEncoded);
         } finally {
             stack.setPointer(stackPointer);
         }
@@ -1845,8 +1859,9 @@ public class Yoga {
         }
         MemoryStack stack = stackGet(); int stackPointer = stack.getPointer();
         try {
-            ByteBuffer messageEncoded = stack.UTF8(message);
-            nYGAssertWithNode(node, condition, memAddress(messageEncoded));
+            stack.nUTF8(message, true);
+            long messageEncoded = stack.getPointerAddress();
+            nYGAssertWithNode(node, condition, messageEncoded);
         } finally {
             stack.setPointer(stackPointer);
         }
@@ -1870,8 +1885,9 @@ public class Yoga {
         }
         MemoryStack stack = stackGet(); int stackPointer = stack.getPointer();
         try {
-            ByteBuffer messageEncoded = stack.UTF8(message);
-            nYGAssertWithConfig(config, condition, memAddress(messageEncoded));
+            stack.nUTF8(message, true);
+            long messageEncoded = stack.getPointerAddress();
+            nYGAssertWithConfig(config, condition, messageEncoded);
         } finally {
             stack.setPointer(stackPointer);
         }

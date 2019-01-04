@@ -29,7 +29,7 @@ import static org.lwjgl.system.MemoryStack.*;
  * <p>Note that using a {@code maxLod} of zero would cause <a target="_blank" href="https://www.khronos.org/registry/vulkan/specs/1.0-extensions/html/vkspec.html#textures-texel-filtering">magnification</a> to always be performed, and the {@code magFilter} to always be used. This is valid, just not an exact match for OpenGL behavior. Clamping the maximum LOD to 0.25 allows the <code>λ</code> value to be non-zero and minification to be performed, while still always rounding down to the base level. If the {@code minFilter} and {@code magFilter} are equal, then using a {@code maxLod} of zero also works.</p>
  * </div>
  * 
- * <p>The maximum number of sampler objects which <b>can</b> be simultaneously created on a device is implementation-dependent and specified by the <a target="_blank" href="https://www.khronos.org/registry/vulkan/specs/1.0-extensions/html/vkspec.html#features-limits-maxSamplerAllocationCount">maxSamplerAllocationCount</a> member of the {@link VkPhysicalDeviceLimits} structure. If {@code maxSamplerAllocationCount} is exceeded, {@link VK10#vkCreateSampler CreateSampler} will return {@link VK10#VK_ERROR_TOO_MANY_OBJECTS ERROR_TOO_MANY_OBJECTS}.</p>
+ * <p>The maximum number of sampler objects which <b>can</b> be simultaneously created on a device is implementation-dependent and specified by the <a target="_blank" href="https://www.khronos.org/registry/vulkan/specs/1.0-extensions/html/vkspec.html#features-limits-maxSamplerAllocationCount">maxSamplerAllocationCount</a> member of the {@link VkPhysicalDeviceLimits} structure. If {@code maxSamplerAllocationCount} is exceeded, {@code vkCreateSampler} will return {@link VK10#VK_ERROR_TOO_MANY_OBJECTS ERROR_TOO_MANY_OBJECTS}.</p>
  * 
  * <p>Since {@code VkSampler} is a non-dispatchable handle type, implementations <b>may</b> return the same handle for sampler state vectors that are identical. In such cases, all such objects would only count once against the {@code maxSamplerAllocationCount} limit.</p>
  * 
@@ -55,6 +55,13 @@ import static org.lwjgl.system.MemoryStack.*;
  * <li>If either {@code magFilter} or {@code minFilter} is {@link IMGFilterCubic#VK_FILTER_CUBIC_IMG FILTER_CUBIC_IMG}, {@code anisotropyEnable} <b>must</b> be {@link VK10#VK_FALSE FALSE}</li>
  * <li>If either {@code magFilter} or {@code minFilter} is {@link IMGFilterCubic#VK_FILTER_CUBIC_IMG FILTER_CUBIC_IMG}, the {@code reductionMode} member of {@link VkSamplerReductionModeCreateInfoEXT} <b>must</b> be {@link EXTSamplerFilterMinmax#VK_SAMPLER_REDUCTION_MODE_WEIGHTED_AVERAGE_EXT SAMPLER_REDUCTION_MODE_WEIGHTED_AVERAGE_EXT}</li>
  * <li>If {@code compareEnable} is {@link VK10#VK_TRUE TRUE}, the {@code reductionMode} member of {@link VkSamplerReductionModeCreateInfoEXT} <b>must</b> be {@link EXTSamplerFilterMinmax#VK_SAMPLER_REDUCTION_MODE_WEIGHTED_AVERAGE_EXT SAMPLER_REDUCTION_MODE_WEIGHTED_AVERAGE_EXT}</li>
+ * <li>If {@code flags} includes {@link EXTFragmentDensityMap#VK_SAMPLER_CREATE_SUBSAMPLED_BIT_EXT SAMPLER_CREATE_SUBSAMPLED_BIT_EXT}, then {@code minFilter} and {@code magFilter} <b>must</b> be equal.</li>
+ * <li>If {@code flags} includes {@link EXTFragmentDensityMap#VK_SAMPLER_CREATE_SUBSAMPLED_BIT_EXT SAMPLER_CREATE_SUBSAMPLED_BIT_EXT}, then {@code mipmapMode} <b>must</b> be {@link VK10#VK_SAMPLER_MIPMAP_MODE_NEAREST SAMPLER_MIPMAP_MODE_NEAREST}.</li>
+ * <li>If {@code flags} includes {@link EXTFragmentDensityMap#VK_SAMPLER_CREATE_SUBSAMPLED_BIT_EXT SAMPLER_CREATE_SUBSAMPLED_BIT_EXT}, then {@code minLod} and {@code maxLod} <b>must</b> be zero.</li>
+ * <li>If {@code flags} includes {@link EXTFragmentDensityMap#VK_SAMPLER_CREATE_SUBSAMPLED_BIT_EXT SAMPLER_CREATE_SUBSAMPLED_BIT_EXT}, then {@code addressModeU} and {@code addressModeV} <b>must</b> each be either {@link VK10#VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE} or {@link VK10#VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER}.</li>
+ * <li>If {@code flags} includes {@link EXTFragmentDensityMap#VK_SAMPLER_CREATE_SUBSAMPLED_BIT_EXT SAMPLER_CREATE_SUBSAMPLED_BIT_EXT}, then {@code anisotropyEnable} <b>must</b> be {@link VK10#VK_FALSE FALSE}.</li>
+ * <li>If {@code flags} includes {@link EXTFragmentDensityMap#VK_SAMPLER_CREATE_SUBSAMPLED_BIT_EXT SAMPLER_CREATE_SUBSAMPLED_BIT_EXT}, then {@code compareEnable} <b>must</b> be {@link VK10#VK_FALSE FALSE}.</li>
+ * <li>If {@code flags} includes {@link EXTFragmentDensityMap#VK_SAMPLER_CREATE_SUBSAMPLED_BIT_EXT SAMPLER_CREATE_SUBSAMPLED_BIT_EXT}, then {@code unnormalizedCoordinates} <b>must</b> be {@link VK10#VK_FALSE FALSE}.</li>
  * </ul>
  * 
  * <h5>Valid Usage (Implicit)</h5>
@@ -63,7 +70,7 @@ import static org.lwjgl.system.MemoryStack.*;
  * <li>{@code sType} <b>must</b> be {@link VK10#VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO STRUCTURE_TYPE_SAMPLER_CREATE_INFO}</li>
  * <li>Each {@code pNext} member of any structure (including this one) in the {@code pNext} chain <b>must</b> be either {@code NULL} or a pointer to a valid instance of {@link VkSamplerReductionModeCreateInfoEXT} or {@link VkSamplerYcbcrConversionInfo}</li>
  * <li>Each {@code sType} member in the {@code pNext} chain <b>must</b> be unique</li>
- * <li>{@code flags} <b>must</b> be 0</li>
+ * <li>{@code flags} <b>must</b> be a valid combination of {@code VkSamplerCreateFlagBits} values</li>
  * <li>{@code magFilter} <b>must</b> be a valid {@code VkFilter} value</li>
  * <li>{@code minFilter} <b>must</b> be a valid {@code VkFilter} value</li>
  * <li>{@code mipmapMode} <b>must</b> be a valid {@code VkSamplerMipmapMode} value</li>
@@ -81,7 +88,7 @@ import static org.lwjgl.system.MemoryStack.*;
  * <ul>
  * <li>{@code sType} &ndash; the type of this structure.</li>
  * <li>{@code pNext} &ndash; {@code NULL} or a pointer to an extension-specific structure.</li>
- * <li>{@code flags} &ndash; reserved for future use.</li>
+ * <li>{@code flags} &ndash; a bitmask of {@code VkSamplerCreateFlagBits} describing additional parameters of the sampler.</li>
  * <li>{@code magFilter} &ndash; a {@code VkFilter} value specifying the magnification filter to apply to lookups.</li>
  * <li>{@code minFilter} &ndash; a {@code VkFilter} value specifying the minification filter to apply to lookups.</li>
  * <li>{@code mipmapMode} &ndash; a {@code VkSamplerMipmapMode} value specifying the mipmap filter to apply to lookups.</li>
@@ -110,6 +117,7 @@ import static org.lwjgl.system.MemoryStack.*;
  * <li>{@code anisotropyEnable} <b>must</b> be {@link VK10#VK_FALSE FALSE}.</li>
  * <li>{@code compareEnable} <b>must</b> be {@link VK10#VK_FALSE FALSE}.</li>
  * <li>The sampler <b>must</b> not enable sampler Y&#8217;C<sub>B</sub>C<sub>R</sub> conversion.</li>
+ * <li>{@code flags} <b>must</b> not include {@link EXTFragmentDensityMap#VK_SAMPLER_CREATE_SUBSAMPLED_BIT_EXT SAMPLER_CREATE_SUBSAMPLED_BIT_EXT}</li>
  * </ul>
  * 
  * <p>When {@code unnormalizedCoordinates} is {@link VK10#VK_TRUE TRUE}, images the sampler is used with in the shader have the following requirements:</p>
@@ -225,10 +233,6 @@ public class VkSamplerCreateInfo extends Struct implements NativeResource {
         UNNORMALIZEDCOORDINATES = layout.offsetof(17);
     }
 
-    VkSamplerCreateInfo(long address, @Nullable ByteBuffer container) {
-        super(address, container);
-    }
-
     /**
      * Creates a {@link VkSamplerCreateInfo} instance at the current position of the specified {@link ByteBuffer} container. Changes to the buffer's content will be
      * visible to the struct instance and vice versa.
@@ -236,7 +240,7 @@ public class VkSamplerCreateInfo extends Struct implements NativeResource {
      * <p>The created instance holds a strong reference to the container object.</p>
      */
     public VkSamplerCreateInfo(ByteBuffer container) {
-        this(memAddress(container), __checkContainer(container, SIZEOF));
+        super(memAddress(container), __checkContainer(container, SIZEOF));
     }
 
     @Override
@@ -389,28 +393,29 @@ public class VkSamplerCreateInfo extends Struct implements NativeResource {
 
     /** Returns a new {@link VkSamplerCreateInfo} instance allocated with {@link MemoryUtil#memAlloc memAlloc}. The instance must be explicitly freed. */
     public static VkSamplerCreateInfo malloc() {
-        return create(nmemAllocChecked(SIZEOF));
+        return wrap(VkSamplerCreateInfo.class, nmemAllocChecked(SIZEOF));
     }
 
     /** Returns a new {@link VkSamplerCreateInfo} instance allocated with {@link MemoryUtil#memCalloc memCalloc}. The instance must be explicitly freed. */
     public static VkSamplerCreateInfo calloc() {
-        return create(nmemCallocChecked(1, SIZEOF));
+        return wrap(VkSamplerCreateInfo.class, nmemCallocChecked(1, SIZEOF));
     }
 
     /** Returns a new {@link VkSamplerCreateInfo} instance allocated with {@link BufferUtils}. */
     public static VkSamplerCreateInfo create() {
-        return new VkSamplerCreateInfo(BufferUtils.createByteBuffer(SIZEOF));
+        ByteBuffer container = BufferUtils.createByteBuffer(SIZEOF);
+        return wrap(VkSamplerCreateInfo.class, memAddress(container), container);
     }
 
     /** Returns a new {@link VkSamplerCreateInfo} instance for the specified memory address. */
     public static VkSamplerCreateInfo create(long address) {
-        return new VkSamplerCreateInfo(address, null);
+        return wrap(VkSamplerCreateInfo.class, address);
     }
 
     /** Like {@link #create(long) create}, but returns {@code null} if {@code address} is {@code NULL}. */
     @Nullable
     public static VkSamplerCreateInfo createSafe(long address) {
-        return address == NULL ? null : create(address);
+        return address == NULL ? null : wrap(VkSamplerCreateInfo.class, address);
     }
 
     /**
@@ -419,7 +424,7 @@ public class VkSamplerCreateInfo extends Struct implements NativeResource {
      * @param capacity the buffer capacity
      */
     public static VkSamplerCreateInfo.Buffer malloc(int capacity) {
-        return create(__malloc(capacity, SIZEOF), capacity);
+        return wrap(Buffer.class, nmemAllocChecked(__checkMalloc(capacity, SIZEOF)), capacity);
     }
 
     /**
@@ -428,7 +433,7 @@ public class VkSamplerCreateInfo extends Struct implements NativeResource {
      * @param capacity the buffer capacity
      */
     public static VkSamplerCreateInfo.Buffer calloc(int capacity) {
-        return create(nmemCallocChecked(capacity, SIZEOF), capacity);
+        return wrap(Buffer.class, nmemCallocChecked(capacity, SIZEOF), capacity);
     }
 
     /**
@@ -437,7 +442,8 @@ public class VkSamplerCreateInfo extends Struct implements NativeResource {
      * @param capacity the buffer capacity
      */
     public static VkSamplerCreateInfo.Buffer create(int capacity) {
-        return new Buffer(__create(capacity, SIZEOF));
+        ByteBuffer container = __create(capacity, SIZEOF);
+        return wrap(Buffer.class, memAddress(container), capacity, container);
     }
 
     /**
@@ -447,13 +453,13 @@ public class VkSamplerCreateInfo extends Struct implements NativeResource {
      * @param capacity the buffer capacity
      */
     public static VkSamplerCreateInfo.Buffer create(long address, int capacity) {
-        return new Buffer(address, capacity);
+        return wrap(Buffer.class, address, capacity);
     }
 
     /** Like {@link #create(long, int) create}, but returns {@code null} if {@code address} is {@code NULL}. */
     @Nullable
     public static VkSamplerCreateInfo.Buffer createSafe(long address, int capacity) {
-        return address == NULL ? null : create(address, capacity);
+        return address == NULL ? null : wrap(Buffer.class, address, capacity);
     }
 
     // -----------------------------------
@@ -474,7 +480,7 @@ public class VkSamplerCreateInfo extends Struct implements NativeResource {
      * @param stack the stack from which to allocate
      */
     public static VkSamplerCreateInfo mallocStack(MemoryStack stack) {
-        return create(stack.nmalloc(ALIGNOF, SIZEOF));
+        return wrap(VkSamplerCreateInfo.class, stack.nmalloc(ALIGNOF, SIZEOF));
     }
 
     /**
@@ -483,7 +489,7 @@ public class VkSamplerCreateInfo extends Struct implements NativeResource {
      * @param stack the stack from which to allocate
      */
     public static VkSamplerCreateInfo callocStack(MemoryStack stack) {
-        return create(stack.ncalloc(ALIGNOF, 1, SIZEOF));
+        return wrap(VkSamplerCreateInfo.class, stack.ncalloc(ALIGNOF, 1, SIZEOF));
     }
 
     /**
@@ -511,7 +517,7 @@ public class VkSamplerCreateInfo extends Struct implements NativeResource {
      * @param capacity the buffer capacity
      */
     public static VkSamplerCreateInfo.Buffer mallocStack(int capacity, MemoryStack stack) {
-        return create(stack.nmalloc(ALIGNOF, capacity * SIZEOF), capacity);
+        return wrap(Buffer.class, stack.nmalloc(ALIGNOF, capacity * SIZEOF), capacity);
     }
 
     /**
@@ -521,89 +527,91 @@ public class VkSamplerCreateInfo extends Struct implements NativeResource {
      * @param capacity the buffer capacity
      */
     public static VkSamplerCreateInfo.Buffer callocStack(int capacity, MemoryStack stack) {
-        return create(stack.ncalloc(ALIGNOF, capacity, SIZEOF), capacity);
+        return wrap(Buffer.class, stack.ncalloc(ALIGNOF, capacity, SIZEOF), capacity);
     }
 
     // -----------------------------------
 
     /** Unsafe version of {@link #sType}. */
-    public static int nsType(long struct) { return memGetInt(struct + VkSamplerCreateInfo.STYPE); }
+    public static int nsType(long struct) { return UNSAFE.getInt(null, struct + VkSamplerCreateInfo.STYPE); }
     /** Unsafe version of {@link #pNext}. */
     public static long npNext(long struct) { return memGetAddress(struct + VkSamplerCreateInfo.PNEXT); }
     /** Unsafe version of {@link #flags}. */
-    public static int nflags(long struct) { return memGetInt(struct + VkSamplerCreateInfo.FLAGS); }
+    public static int nflags(long struct) { return UNSAFE.getInt(null, struct + VkSamplerCreateInfo.FLAGS); }
     /** Unsafe version of {@link #magFilter}. */
-    public static int nmagFilter(long struct) { return memGetInt(struct + VkSamplerCreateInfo.MAGFILTER); }
+    public static int nmagFilter(long struct) { return UNSAFE.getInt(null, struct + VkSamplerCreateInfo.MAGFILTER); }
     /** Unsafe version of {@link #minFilter}. */
-    public static int nminFilter(long struct) { return memGetInt(struct + VkSamplerCreateInfo.MINFILTER); }
+    public static int nminFilter(long struct) { return UNSAFE.getInt(null, struct + VkSamplerCreateInfo.MINFILTER); }
     /** Unsafe version of {@link #mipmapMode}. */
-    public static int nmipmapMode(long struct) { return memGetInt(struct + VkSamplerCreateInfo.MIPMAPMODE); }
+    public static int nmipmapMode(long struct) { return UNSAFE.getInt(null, struct + VkSamplerCreateInfo.MIPMAPMODE); }
     /** Unsafe version of {@link #addressModeU}. */
-    public static int naddressModeU(long struct) { return memGetInt(struct + VkSamplerCreateInfo.ADDRESSMODEU); }
+    public static int naddressModeU(long struct) { return UNSAFE.getInt(null, struct + VkSamplerCreateInfo.ADDRESSMODEU); }
     /** Unsafe version of {@link #addressModeV}. */
-    public static int naddressModeV(long struct) { return memGetInt(struct + VkSamplerCreateInfo.ADDRESSMODEV); }
+    public static int naddressModeV(long struct) { return UNSAFE.getInt(null, struct + VkSamplerCreateInfo.ADDRESSMODEV); }
     /** Unsafe version of {@link #addressModeW}. */
-    public static int naddressModeW(long struct) { return memGetInt(struct + VkSamplerCreateInfo.ADDRESSMODEW); }
+    public static int naddressModeW(long struct) { return UNSAFE.getInt(null, struct + VkSamplerCreateInfo.ADDRESSMODEW); }
     /** Unsafe version of {@link #mipLodBias}. */
-    public static float nmipLodBias(long struct) { return memGetFloat(struct + VkSamplerCreateInfo.MIPLODBIAS); }
+    public static float nmipLodBias(long struct) { return UNSAFE.getFloat(null, struct + VkSamplerCreateInfo.MIPLODBIAS); }
     /** Unsafe version of {@link #anisotropyEnable}. */
-    public static int nanisotropyEnable(long struct) { return memGetInt(struct + VkSamplerCreateInfo.ANISOTROPYENABLE); }
+    public static int nanisotropyEnable(long struct) { return UNSAFE.getInt(null, struct + VkSamplerCreateInfo.ANISOTROPYENABLE); }
     /** Unsafe version of {@link #maxAnisotropy}. */
-    public static float nmaxAnisotropy(long struct) { return memGetFloat(struct + VkSamplerCreateInfo.MAXANISOTROPY); }
+    public static float nmaxAnisotropy(long struct) { return UNSAFE.getFloat(null, struct + VkSamplerCreateInfo.MAXANISOTROPY); }
     /** Unsafe version of {@link #compareEnable}. */
-    public static int ncompareEnable(long struct) { return memGetInt(struct + VkSamplerCreateInfo.COMPAREENABLE); }
+    public static int ncompareEnable(long struct) { return UNSAFE.getInt(null, struct + VkSamplerCreateInfo.COMPAREENABLE); }
     /** Unsafe version of {@link #compareOp}. */
-    public static int ncompareOp(long struct) { return memGetInt(struct + VkSamplerCreateInfo.COMPAREOP); }
+    public static int ncompareOp(long struct) { return UNSAFE.getInt(null, struct + VkSamplerCreateInfo.COMPAREOP); }
     /** Unsafe version of {@link #minLod}. */
-    public static float nminLod(long struct) { return memGetFloat(struct + VkSamplerCreateInfo.MINLOD); }
+    public static float nminLod(long struct) { return UNSAFE.getFloat(null, struct + VkSamplerCreateInfo.MINLOD); }
     /** Unsafe version of {@link #maxLod}. */
-    public static float nmaxLod(long struct) { return memGetFloat(struct + VkSamplerCreateInfo.MAXLOD); }
+    public static float nmaxLod(long struct) { return UNSAFE.getFloat(null, struct + VkSamplerCreateInfo.MAXLOD); }
     /** Unsafe version of {@link #borderColor}. */
-    public static int nborderColor(long struct) { return memGetInt(struct + VkSamplerCreateInfo.BORDERCOLOR); }
+    public static int nborderColor(long struct) { return UNSAFE.getInt(null, struct + VkSamplerCreateInfo.BORDERCOLOR); }
     /** Unsafe version of {@link #unnormalizedCoordinates}. */
-    public static int nunnormalizedCoordinates(long struct) { return memGetInt(struct + VkSamplerCreateInfo.UNNORMALIZEDCOORDINATES); }
+    public static int nunnormalizedCoordinates(long struct) { return UNSAFE.getInt(null, struct + VkSamplerCreateInfo.UNNORMALIZEDCOORDINATES); }
 
     /** Unsafe version of {@link #sType(int) sType}. */
-    public static void nsType(long struct, int value) { memPutInt(struct + VkSamplerCreateInfo.STYPE, value); }
+    public static void nsType(long struct, int value) { UNSAFE.putInt(null, struct + VkSamplerCreateInfo.STYPE, value); }
     /** Unsafe version of {@link #pNext(long) pNext}. */
     public static void npNext(long struct, long value) { memPutAddress(struct + VkSamplerCreateInfo.PNEXT, value); }
     /** Unsafe version of {@link #flags(int) flags}. */
-    public static void nflags(long struct, int value) { memPutInt(struct + VkSamplerCreateInfo.FLAGS, value); }
+    public static void nflags(long struct, int value) { UNSAFE.putInt(null, struct + VkSamplerCreateInfo.FLAGS, value); }
     /** Unsafe version of {@link #magFilter(int) magFilter}. */
-    public static void nmagFilter(long struct, int value) { memPutInt(struct + VkSamplerCreateInfo.MAGFILTER, value); }
+    public static void nmagFilter(long struct, int value) { UNSAFE.putInt(null, struct + VkSamplerCreateInfo.MAGFILTER, value); }
     /** Unsafe version of {@link #minFilter(int) minFilter}. */
-    public static void nminFilter(long struct, int value) { memPutInt(struct + VkSamplerCreateInfo.MINFILTER, value); }
+    public static void nminFilter(long struct, int value) { UNSAFE.putInt(null, struct + VkSamplerCreateInfo.MINFILTER, value); }
     /** Unsafe version of {@link #mipmapMode(int) mipmapMode}. */
-    public static void nmipmapMode(long struct, int value) { memPutInt(struct + VkSamplerCreateInfo.MIPMAPMODE, value); }
+    public static void nmipmapMode(long struct, int value) { UNSAFE.putInt(null, struct + VkSamplerCreateInfo.MIPMAPMODE, value); }
     /** Unsafe version of {@link #addressModeU(int) addressModeU}. */
-    public static void naddressModeU(long struct, int value) { memPutInt(struct + VkSamplerCreateInfo.ADDRESSMODEU, value); }
+    public static void naddressModeU(long struct, int value) { UNSAFE.putInt(null, struct + VkSamplerCreateInfo.ADDRESSMODEU, value); }
     /** Unsafe version of {@link #addressModeV(int) addressModeV}. */
-    public static void naddressModeV(long struct, int value) { memPutInt(struct + VkSamplerCreateInfo.ADDRESSMODEV, value); }
+    public static void naddressModeV(long struct, int value) { UNSAFE.putInt(null, struct + VkSamplerCreateInfo.ADDRESSMODEV, value); }
     /** Unsafe version of {@link #addressModeW(int) addressModeW}. */
-    public static void naddressModeW(long struct, int value) { memPutInt(struct + VkSamplerCreateInfo.ADDRESSMODEW, value); }
+    public static void naddressModeW(long struct, int value) { UNSAFE.putInt(null, struct + VkSamplerCreateInfo.ADDRESSMODEW, value); }
     /** Unsafe version of {@link #mipLodBias(float) mipLodBias}. */
-    public static void nmipLodBias(long struct, float value) { memPutFloat(struct + VkSamplerCreateInfo.MIPLODBIAS, value); }
+    public static void nmipLodBias(long struct, float value) { UNSAFE.putFloat(null, struct + VkSamplerCreateInfo.MIPLODBIAS, value); }
     /** Unsafe version of {@link #anisotropyEnable(boolean) anisotropyEnable}. */
-    public static void nanisotropyEnable(long struct, int value) { memPutInt(struct + VkSamplerCreateInfo.ANISOTROPYENABLE, value); }
+    public static void nanisotropyEnable(long struct, int value) { UNSAFE.putInt(null, struct + VkSamplerCreateInfo.ANISOTROPYENABLE, value); }
     /** Unsafe version of {@link #maxAnisotropy(float) maxAnisotropy}. */
-    public static void nmaxAnisotropy(long struct, float value) { memPutFloat(struct + VkSamplerCreateInfo.MAXANISOTROPY, value); }
+    public static void nmaxAnisotropy(long struct, float value) { UNSAFE.putFloat(null, struct + VkSamplerCreateInfo.MAXANISOTROPY, value); }
     /** Unsafe version of {@link #compareEnable(boolean) compareEnable}. */
-    public static void ncompareEnable(long struct, int value) { memPutInt(struct + VkSamplerCreateInfo.COMPAREENABLE, value); }
+    public static void ncompareEnable(long struct, int value) { UNSAFE.putInt(null, struct + VkSamplerCreateInfo.COMPAREENABLE, value); }
     /** Unsafe version of {@link #compareOp(int) compareOp}. */
-    public static void ncompareOp(long struct, int value) { memPutInt(struct + VkSamplerCreateInfo.COMPAREOP, value); }
+    public static void ncompareOp(long struct, int value) { UNSAFE.putInt(null, struct + VkSamplerCreateInfo.COMPAREOP, value); }
     /** Unsafe version of {@link #minLod(float) minLod}. */
-    public static void nminLod(long struct, float value) { memPutFloat(struct + VkSamplerCreateInfo.MINLOD, value); }
+    public static void nminLod(long struct, float value) { UNSAFE.putFloat(null, struct + VkSamplerCreateInfo.MINLOD, value); }
     /** Unsafe version of {@link #maxLod(float) maxLod}. */
-    public static void nmaxLod(long struct, float value) { memPutFloat(struct + VkSamplerCreateInfo.MAXLOD, value); }
+    public static void nmaxLod(long struct, float value) { UNSAFE.putFloat(null, struct + VkSamplerCreateInfo.MAXLOD, value); }
     /** Unsafe version of {@link #borderColor(int) borderColor}. */
-    public static void nborderColor(long struct, int value) { memPutInt(struct + VkSamplerCreateInfo.BORDERCOLOR, value); }
+    public static void nborderColor(long struct, int value) { UNSAFE.putInt(null, struct + VkSamplerCreateInfo.BORDERCOLOR, value); }
     /** Unsafe version of {@link #unnormalizedCoordinates(boolean) unnormalizedCoordinates}. */
-    public static void nunnormalizedCoordinates(long struct, int value) { memPutInt(struct + VkSamplerCreateInfo.UNNORMALIZEDCOORDINATES, value); }
+    public static void nunnormalizedCoordinates(long struct, int value) { UNSAFE.putInt(null, struct + VkSamplerCreateInfo.UNNORMALIZEDCOORDINATES, value); }
 
     // -----------------------------------
 
     /** An array of {@link VkSamplerCreateInfo} structs. */
     public static class Buffer extends StructBuffer<VkSamplerCreateInfo, Buffer> implements NativeResource {
+
+        private static final VkSamplerCreateInfo ELEMENT_FACTORY = VkSamplerCreateInfo.create(-1L);
 
         /**
          * Creates a new {@link VkSamplerCreateInfo.Buffer} instance backed by the specified container.
@@ -632,18 +640,8 @@ public class VkSamplerCreateInfo extends Struct implements NativeResource {
         }
 
         @Override
-        protected Buffer newBufferInstance(long address, @Nullable ByteBuffer container, int mark, int pos, int lim, int cap) {
-            return new Buffer(address, container, mark, pos, lim, cap);
-        }
-
-        @Override
-        protected VkSamplerCreateInfo newInstance(long address) {
-            return new VkSamplerCreateInfo(address, container);
-        }
-
-        @Override
-        public int sizeof() {
-            return SIZEOF;
+        protected VkSamplerCreateInfo getElementFactory() {
+            return ELEMENT_FACTORY;
         }
 
         /** Returns the value of the {@code sType} field. */

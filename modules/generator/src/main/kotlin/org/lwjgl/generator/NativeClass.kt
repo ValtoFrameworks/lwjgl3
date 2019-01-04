@@ -187,6 +187,7 @@ class NativeClass internal constructor(
 ) : GeneratorTargetNative(module, className, nativeSubPath) {
     companion object {
         private val JDOC_LINK_PATTERN = """(?<!\p{javaJavaIdentifierPart}|[@#])#(\p{javaJavaIdentifierStart}\p{javaJavaIdentifierPart}*)""".toRegex()
+        private val VOID_ARGS = Parameter(void, ANONYMOUS, "", "")
     }
 
     var extends: NativeClass? = null
@@ -458,7 +459,7 @@ class NativeClass internal constructor(
                         it.has<SingleValue>() ||
                         (it.isAutoSizeResultOut && func.hideAutoSizeResultParam) ||
                         it.has<PointerArray>() ||
-                        (it.nativeType is CharSequenceType && it.paramType !== ParameterType.OUT)
+                        (it.nativeType is CharSequenceType && it.isInput)
                     )
                 }
             }
@@ -504,8 +505,8 @@ class NativeClass internal constructor(
 
         val documentation = super.documentation
         if (!documentation.isNullOrBlank())
-            println(processDocumentation(documentation!!).toJavaDoc(indentation = ""))
-        val isOpen = hasFunctions || extends != null
+            println(processDocumentation(documentation).toJavaDoc(indentation = ""))
+        val isOpen = access === Access.PUBLIC && (hasFunctions || extends != null)
         print("${access.modifier}${if (isOpen) "" else "final "}class $className")
         extends.let {
             if (it != null)
@@ -518,28 +519,30 @@ class NativeClass internal constructor(
         }
 
         fun PrintWriter.libraryInit() {
-            println(if (library == null)
-                "\n${t}static { Library.initialize(); }"
-            else if (library.contains('\n'))
-                """
+            if (library != null || binding !is SimpleBinding) {
+                println(if (library == null)
+                    "\n${t}static { Library.initialize(); }"
+                else if (library.contains('\n'))
+                    """
     static {
         ${library.trim()}
     }"""
-            else if (library.endsWith(");"))
-                "\n${t}static { $library }"
-            else
-                "\n${t}static { Library.loadSystem(System::load, System::loadLibrary, $className.class, Platform.mapLibraryNameBundled(\"$library\")); }"
-            )
+                else if (library.endsWith(");"))
+                    "\n${t}static { $library }"
+                else
+                    "\n${t}static { Library.loadSystem(System::load, System::loadLibrary, $className.class, Platform.mapLibraryNameBundled(\"$library\")); }"
+                )
+            }
         }
 
         if (hasFunctions || binding is SimpleBinding) {
             if (binding != null) {
-                if (binding !is SimpleBinding && functions.any(Func::hasCustomJNI))
+                if (functions.any(Func::hasCustomJNI))
                     libraryInit()
 
                 if (binding is SimpleBinding || functions.any { !it.hasExplicitFunctionAddress }) {
                     println("""
-    ${if (isOpen && access === Access.PUBLIC) "protected" else "private"} $className() {
+    ${if (isOpen) "protected" else "private"} $className() {
         throw new UnsupportedOperationException();
     }""")
                     binding.generateFunctionSetup(this, this@NativeClass)
@@ -552,12 +555,12 @@ class NativeClass internal constructor(
 
                 // This allows binding classes to be "statically" extended. Not a good practice, but usable with static imports.
                 println("""
-    ${if (isOpen && access === Access.PUBLIC) "protected" else "private"} $className() {
+    ${if (isOpen) "protected" else "private"} $className() {
         throw new UnsupportedOperationException();
     }""")
             }
         } else {
-            println("\n$t${if (isOpen && access === Access.PUBLIC) "protected" else "private"} $className() {}")
+            println("\n$t${if (isOpen) "protected" else "private"} $className() {}")
         }
 
         genFunctions.forEach { func ->
@@ -663,22 +666,13 @@ class NativeClass internal constructor(
     fun String.enum(documentation: String, expression: String) =
         Constant(this, EnumValueExpression({ if (documentation.isEmpty()) null else processDocumentation(documentation) }, expression))
 
-    fun DataType.IN(name: String, javadoc: String, links: String = "", linkMode: LinkMode = LinkMode.SINGLE) = createParameter(name, ParameterType.IN, javadoc, links, linkMode)
-    fun PointerType<*>.OUT(name: String, javadoc: String, links: String = "", linkMode: LinkMode = LinkMode.SINGLE) = createParameter(name, ParameterType.OUT, javadoc, links, linkMode)
-    fun <T : DataType> PointerType<T>.INOUT(name: String, javadoc: String, links: String = "", linkMode: LinkMode = LinkMode.SINGLE) =
-        createParameter(name, ParameterType.INOUT, javadoc, links, linkMode)
+    operator fun DataType.invoke(name: String, javadoc: String, links: String = "", linkMode: LinkMode = LinkMode.SINGLE) =
+        if (links.isEmpty() || !links.contains('+'))
+            Parameter(this, name, javadoc, links, linkMode)
+        else
+            Parameter(this, name) { linkMode.appendLinks(javadoc, linksFromRegex(links)) }
 
-    private fun NativeType.createParameter(
-        name: String,
-        paramType: ParameterType,
-        javadoc: String,
-        links: String,
-        linkMode: LinkMode = LinkMode.SINGLE
-    ) = if (links.isEmpty() || !links.contains('+'))
-        Parameter(this, name, paramType, javadoc, links, linkMode)
-    else
-        Parameter(this, name, paramType) { linkMode.appendLinks(javadoc, linksFromRegex(links)) }
-
+    operator fun VoidType.invoke() = VOID_ARGS
     operator fun VoidType.invoke(
         className: String,
         functionDoc: String,
@@ -779,6 +773,11 @@ class NativeClass internal constructor(
         noPrefix: Boolean,
         vararg parameters: Parameter
     ): Func {
+        val params = if (parameters.size == 1 && parameters[0].nativeType === void) {
+            emptyArray()
+        } else {
+            parameters
+        }
         val overload = name.indexOf('@').let { if (it == -1) name else name.substring(0, it) }
         val func = Func(
             returns = returns,
@@ -787,7 +786,7 @@ class NativeClass internal constructor(
             documentation = { parameterFilter ->
                 this@NativeClass.toJavaDoc(
                     processDocumentation(documentation),
-                    parameters.asSequence().filter { it !== JNI_ENV && parameterFilter(it) },
+                    params.asSequence().filter { it !== JNI_ENV && parameterFilter(it) },
                     returns.nativeType,
                     returnDoc,
                     see,
@@ -795,7 +794,7 @@ class NativeClass internal constructor(
                 )
             },
             nativeClass = this@NativeClass,
-            parameters = *parameters
+            parameters = *params
         )
 
         if ((_functions.put(name, func)) != null) {

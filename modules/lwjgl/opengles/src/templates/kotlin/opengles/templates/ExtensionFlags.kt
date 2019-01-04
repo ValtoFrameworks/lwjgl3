@@ -441,6 +441,22 @@ val KHR_texture_compression_astc_sliced_3d = EXT_FLAG.nativeClassGLES("KHR_textu
         """
 }
 
+val NV_compute_shader_derivatives = EXT_FLAG.nativeClassGLES("NV_compute_shader_derivatives", postfix = NV) {
+    documentation =
+        """
+        When true, the $registryLink extension is supported.
+
+        This extension adds OpenGL ES API support for the OpenGL Shading Language (GLSL) extension {@code "NV_compute_shader_derivatives"}.
+
+        That extension, when enabled, allows applications to use derivatives in compute shaders. It adds compute shader support for explicit derivative
+        built-in functions like {@code dFdx()}, automatic derivative computation in texture lookup functions like {@code texture()}, use of the optional LOD
+        bias parameter to adjust the computed level of detail values in texture lookup functions, and the texture level of detail query function
+        {@code textureQueryLod()}.
+
+        Requires ${GLES32.core}.
+        """
+}
+
 val NV_explicit_attrib_location = EXT_FLAG.nativeClassGLES("NV_explicit_attrib_location", postfix = NV) {
     documentation =
         """
@@ -927,5 +943,37 @@ val OVR_multiview2 = EXT_FLAG.nativeClassGLES("OVR_multiview2", postfix = OVR) {
         view-dependent outputs like reflection vectors and similar are allowed.
 
         Requires ${GLES30.core} and ${OVR_multiview.link}.
+        """
+}
+
+val QCOM_shader_framebuffer_fetch_rate = EXT_FLAG.nativeClassGLES("QCOM_shader_framebuffer_fetch_rate", postfix = QCOM) {
+    documentation =
+        """
+        When certain built-ins (e.g. {@code gl_LastFragData}, {@code gl_LastFragStencilARM}) are referenced in the shader, the shader is required to execute at
+        sample-rate if the attachments are multisampled. In some use-cases executing such shaders at fragment-rate is actually the preferred behavior. When
+        this extension is enabled, such GLSL shaders will execute at fragment-rate and the built-in will return a per-fragment value. This avoids the
+        significant performance penalty that would otherwise be incurred with sample-rate shading.
+
+        The following built-ins are affected when the this extension is enabled:
+        ${ul(
+            "{@code gl_LastFragData} (from ${EXT_shader_framebuffer_fetch.link})",
+            "{@code gl_LastFragDepthARM} (from ${ARM_shader_framebuffer_fetch_depth_stencil.cap})"
+        )}
+
+        The following built-ins are disallowed when this extension is enabled:
+        ${ul(
+            "gl_SampleID",
+            "gl_SamplePosition",
+            "interpolateAtSample()"
+        )}
+        """
+}
+
+val QCOM_YUV_texture_gather = EXT_FLAG.nativeClassGLES("QCOM_YUV_texture_gather", postfix = QCOM) {
+    documentation =
+        """
+        Extension ${EXT_gpu_shader5.cap} introduced the texture gather built-in functions. Extension ${EXT_YUV_target.link} adds the ability to sample from YUV
+        textures, but does not include gather functions. This extension allows gather function to be used in combination with the YUV textures exposed in
+        {@code EXT_YUV_target}.
         """
 }

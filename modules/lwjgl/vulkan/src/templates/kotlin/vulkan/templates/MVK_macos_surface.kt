@@ -34,7 +34,7 @@ val MVK_macos_surface = "MVKMacosSurface".nativeClassVK("MVK_macos_surface", typ
 
             <dt><b>Contact</b></dt>
             <dd><ul>
-                <li>Bill Hollings @billhollings</li>
+                <li>Bill Hollings <a target="_blank" href="https://github.com/KhronosGroup/Vulkan-Docs/issues/new?title=VK_MVK_macos_surface:%20&amp;body=@billhollings%20">billhollings</a></li>
             </ul></dd>
 
             <dt><b>Last Modified Date</b></dt>
@@ -110,9 +110,9 @@ val MVK_macos_surface = "MVKMacosSurface".nativeClassVK("MVK_macos_surface", typ
         ##VkAllocationCallbacks, ##VkMacOSSurfaceCreateInfoMVK
         """,
 
-        VkInstance.IN("instance", "the instance with which to associate the surface."),
-        VkMacOSSurfaceCreateInfoMVK.const.p.IN("pCreateInfo", "a pointer to an instance of the ##VkMacOSSurfaceCreateInfoMVK structure containing parameters affecting the creation of the surface object."),
-        nullable..VkAllocationCallbacks.const.p.IN("pAllocator", "the allocator used for host memory allocated for the surface object when there is no more specific allocator available (see <a target=\"_blank\" href=\"https://www.khronos.org/registry/vulkan/specs/1.0-extensions/html/vkspec.html\\#memory-allocation\">Memory Allocation</a>)."),
-        Check(1)..VkSurfaceKHR.p.OUT("pSurface", "points to a {@code VkSurfaceKHR} handle in which the created surface object is returned.")
+        VkInstance("instance", "the instance with which to associate the surface."),
+        VkMacOSSurfaceCreateInfoMVK.const.p("pCreateInfo", "a pointer to an instance of the ##VkMacOSSurfaceCreateInfoMVK structure containing parameters affecting the creation of the surface object."),
+        nullable..VkAllocationCallbacks.const.p("pAllocator", "the allocator used for host memory allocated for the surface object when there is no more specific allocator available (see <a target=\"_blank\" href=\"https://www.khronos.org/registry/vulkan/specs/1.0-extensions/html/vkspec.html\\#memory-allocation\">Memory Allocation</a>)."),
+        Check(1)..VkSurfaceKHR.p("pSurface", "points to a {@code VkSurfaceKHR} handle in which the created surface object is returned.")
     )
 }

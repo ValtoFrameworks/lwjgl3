@@ -37,7 +37,7 @@ val EXT_sample_locations = "EXTSampleLocations".nativeClassVK("EXT_sample_locati
 
             <dt><b>Contact</b></dt>
             <dd><ul>
-                <li>Daniel Rakos @drakos-amd</li>
+                <li>Daniel Rakos <a target="_blank" href="https://github.com/KhronosGroup/Vulkan-Docs/issues/new?title=VK_EXT_sample_locations:%20&amp;body=@drakos-amd%20">drakos-amd</a></li>
             </ul></dd>
 
             <dt><b>Last Modified Date</b></dt>
@@ -98,7 +98,7 @@ val EXT_sample_locations = "EXTSampleLocations".nativeClassVK("EXT_sample_locati
         <h5>C Specification</h5>
         The custom sample locations used for rasterization when ##VkPipelineSampleLocationsStateCreateInfoEXT{@code ::sampleLocationsEnable} is #TRUE are specified by the ##VkPipelineSampleLocationsStateCreateInfoEXT{@code ::sampleLocationsInfo} property of the bound graphics pipeline, if the pipeline was not created with #DYNAMIC_STATE_SAMPLE_LOCATIONS_EXT enabled.
 
-        Otherwise, the sample locations used for rasterization are set by calling #CmdSetSampleLocationsEXT():
+        Otherwise, the sample locations used for rasterization are set by calling {@code vkCmdSetSampleLocationsEXT}:
 
         <pre><code>
 ￿void vkCmdSetSampleLocationsEXT(
@@ -136,8 +136,8 @@ val EXT_sample_locations = "EXTSampleLocations".nativeClassVK("EXT_sample_locati
         ##VkSampleLocationsInfoEXT
         """,
 
-        VkCommandBuffer.IN("commandBuffer", "the command buffer into which the command will be recorded."),
-        VkSampleLocationsInfoEXT.const.p.IN("pSampleLocationsInfo", "the sample locations state to set.")
+        VkCommandBuffer("commandBuffer", "the command buffer into which the command will be recorded."),
+        VkSampleLocationsInfoEXT.const.p("pSampleLocationsInfo", "the sample locations state to set.")
     )
 
     void(
@@ -167,8 +167,8 @@ val EXT_sample_locations = "EXTSampleLocations".nativeClassVK("EXT_sample_locati
         ##VkMultisamplePropertiesEXT
         """,
 
-        VkPhysicalDevice.IN("physicalDevice", "the physical device from which to query the additional multisampling capabilities."),
-        VkSampleCountFlagBits.IN("samples", "the sample count to query the capabilities for."),
-        VkMultisamplePropertiesEXT.p.OUT("pMultisampleProperties", "a pointer to a structure of type ##VkMultisamplePropertiesEXT, in which information about the additional multisampling capabilities specific to the sample count is returned.")
+        VkPhysicalDevice("physicalDevice", "the physical device from which to query the additional multisampling capabilities."),
+        VkSampleCountFlagBits("samples", "the sample count to query the capabilities for."),
+        VkMultisamplePropertiesEXT.p("pMultisampleProperties", "a pointer to a structure of type ##VkMultisamplePropertiesEXT, in which information about the additional multisampling capabilities specific to the sample count is returned.")
     )
 }

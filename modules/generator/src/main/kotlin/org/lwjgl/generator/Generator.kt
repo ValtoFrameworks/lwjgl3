@@ -48,12 +48,17 @@ enum class Module(
 
     ASSIMP("binding.assimp", "org.lwjgl.assimp"),
     BGFX("binding.bgfx", "org.lwjgl.bgfx"),
+    BULLET("binding.bullet", "org.lwjgl.bullet", arrayOverloads = false),
+    CUDA("binding.cuda", "org.lwjgl.cuda", CallingConvention.STDCALL, arrayOverloads = false),
     EGL("binding.egl", "org.lwjgl.egl", CallingConvention.STDCALL),
     GLFW("binding.glfw", "org.lwjgl.glfw"),
     JAWT("binding.jawt", "org.lwjgl.system.jawt", CallingConvention.STDCALL),
     JEMALLOC("binding.jemalloc", "org.lwjgl.system.jemalloc"),
+    LIBDIVIDE("binding.libdivide", "org.lwjgl.util.libdivide", arrayOverloads = false),
+    LLVM("binding.llvm", "org.lwjgl.llvm", arrayOverloads = false),
     LMDB("binding.lmdb", "org.lwjgl.util.lmdb"),
     LZ4("binding.lz4", "org.lwjgl.util.lz4", arrayOverloads = false),
+    MEOW("binding.meow", "org.lwjgl.util.meow", arrayOverloads = false),
     NANOVG("binding.nanovg", "org.lwjgl.nanovg"),
     NFD("binding.nfd", "org.lwjgl.util.nfd"),
     NUKLEAR("binding.nuklear", "org.lwjgl.nuklear"),
@@ -63,6 +68,7 @@ enum class Module(
     OPENGL("binding.opengl", "org.lwjgl.opengl", CallingConvention.STDCALL),
     OPENGLES("binding.opengles", "org.lwjgl.opengles", CallingConvention.STDCALL),
     OPENVR("binding.openvr", "org.lwjgl.openvr", CallingConvention.STDCALL, arrayOverloads = false),
+    OPUS("binding.opus", "org.lwjgl.util.opus", arrayOverloads = false),
     OVR("binding.ovr", "org.lwjgl.ovr"),
     PAR("binding.par", "org.lwjgl.util.par"),
     REMOTERY("binding.remotery", "org.lwjgl.util.remotery", arrayOverloads = false),
@@ -517,10 +523,6 @@ private fun readFile(file: Path) = Files.newByteChannel(file).use {
     buffer
 }
 
-private class LWJGLWriter(out: Writer) : PrintWriter(out) {
-    override fun println() = print('\n')
-}
-
 private fun <T> generateOutput(
     target: T,
     file: Path,
@@ -535,7 +537,7 @@ private fun <T> generateOutput(
     if (Files.isRegularFile(file)) {
         // Generate in-memory
         val baos = ByteArrayOutputStream(4 * 1024)
-        LWJGLWriter(OutputStreamWriter(baos, Charsets.UTF_8)).use {
+        PrintWriter(OutputStreamWriter(baos, Charsets.UTF_8)).use {
             target.generate(it)
         }
 
@@ -562,7 +564,7 @@ private fun <T> generateOutput(
         }
     } else {
         println("\tWRITING: $file")
-        LWJGLWriter(Files.newBufferedWriter(file, Charsets.UTF_8)).use {
+        PrintWriter(Files.newBufferedWriter(file, Charsets.UTF_8)).use {
             target.generate(it)
         }
     }

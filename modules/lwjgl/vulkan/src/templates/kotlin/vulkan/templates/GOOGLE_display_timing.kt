@@ -43,7 +43,7 @@ val GOOGLE_display_timing = "GOOGLEDisplayTiming".nativeClassVK("GOOGLE_display_
 
             <dt><b>Contact</b></dt>
             <dd><ul>
-                <li>Ian Elliott @ianelliottus</li>
+                <li>Ian Elliott <a target="_blank" href="https://github.com/KhronosGroup/Vulkan-Docs/issues/new?title=VK_GOOGLE_display_timing:%20&amp;body=@ianelliottus%20">ianelliottus</a></li>
             </ul></dd>
 
             <dt><b>Last Modified Date</b></dt>
@@ -123,9 +123,9 @@ val GOOGLE_display_timing = "GOOGLEDisplayTiming".nativeClassVK("GOOGLE_display_
         ##VkRefreshCycleDurationGOOGLE
         """,
 
-        VkDevice.IN("device", "the device associated with {@code swapchain}."),
-        VkSwapchainKHR.IN("swapchain", "the swapchain to obtain the refresh duration for."),
-        VkRefreshCycleDurationGOOGLE.p.OUT("pDisplayTimingProperties", "a pointer to an instance of the ##VkRefreshCycleDurationGOOGLE structure.")
+        VkDevice("device", "the device associated with {@code swapchain}."),
+        VkSwapchainKHR("swapchain", "the swapchain to obtain the refresh duration for."),
+        VkRefreshCycleDurationGOOGLE.p("pDisplayTimingProperties", "a pointer to an instance of the ##VkRefreshCycleDurationGOOGLE structure.")
     )
 
     VkResult(
@@ -182,9 +182,9 @@ val GOOGLE_display_timing = "GOOGLEDisplayTiming".nativeClassVK("GOOGLE_display_
         ##VkPastPresentationTimingGOOGLE
         """,
 
-        VkDevice.IN("device", "the device associated with {@code swapchain}."),
-        VkSwapchainKHR.IN("swapchain", "the swapchain to obtain presentation timing information duration for."),
-        AutoSize("pPresentationTimings")..Check(1)..uint32_t.p.INOUT("pPresentationTimingCount", "a pointer to an integer related to the number of ##VkPastPresentationTimingGOOGLE structures to query, as described below."),
-        nullable..VkPastPresentationTimingGOOGLE.p.OUT("pPresentationTimings", "either {@code NULL} or a pointer to an an array of ##VkPastPresentationTimingGOOGLE structures.")
+        VkDevice("device", "the device associated with {@code swapchain}."),
+        VkSwapchainKHR("swapchain", "the swapchain to obtain presentation timing information duration for."),
+        AutoSize("pPresentationTimings")..Check(1)..uint32_t.p("pPresentationTimingCount", "a pointer to an integer related to the number of ##VkPastPresentationTimingGOOGLE structures to query, as described below."),
+        nullable..VkPastPresentationTimingGOOGLE.p("pPresentationTimings", "either {@code NULL} or a pointer to an array of ##VkPastPresentationTimingGOOGLE structures.")
     )
 }

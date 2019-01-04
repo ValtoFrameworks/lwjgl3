@@ -78,7 +78,27 @@ class AutoSizeIndirect(
 object NullableMember : StructMemberModifier {
     override val isSpecial = true
     override fun validate(member: StructMember) {
-        if (member.nativeType !is PointerType<*> && member !is StructMemberBuffer)
-            throw IllegalArgumentException("The nullable modifier can only be applied on pointer members.")
+        if (member.nativeType !is PointerType<*>)
+            throw IllegalArgumentException("The nullable modifier can only be applied to pointer members.")
+    }
+}
+
+object UnsafeMember : StructMemberModifier {
+    override val isSpecial = true
+    override fun validate(member: StructMember) {
+        if (member.nativeType !is PointerType<*> || member.nativeType.elementType !is StructType)
+            throw IllegalArgumentException("The Unsafe modifier can only be applied to pointer to struct members.")
+    }
+}
+
+/** Marks a member as a callback member's "user data". */
+class UserDataMember(
+    override val reference: String = ""
+) : StructMemberModifier, ReferenceModifier {
+    override val isSpecial = true
+    override fun validate(member: StructMember) {
+        if (!(member.nativeType is PointerType<*> && member.nativeType.elementType is OpaqueType)) {
+            throw IllegalArgumentException("The UserData modifier can only be applied to opaque pointer parameters.")
+        }
     }
 }

@@ -42,7 +42,7 @@ val KHR_external_memory_capabilities = "KHRExternalMemoryCapabilities".nativeCla
 
             <dt><b>Contact</b></dt>
             <dd><ul>
-                <li>James Jones @cubanismo</li>
+                <li>James Jones <a target="_blank" href="https://github.com/KhronosGroup/Vulkan-Docs/issues/new?title=VK_KHR_external_memory_capabilities:%20&amp;body=@cubanismo%20">cubanismo</a></li>
             </ul></dd>
 
             <dt><b>Last Modified Date</b></dt>
@@ -119,8 +119,8 @@ val KHR_external_memory_capabilities = "KHRExternalMemoryCapabilities".nativeCla
         "GetPhysicalDeviceExternalBufferPropertiesKHR",
         "See #GetPhysicalDeviceExternalBufferProperties().",
 
-        VkPhysicalDevice.IN("physicalDevice", "the physical device from which to query the buffer capabilities."),
-        VkPhysicalDeviceExternalBufferInfo.const.p.IN("pExternalBufferInfo", "points to an instance of the ##VkPhysicalDeviceExternalBufferInfo structure, describing the parameters that would be consumed by #CreateBuffer()."),
-        VkExternalBufferProperties.p.OUT("pExternalBufferProperties", "points to an instance of the ##VkExternalBufferProperties structure in which capabilities are returned.")
+        VkPhysicalDevice("physicalDevice", "the physical device from which to query the buffer capabilities."),
+        VkPhysicalDeviceExternalBufferInfo.const.p("pExternalBufferInfo", "points to an instance of the ##VkPhysicalDeviceExternalBufferInfo structure, describing the parameters that would be consumed by #CreateBuffer()."),
+        VkExternalBufferProperties.p("pExternalBufferProperties", "points to an instance of the ##VkExternalBufferProperties structure in which capabilities are returned.")
     )
 }

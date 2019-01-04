@@ -174,7 +174,7 @@ val NV_external_memory_win32 = "NVExternalMemoryWin32".nativeClassVK("NV_externa
 
             <dt><b>Contact</b></dt>
             <dd><ul>
-                <li>James Jones @cubanismo</li>
+                <li>James Jones <a target="_blank" href="https://github.com/KhronosGroup/Vulkan-Docs/issues/new?title=VK_NV_external_memory_win32:%20&amp;body=@cubanismo%20">cubanismo</a></li>
             </ul></dd>
 
             <dt><b>Last Modified Date</b></dt>
@@ -255,9 +255,9 @@ val NV_external_memory_win32 = "NVExternalMemoryWin32".nativeClassVK("NV_externa
         </dl>
         """,
 
-        VkDevice.IN("device", "the logical device that owns the memory."),
-        VkDeviceMemory.IN("memory", "the {@code VkDeviceMemory} object."),
-        VkExternalMemoryHandleTypeFlagsNV.IN("handleType", "a bitmask of {@code VkExternalMemoryHandleTypeFlagBitsNV} containing a single bit specifying the type of handle requested."),
-        Check(1)..HANDLE.p.OUT("pHandle", "")
+        VkDevice("device", "the logical device that owns the memory."),
+        VkDeviceMemory("memory", "the {@code VkDeviceMemory} object."),
+        VkExternalMemoryHandleTypeFlagsNV("handleType", "a bitmask of {@code VkExternalMemoryHandleTypeFlagBitsNV} containing a single bit specifying the type of handle requested."),
+        Check(1)..HANDLE.p("pHandle", "")
     )
 }

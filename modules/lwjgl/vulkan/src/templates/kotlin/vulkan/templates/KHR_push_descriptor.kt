@@ -37,7 +37,7 @@ val KHR_push_descriptor = "KHRPushDescriptor".nativeClassVK("KHR_push_descriptor
 
             <dt><b>Contact</b></dt>
             <dd><ul>
-                <li>Jeff Bolz @jeffbolznv</li>
+                <li>Jeff Bolz <a target="_blank" href="https://github.com/KhronosGroup/Vulkan-Docs/issues/new?title=VK_KHR_push_descriptor:%20&amp;body=@jeffbolznv%20">jeffbolznv</a></li>
             </ul></dd>
 
             <dt><b>Last Modified Date</b></dt>
@@ -151,12 +151,12 @@ val KHR_push_descriptor = "KHRPushDescriptor".nativeClassVK("KHR_push_descriptor
         ##VkWriteDescriptorSet
         """,
 
-        VkCommandBuffer.IN("commandBuffer", "the command buffer that the descriptors will be recorded in."),
-        VkPipelineBindPoint.IN("pipelineBindPoint", "a {@code VkPipelineBindPoint} indicating whether the descriptors will be used by graphics pipelines or compute pipelines. There is a separate set of push descriptor bindings for each of graphics and compute, so binding one does not disturb the other."),
-        VkPipelineLayout.IN("layout", "a {@code VkPipelineLayout} object used to program the bindings."),
-        uint32_t.IN("set", "the set number of the descriptor set in the pipeline layout that will be updated."),
-        AutoSize("pDescriptorWrites")..uint32_t.IN("descriptorWriteCount", "the number of elements in the {@code pDescriptorWrites} array."),
-        VkWriteDescriptorSet.const.p.IN("pDescriptorWrites", "a pointer to an array of ##VkWriteDescriptorSet structures describing the descriptors to be updated.")
+        VkCommandBuffer("commandBuffer", "the command buffer that the descriptors will be recorded in."),
+        VkPipelineBindPoint("pipelineBindPoint", "a {@code VkPipelineBindPoint} indicating whether the descriptors will be used by graphics pipelines or compute pipelines. There is a separate set of push descriptor bindings for each of graphics and compute, so binding one does not disturb the other."),
+        VkPipelineLayout("layout", "a {@code VkPipelineLayout} object used to program the bindings."),
+        uint32_t("set", "the set number of the descriptor set in the pipeline layout that will be updated."),
+        AutoSize("pDescriptorWrites")..uint32_t("descriptorWriteCount", "the number of elements in the {@code pDescriptorWrites} array."),
+        VkWriteDescriptorSet.const.p("pDescriptorWrites", "a pointer to an array of ##VkWriteDescriptorSet structures describing the descriptors to be updated.")
     )
 
     DependsOn("Vulkan11")..void(
@@ -229,7 +229,7 @@ val KHR_push_descriptor = "KHRPushDescriptor".nativeClassVK("KHR_push_descriptor
 ￿
 ￿};
 ￿
-￿// create an descriptor update template for descriptor set updates
+￿// create a descriptor update template for descriptor set updates
 ￿const VkDescriptorUpdateTemplateCreateInfo createInfo =
 ￿{
 ￿    VK_STRUCTURE_TYPE_DESCRIPTOR_UPDATE_TEMPLATE_CREATE_INFO,  // sType
@@ -257,10 +257,10 @@ val KHR_push_descriptor = "KHRPushDescriptor".nativeClassVK("KHR_push_descriptor
 ￿vkCmdPushDescriptorSetWithTemplateKHR(myCmdBuffer, myDescriptorUpdateTemplate, myPipelineLayout, 0,&amp;appData);</code></pre>
         """,
 
-        VkCommandBuffer.IN("commandBuffer", "the command buffer that the descriptors will be recorded in."),
-        VkDescriptorUpdateTemplate.IN("descriptorUpdateTemplate", "A descriptor update template which defines how to interpret the descriptor information in pData."),
-        VkPipelineLayout.IN("layout", "a {@code VkPipelineLayout} object used to program the bindings. It <b>must</b> be compatible with the layout used to create the {@code descriptorUpdateTemplate} handle."),
-        uint32_t.IN("set", "the set number of the descriptor set in the pipeline layout that will be updated. This <b>must</b> be the same number used to create the {@code descriptorUpdateTemplate} handle."),
-        opaque_const_p.IN("pData", "Points to memory which contains the descriptors for the templated update.")
+        VkCommandBuffer("commandBuffer", "the command buffer that the descriptors will be recorded in."),
+        VkDescriptorUpdateTemplate("descriptorUpdateTemplate", "A descriptor update template which defines how to interpret the descriptor information in pData."),
+        VkPipelineLayout("layout", "a {@code VkPipelineLayout} object used to program the bindings. It <b>must</b> be compatible with the layout used to create the {@code descriptorUpdateTemplate} handle."),
+        uint32_t("set", "the set number of the descriptor set in the pipeline layout that will be updated. This <b>must</b> be the same number used to create the {@code descriptorUpdateTemplate} handle."),
+        opaque_const_p("pData", "Points to memory which contains the descriptors for the templated update.")
     )
 }

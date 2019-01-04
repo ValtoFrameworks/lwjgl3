@@ -68,6 +68,11 @@ public class ZstdX {
         ZSTD_MAGIC_SKIPPABLE_START = 0x184D2A50,
         ZSTD_MAGIC_DICTIONARY      = 0xEC30A437;
 
+    /** Block size constant. */
+    public static final int
+        ZSTD_BLOCKSIZELOG_MAX = 17,
+        ZSTD_BLOCKSIZE_MAX    = (1<<ZSTD_BLOCKSIZELOG_MAX);
+
     /** Constant. */
     public static final int
         ZSTD_WINDOWLOG_MAX_32       = 30,
@@ -85,8 +90,10 @@ public class ZstdX {
         ZSTD_SEARCHLOG_MIN          = 1,
         ZSTD_SEARCHLENGTH_MAX       = 7,
         ZSTD_SEARCHLENGTH_MIN       = 3,
-        ZSTD_LDM_MINMATCH_MIN       = 4,
+        ZSTD_TARGETLENGTH_MAX       = ZSTD_BLOCKSIZE_MAX,
+        ZSTD_TARGETLENGTH_MIN       = 0,
         ZSTD_LDM_MINMATCH_MAX       = 4096,
+        ZSTD_LDM_MINMATCH_MIN       = 4,
         ZSTD_LDM_BUCKETSIZELOG_MAX  = 8,
         ZSTD_FRAMEHEADERSIZE_PREFIX = 5,
         ZSTD_FRAMEHEADERSIZE_MIN    = 6,
@@ -161,6 +168,28 @@ public class ZstdX {
     public static final int
         ZSTD_frame          = 0,
         ZSTD_skippableFrame = 1;
+
+    /**
+     * {@code ZSTD_nextInputType_e}
+     * 
+     * <h5>Enum values:</h5>
+     * 
+     * <ul>
+     * <li>{@link #ZSTDnit_frameHeader ZSTDnit_frameHeader}</li>
+     * <li>{@link #ZSTDnit_blockHeader ZSTDnit_blockHeader}</li>
+     * <li>{@link #ZSTDnit_block ZSTDnit_block}</li>
+     * <li>{@link #ZSTDnit_lastBlock ZSTDnit_lastBlock}</li>
+     * <li>{@link #ZSTDnit_checksum ZSTDnit_checksum}</li>
+     * <li>{@link #ZSTDnit_skippableFrame ZSTDnit_skippableFrame}</li>
+     * </ul>
+     */
+    public static final int
+        ZSTDnit_frameHeader    = 0,
+        ZSTDnit_blockHeader    = 1,
+        ZSTDnit_block          = 2,
+        ZSTDnit_lastBlock      = 3,
+        ZSTDnit_checksum       = 4,
+        ZSTDnit_skippableFrame = 5;
 
     /**
      * {@code ZSTD_format_e}
@@ -400,9 +429,15 @@ public class ZstdX {
      * <h5>Enum values:</h5>
      * 
      * <ul>
-     * <li>{@link #ZSTD_e_continue e_continue} - collect more data, encoder decides when to output compressed result, for optimal conditions</li>
-     * <li>{@link #ZSTD_e_flush e_flush} - flush any data provided so far - frame will continue, future data can still reference previous data for better compression</li>
-     * <li>{@link #ZSTD_e_end e_end} - flush any remaining data and close current frame. Any additional data starts a new frame</li>
+     * <li>{@link #ZSTD_e_continue e_continue} - Collect more data, encoder decides when to output compressed result, for optimal compression ratio.</li>
+     * <li>{@link #ZSTD_e_flush e_flush} - 
+     * Flush any data provided so far, it creates (at least) one new block, that can be decoded immediately on reception; frame will continue: any future
+     * data can still reference previously compressed data, improving compression.
+     * </li>
+     * <li>{@link #ZSTD_e_end e_end} - 
+     * Flush any remaining data and close current frame. Any additional data starts a new frame. Each frame is independent (does not reference any content
+     * from previous frame).
+     * </li>
      * </ul>
      */
     public static final int
@@ -410,16 +445,16 @@ public class ZstdX {
         ZSTD_e_flush    = 1,
         ZSTD_e_end      = 2;
 
-    /** Block size constant. */
-    public static final int
-        ZSTD_BLOCKSIZELOG_MAX = 17,
-        ZSTD_BLOCKSIZE_MAX    = (1<<ZSTD_BLOCKSIZELOG_MAX);
-
     static { LibZstd.initialize(); }
 
     protected ZstdX() {
         throw new UnsupportedOperationException();
     }
+
+    // --- [ ZSTD_minCLevel ] ---
+
+    /** Returns minimum negative compression level allowed. */
+    public static native int ZSTD_minCLevel();
 
     // --- [ ZSTD_findFrameCompressedSize ] ---
 
@@ -578,6 +613,15 @@ public class ZstdX {
     @NativeType("size_t")
     public static native long ZSTD_estimateCCtxSize(int compressionLevel);
 
+    // --- [ ZSTD_estimateCCtxSize_usingCParams ] ---
+
+    public static native long nZSTD_estimateCCtxSize_usingCParams(long cParams);
+
+    @NativeType("size_t")
+    public static long ZSTD_estimateCCtxSize_usingCParams(@NativeType("ZSTD_compressionParameters") ZSTDCompressionParameters cParams) {
+        return nZSTD_estimateCCtxSize_usingCParams(cParams.address());
+    }
+
     // --- [ ZSTD_estimateCCtxSize_usingCCtxParams ] ---
 
     /** Unsafe version of: {@link #ZSTD_estimateCCtxSize_usingCCtxParams estimateCCtxSize_usingCCtxParams} */
@@ -613,6 +657,15 @@ public class ZstdX {
      */
     @NativeType("size_t")
     public static native long ZSTD_estimateCStreamSize(int compressionLevel);
+
+    // --- [ ZSTD_estimateCStreamSize_usingCParams ] ---
+
+    public static native long nZSTD_estimateCStreamSize_usingCParams(long cParams);
+
+    @NativeType("size_t")
+    public static long ZSTD_estimateCStreamSize_usingCParams(@NativeType("ZSTD_compressionParameters") ZSTDCompressionParameters cParams) {
+        return nZSTD_estimateCStreamSize_usingCParams(cParams.address());
+    }
 
     // --- [ ZSTD_estimateCStreamSize_usingCCtxParams ] ---
 
@@ -665,6 +718,15 @@ public class ZstdX {
     @NativeType("size_t")
     public static native long ZSTD_estimateCDictSize(@NativeType("size_t") long dictSize, int compressionLevel);
 
+    // --- [ ZSTD_estimateCDictSize_advanced ] ---
+
+    public static native long nZSTD_estimateCDictSize_advanced(long dictSize, long cParams, int dictLoadMethod);
+
+    @NativeType("size_t")
+    public static long ZSTD_estimateCDictSize_advanced(@NativeType("size_t") long dictSize, @NativeType("ZSTD_compressionParameters") ZSTDCompressionParameters cParams, @NativeType("ZSTD_dictLoadMethod_e") int dictLoadMethod) {
+        return nZSTD_estimateCDictSize_advanced(dictSize, cParams.address(), dictLoadMethod);
+    }
+
     // --- [ ZSTD_estimateDDictSize ] ---
 
     /**
@@ -674,33 +736,6 @@ public class ZstdX {
      */
     @NativeType("size_t")
     public static native long ZSTD_estimateDDictSize(@NativeType("size_t") long dictSize, @NativeType("ZSTD_dictLoadMethod_e") int dictLoadMethod);
-
-    // --- [ ZSTD_defaultCMem ] ---
-
-    private static native long nZSTD_defaultCMem();
-
-    @NativeType("ZSTD_customMem *")
-    private static ZSTDCustomMem ZSTD_defaultCMem() {
-        long __result = nZSTD_defaultCMem();
-        return ZSTDCustomMem.create(__result);
-    }
-
-    /** Use this constant to defer to stdlib's functions. */
-    public static final ZSTDCustomMem ZSTD_defaultCMem = ZSTD_defaultCMem();
-
-    // --- [ ZSTD_createCCtx_advanced ] ---
-
-    /** Unsafe version of: {@link #ZSTD_createCCtx_advanced createCCtx_advanced} */
-    public static native long nZSTD_createCCtx_advanced(long customMem);
-
-    /** Create a ZSTD compression context using external alloc and free functions. */
-    @NativeType("ZSTD_CCtx *")
-    public static long ZSTD_createCCtx_advanced(@NativeType("ZSTD_customMem") ZSTDCustomMem customMem) {
-        if (CHECKS) {
-            ZSTDCustomMem.validate(customMem.address());
-        }
-        return nZSTD_createCCtx_advanced(customMem.address());
-    }
 
     // --- [ ZSTD_initStaticCCtx ] ---
 
@@ -737,39 +772,13 @@ public class ZstdX {
         return nZSTD_initStaticCCtx(memAddress(workspace), workspace.remaining());
     }
 
-    // --- [ ZSTD_isFrame ] ---
+    // --- [ ZSTD_initStaticCStream ] ---
 
-    /** Unsafe version of: {@link #ZSTD_isFrame isFrame} */
-    public static native int nZSTD_isFrame(long buffer, long size);
+    public static native long nZSTD_initStaticCStream(long workspace, long workspaceSize);
 
-    /**
-     * Tells if the content of {@code buffer} starts with a valid Frame Identifier.
-     * 
-     * <p>Notes:</p>
-     * 
-     * <ol>
-     * <li>Frame Identifier is 4 bytes. If {@code size < 4}, {@code @return} will always be 0.</li>
-     * <li>Legacy Frame Identifiers are considered valid only if Legacy Support is enabled.</li>
-     * <li>Skippable Frame Identifiers are considered valid.</li>
-     * </ol>
-     */
-    @NativeType("unsigned")
-    public static boolean ZSTD_isFrame(@NativeType("void const *") ByteBuffer buffer) {
-        return nZSTD_isFrame(memAddress(buffer), buffer.remaining()) != 0;
-    }
-
-    // --- [ ZSTD_createDCtx_advanced ] ---
-
-    /** Unsafe version of: {@link #ZSTD_createDCtx_advanced createDCtx_advanced} */
-    public static native long nZSTD_createDCtx_advanced(long customMem);
-
-    /** Create a ZSTD decompression context using external alloc and free functions. */
-    @NativeType("ZSTD_DCtx *")
-    public static long ZSTD_createDCtx_advanced(@NativeType("ZSTD_customMem") ZSTDCustomMem customMem) {
-        if (CHECKS) {
-            ZSTDCustomMem.validate(customMem.address());
-        }
-        return nZSTD_createDCtx_advanced(customMem.address());
+    @NativeType("ZSTD_CStream *")
+    public static long ZSTD_initStaticCStream(@NativeType("void *") ByteBuffer workspace) {
+        return nZSTD_initStaticCStream(memAddress(workspace), workspace.remaining());
     }
 
     // --- [ ZSTD_initStaticDCtx ] ---
@@ -801,23 +810,22 @@ public class ZstdX {
         return nZSTD_initStaticDCtx(memAddress(workspace), workspace.remaining());
     }
 
-    // --- [ ZSTD_createDDict_advanced ] ---
+    // --- [ ZSTD_initStaticDStream ] ---
 
-    /** Unsafe version of: {@link #ZSTD_createDDict_advanced createDDict_advanced} */
-    public static native long nZSTD_createDDict_advanced(long dict, long dictSize, int dictLoadMethod, int dictContentType, long customMem);
+    public static native long nZSTD_initStaticDStream(long workspace, long workspaceSize);
 
-    /**
-     * Create a {@code ZSTD_DDict} using external alloc and free, optionally by reference.
-     *
-     * @param dictLoadMethod  one of:<br><table><tr><td>{@link #ZSTD_dlm_byCopy dlm_byCopy}</td><td>{@link #ZSTD_dlm_byRef dlm_byRef}</td></tr></table>
-     * @param dictContentType one of:<br><table><tr><td>{@link #ZSTD_dct_auto dct_auto}</td><td>{@link #ZSTD_dct_rawContent dct_rawContent}</td><td>{@link #ZSTD_dct_fullDict dct_fullDict}</td></tr></table>
-     */
-    @NativeType("ZSTD_DDict *")
-    public static long ZSTD_createDDict_advanced(@NativeType("void const *") ByteBuffer dict, @NativeType("ZSTD_dictLoadMethod_e") int dictLoadMethod, @NativeType("ZSTD_dictContentType_e") int dictContentType, @NativeType("ZSTD_customMem") ZSTDCustomMem customMem) {
-        if (CHECKS) {
-            ZSTDCustomMem.validate(customMem.address());
-        }
-        return nZSTD_createDDict_advanced(memAddress(dict), dict.remaining(), dictLoadMethod, dictContentType, customMem.address());
+    @NativeType("ZSTD_DStream *")
+    public static long ZSTD_initStaticDStream(@NativeType("void *") ByteBuffer workspace) {
+        return nZSTD_initStaticDStream(memAddress(workspace), workspace.remaining());
+    }
+
+    // --- [ ZSTD_initStaticCDict ] ---
+
+    public static native long nZSTD_initStaticCDict(long workspace, long workspaceSize, long dict, long dictSize, int dictLoadMethod, int dictContentType, long cParams);
+
+    @NativeType("ZSTD_CDict const *")
+    public static long ZSTD_initStaticCDict(@NativeType("void *") ByteBuffer workspace, @NativeType("void const *") ByteBuffer dict, @NativeType("ZSTD_dictLoadMethod_e") int dictLoadMethod, @NativeType("ZSTD_dictContentType_e") int dictContentType, @NativeType("ZSTD_compressionParameters") ZSTDCompressionParameters cParams) {
+        return nZSTD_initStaticCDict(memAddress(workspace), workspace.remaining(), memAddress(dict), dict.remaining(), dictLoadMethod, dictContentType, cParams.address());
     }
 
     // --- [ ZSTD_initStaticDDict ] ---
@@ -841,6 +849,205 @@ public class ZstdX {
     @NativeType("ZSTD_DDict const *")
     public static long ZSTD_initStaticDDict(@NativeType("void *") ByteBuffer workspace, @NativeType("void const *") ByteBuffer dict, @NativeType("ZSTD_dictLoadMethod_e") int dictLoadMethod, @NativeType("ZSTD_dictContentType_e") int dictContentType) {
         return nZSTD_initStaticDDict(memAddress(workspace), workspace.remaining(), memAddress(dict), dict.remaining(), dictLoadMethod, dictContentType);
+    }
+
+    // --- [ ZSTD_defaultCMem ] ---
+
+    private static native long nZSTD_defaultCMem();
+
+    @NativeType("ZSTD_customMem *")
+    private static ZSTDCustomMem ZSTD_defaultCMem() {
+        long __result = nZSTD_defaultCMem();
+        return ZSTDCustomMem.create(__result);
+    }
+
+    /** Use this constant to defer to stdlib's functions. */
+    public static final ZSTDCustomMem ZSTD_defaultCMem = ZSTD_defaultCMem();
+
+    // --- [ ZSTD_createCCtx_advanced ] ---
+
+    /** Unsafe version of: {@link #ZSTD_createCCtx_advanced createCCtx_advanced} */
+    public static native long nZSTD_createCCtx_advanced(long customMem);
+
+    /** Create a ZSTD compression context using external alloc and free functions. */
+    @NativeType("ZSTD_CCtx *")
+    public static long ZSTD_createCCtx_advanced(@NativeType("ZSTD_customMem") ZSTDCustomMem customMem) {
+        if (CHECKS) {
+            ZSTDCustomMem.validate(customMem.address());
+        }
+        return nZSTD_createCCtx_advanced(customMem.address());
+    }
+
+    // --- [ ZSTD_createCStream_advanced ] ---
+
+    public static native long nZSTD_createCStream_advanced(long customMem);
+
+    @NativeType("ZSTD_CStream *")
+    public static long ZSTD_createCStream_advanced(@NativeType("ZSTD_customMem") ZSTDCustomMem customMem) {
+        if (CHECKS) {
+            ZSTDCustomMem.validate(customMem.address());
+        }
+        return nZSTD_createCStream_advanced(customMem.address());
+    }
+
+    // --- [ ZSTD_createDCtx_advanced ] ---
+
+    /** Unsafe version of: {@link #ZSTD_createDCtx_advanced createDCtx_advanced} */
+    public static native long nZSTD_createDCtx_advanced(long customMem);
+
+    /** Create a ZSTD decompression context using external alloc and free functions. */
+    @NativeType("ZSTD_DCtx *")
+    public static long ZSTD_createDCtx_advanced(@NativeType("ZSTD_customMem") ZSTDCustomMem customMem) {
+        if (CHECKS) {
+            ZSTDCustomMem.validate(customMem.address());
+        }
+        return nZSTD_createDCtx_advanced(customMem.address());
+    }
+
+    // --- [ ZSTD_createDStream_advanced ] ---
+
+    public static native long nZSTD_createDStream_advanced(long customMem);
+
+    @NativeType("ZSTD_DStream *")
+    public static long ZSTD_createDStream_advanced(@NativeType("ZSTD_customMem") ZSTDCustomMem customMem) {
+        if (CHECKS) {
+            ZSTDCustomMem.validate(customMem.address());
+        }
+        return nZSTD_createDStream_advanced(customMem.address());
+    }
+
+    // --- [ ZSTD_createCDict_advanced ] ---
+
+    public static native long nZSTD_createCDict_advanced(long dict, long dictSize, int dictLoadMethod, int dictContentType, long cParams, long customMem);
+
+    @NativeType("ZSTD_CDict *")
+    public static long ZSTD_createCDict_advanced(@NativeType("void const *") ByteBuffer dict, @NativeType("ZSTD_dictLoadMethod_e") int dictLoadMethod, @NativeType("ZSTD_dictContentType_e") int dictContentType, @NativeType("ZSTD_compressionParameters") ZSTDCompressionParameters cParams, @NativeType("ZSTD_customMem") ZSTDCustomMem customMem) {
+        if (CHECKS) {
+            ZSTDCustomMem.validate(customMem.address());
+        }
+        return nZSTD_createCDict_advanced(memAddress(dict), dict.remaining(), dictLoadMethod, dictContentType, cParams.address(), customMem.address());
+    }
+
+    // --- [ ZSTD_createDDict_advanced ] ---
+
+    /** Unsafe version of: {@link #ZSTD_createDDict_advanced createDDict_advanced} */
+    public static native long nZSTD_createDDict_advanced(long dict, long dictSize, int dictLoadMethod, int dictContentType, long customMem);
+
+    /**
+     * Create a {@code ZSTD_DDict} using external alloc and free, optionally by reference.
+     *
+     * @param dictLoadMethod  one of:<br><table><tr><td>{@link #ZSTD_dlm_byCopy dlm_byCopy}</td><td>{@link #ZSTD_dlm_byRef dlm_byRef}</td></tr></table>
+     * @param dictContentType one of:<br><table><tr><td>{@link #ZSTD_dct_auto dct_auto}</td><td>{@link #ZSTD_dct_rawContent dct_rawContent}</td><td>{@link #ZSTD_dct_fullDict dct_fullDict}</td></tr></table>
+     */
+    @NativeType("ZSTD_DDict *")
+    public static long ZSTD_createDDict_advanced(@NativeType("void const *") ByteBuffer dict, @NativeType("ZSTD_dictLoadMethod_e") int dictLoadMethod, @NativeType("ZSTD_dictContentType_e") int dictContentType, @NativeType("ZSTD_customMem") ZSTDCustomMem customMem) {
+        if (CHECKS) {
+            ZSTDCustomMem.validate(customMem.address());
+        }
+        return nZSTD_createDDict_advanced(memAddress(dict), dict.remaining(), dictLoadMethod, dictContentType, customMem.address());
+    }
+
+    // --- [ ZSTD_createCDict_byReference ] ---
+
+    public static native long nZSTD_createCDict_byReference(long dictBuffer, long dictSize, int compressionLevel);
+
+    @NativeType("ZSTD_CDict *")
+    public static long ZSTD_createCDict_byReference(@NativeType("void const *") ByteBuffer dictBuffer, int compressionLevel) {
+        return nZSTD_createCDict_byReference(memAddress(dictBuffer), dictBuffer.remaining(), compressionLevel);
+    }
+
+    // --- [ ZSTD_getCParams ] ---
+
+    public static native void nZSTD_getCParams(int compressionLevel, long estimatedSrcSize, long dictSize, long __result);
+
+    @NativeType("ZSTD_compressionParameters")
+    public static ZSTDCompressionParameters ZSTD_getCParams(int compressionLevel, @NativeType("unsigned long long") long estimatedSrcSize, @NativeType("size_t") long dictSize, @NativeType("ZSTD_compressionParameters") ZSTDCompressionParameters __result) {
+        nZSTD_getCParams(compressionLevel, estimatedSrcSize, dictSize, __result.address());
+        return __result;
+    }
+
+    // --- [ ZSTD_getParams ] ---
+
+    public static native void nZSTD_getParams(int compressionLevel, long estimatedSrcSize, long dictSize, long __result);
+
+    @NativeType("ZSTD_parameters")
+    public static ZSTDParameters ZSTD_getParams(int compressionLevel, @NativeType("unsigned long long") long estimatedSrcSize, @NativeType("size_t") long dictSize, @NativeType("ZSTD_parameters") ZSTDParameters __result) {
+        nZSTD_getParams(compressionLevel, estimatedSrcSize, dictSize, __result.address());
+        return __result;
+    }
+
+    // --- [ ZSTD_checkCParams ] ---
+
+    public static native long nZSTD_checkCParams(long params);
+
+    @NativeType("size_t")
+    public static long ZSTD_checkCParams(@NativeType("ZSTD_compressionParameters") ZSTDCompressionParameters params) {
+        return nZSTD_checkCParams(params.address());
+    }
+
+    // --- [ ZSTD_adjustCParams ] ---
+
+    public static native void nZSTD_adjustCParams(long cPar, long srcSize, long dictSize, long __result);
+
+    @NativeType("ZSTD_compressionParameters")
+    public static ZSTDCompressionParameters ZSTD_adjustCParams(@NativeType("ZSTD_compressionParameters") ZSTDCompressionParameters cPar, @NativeType("unsigned long long") long srcSize, @NativeType("size_t") long dictSize, @NativeType("ZSTD_compressionParameters") ZSTDCompressionParameters __result) {
+        nZSTD_adjustCParams(cPar.address(), srcSize, dictSize, __result.address());
+        return __result;
+    }
+
+    // --- [ ZSTD_compress_advanced ] ---
+
+    public static native long nZSTD_compress_advanced(long cctx, long dst, long dstCapacity, long src, long srcSize, long dict, long dictSize, long params);
+
+    @NativeType("size_t")
+    public static long ZSTD_compress_advanced(@NativeType("ZSTD_CCtx *") long cctx, @NativeType("void *") ByteBuffer dst, @NativeType("void const *") ByteBuffer src, @NativeType("void const *") ByteBuffer dict, @NativeType("ZSTD_parameters") ZSTDParameters params) {
+        if (CHECKS) {
+            check(cctx);
+        }
+        return nZSTD_compress_advanced(cctx, memAddress(dst), dst.remaining(), memAddress(src), src.remaining(), memAddress(dict), dict.remaining(), params.address());
+    }
+
+    // --- [ ZSTD_compress_usingCDict_advanced ] ---
+
+    public static native long nZSTD_compress_usingCDict_advanced(long cctx, long dst, long dstCapacity, long src, long srcSize, long cdict, long fParams);
+
+    @NativeType("size_t")
+    public static long ZSTD_compress_usingCDict_advanced(@NativeType("ZSTD_CCtx *") long cctx, @NativeType("void *") ByteBuffer dst, @NativeType("void const *") ByteBuffer src, @NativeType("ZSTD_CDict const *") long cdict, @NativeType("ZSTD_frameParameters") ZSTDFrameParameters fParams) {
+        if (CHECKS) {
+            check(cctx);
+            check(cdict);
+        }
+        return nZSTD_compress_usingCDict_advanced(cctx, memAddress(dst), dst.remaining(), memAddress(src), src.remaining(), cdict, fParams.address());
+    }
+
+    // --- [ ZSTD_isFrame ] ---
+
+    /** Unsafe version of: {@link #ZSTD_isFrame isFrame} */
+    public static native int nZSTD_isFrame(long buffer, long size);
+
+    /**
+     * Tells if the content of {@code buffer} starts with a valid Frame Identifier.
+     * 
+     * <p>Notes:</p>
+     * 
+     * <ol>
+     * <li>Frame Identifier is 4 bytes. If {@code size < 4}, {@code @return} will always be 0.</li>
+     * <li>Legacy Frame Identifiers are considered valid only if Legacy Support is enabled.</li>
+     * <li>Skippable Frame Identifiers are considered valid.</li>
+     * </ol>
+     */
+    @NativeType("unsigned")
+    public static boolean ZSTD_isFrame(@NativeType("void const *") ByteBuffer buffer) {
+        return nZSTD_isFrame(memAddress(buffer), buffer.remaining()) != 0;
+    }
+
+    // --- [ ZSTD_createDDict_byReference ] ---
+
+    public static native long nZSTD_createDDict_byReference(long dictBuffer, long dictSize);
+
+    @NativeType("ZSTD_DDict *")
+    public static long ZSTD_createDDict_byReference(@NativeType("void const *") ByteBuffer dictBuffer) {
+        return nZSTD_createDDict_byReference(memAddress(dictBuffer), dictBuffer.remaining());
     }
 
     // --- [ ZSTD_getDictID_fromDict ] ---
@@ -902,46 +1109,225 @@ public class ZstdX {
         return nZSTD_getDictID_fromFrame(memAddress(src), src.remaining());
     }
 
-    // --- [ ZSTD_createCStream_advanced ] ---
+    // --- [ ZSTD_initCStream_srcSize ] ---
 
-    public static native long nZSTD_createCStream_advanced(long customMem);
+    public static native long nZSTD_initCStream_srcSize(long zcs, int compressionLevel, long pledgedSrcSize);
 
-    @NativeType("ZSTD_CStream *")
-    public static long ZSTD_createCStream_advanced(@NativeType("ZSTD_customMem") ZSTDCustomMem customMem) {
+    @NativeType("size_t")
+    public static long ZSTD_initCStream_srcSize(@NativeType("ZSTD_CStream *") long zcs, int compressionLevel, @NativeType("unsigned long long") long pledgedSrcSize) {
         if (CHECKS) {
-            ZSTDCustomMem.validate(customMem.address());
+            check(zcs);
         }
-        return nZSTD_createCStream_advanced(customMem.address());
+        return nZSTD_initCStream_srcSize(zcs, compressionLevel, pledgedSrcSize);
     }
 
-    // --- [ ZSTD_initStaticCStream ] ---
+    // --- [ ZSTD_initCStream_usingDict ] ---
 
-    public static native long nZSTD_initStaticCStream(long workspace, long workspaceSize);
+    public static native long nZSTD_initCStream_usingDict(long zcs, long dict, long dictSize, int compressionLevel);
 
-    @NativeType("ZSTD_CStream *")
-    public static long ZSTD_initStaticCStream(@NativeType("void *") ByteBuffer workspace) {
-        return nZSTD_initStaticCStream(memAddress(workspace), workspace.remaining());
-    }
-
-    // --- [ ZSTD_createDStream_advanced ] ---
-
-    public static native long nZSTD_createDStream_advanced(long customMem);
-
-    @NativeType("ZSTD_DStream *")
-    public static long ZSTD_createDStream_advanced(@NativeType("ZSTD_customMem") ZSTDCustomMem customMem) {
+    @NativeType("size_t")
+    public static long ZSTD_initCStream_usingDict(@NativeType("ZSTD_CStream *") long zcs, @NativeType("void const *") ByteBuffer dict, int compressionLevel) {
         if (CHECKS) {
-            ZSTDCustomMem.validate(customMem.address());
+            check(zcs);
         }
-        return nZSTD_createDStream_advanced(customMem.address());
+        return nZSTD_initCStream_usingDict(zcs, memAddress(dict), dict.remaining(), compressionLevel);
     }
 
-    // --- [ ZSTD_initStaticDStream ] ---
+    // --- [ ZSTD_initCStream_advanced ] ---
 
-    public static native long nZSTD_initStaticDStream(long workspace, long workspaceSize);
+    public static native long nZSTD_initCStream_advanced(long zcs, long dict, long dictSize, long params, long pledgedSrcSize);
 
-    @NativeType("ZSTD_DStream *")
-    public static long ZSTD_initStaticDStream(@NativeType("void *") ByteBuffer workspace) {
-        return nZSTD_initStaticDStream(memAddress(workspace), workspace.remaining());
+    @NativeType("size_t")
+    public static long ZSTD_initCStream_advanced(@NativeType("ZSTD_CStream *") long zcs, @NativeType("void const *") ByteBuffer dict, @NativeType("ZSTD_parameters") ZSTDParameters params, @NativeType("unsigned long long") long pledgedSrcSize) {
+        if (CHECKS) {
+            check(zcs);
+        }
+        return nZSTD_initCStream_advanced(zcs, memAddress(dict), dict.remaining(), params.address(), pledgedSrcSize);
+    }
+
+    // --- [ ZSTD_initCStream_usingCDict ] ---
+
+    public static native long nZSTD_initCStream_usingCDict(long zcs, long cdict);
+
+    @NativeType("size_t")
+    public static long ZSTD_initCStream_usingCDict(@NativeType("ZSTD_CStream *") long zcs, @NativeType("ZSTD_CDict const *") long cdict) {
+        if (CHECKS) {
+            check(zcs);
+            check(cdict);
+        }
+        return nZSTD_initCStream_usingCDict(zcs, cdict);
+    }
+
+    // --- [ ZSTD_initCStream_usingCDict_advanced ] ---
+
+    public static native long nZSTD_initCStream_usingCDict_advanced(long zcs, long cdict, long fParams, long pledgedSrcSize);
+
+    @NativeType("size_t")
+    public static long ZSTD_initCStream_usingCDict_advanced(@NativeType("ZSTD_CStream *") long zcs, @NativeType("ZSTD_CDict const *") long cdict, @NativeType("ZSTD_frameParameters") ZSTDFrameParameters fParams, @NativeType("unsigned long long") long pledgedSrcSize) {
+        if (CHECKS) {
+            check(zcs);
+            check(cdict);
+        }
+        return nZSTD_initCStream_usingCDict_advanced(zcs, cdict, fParams.address(), pledgedSrcSize);
+    }
+
+    // --- [ ZSTD_resetCStream ] ---
+
+    public static native long nZSTD_resetCStream(long zcs, long pledgedSrcSize);
+
+    @NativeType("size_t")
+    public static long ZSTD_resetCStream(@NativeType("ZSTD_CStream *") long zcs, @NativeType("unsigned long long") long pledgedSrcSize) {
+        if (CHECKS) {
+            check(zcs);
+        }
+        return nZSTD_resetCStream(zcs, pledgedSrcSize);
+    }
+
+    // --- [ ZSTD_getFrameProgression ] ---
+
+    /** Unsafe version of: {@link #ZSTD_getFrameProgression getFrameProgression} */
+    public static native void nZSTD_getFrameProgression(long cctx, long __result);
+
+    /**
+     * Tells how much data has been {@code ingested} (read from input) {@code consumed} (input actually compressed) and {@code produced} (output) for current
+     * frame.
+     * 
+     * <p>Note: {@code (ingested - consumed)} is amount of input data buffered internally, not yet compressed. Aggregates progression inside active worker
+     * threads.</p>
+     */
+    @NativeType("ZSTD_frameProgression")
+    public static ZSTDFrameProgression ZSTD_getFrameProgression(@NativeType("ZSTD_CCtx const *") long cctx, @NativeType("ZSTD_frameProgression") ZSTDFrameProgression __result) {
+        if (CHECKS) {
+            check(cctx);
+        }
+        nZSTD_getFrameProgression(cctx, __result.address());
+        return __result;
+    }
+
+    // --- [ ZSTD_toFlushNow ] ---
+
+    /** Unsafe version of: {@link #ZSTD_toFlushNow toFlushNow} */
+    public static native long nZSTD_toFlushNow(long cctx);
+
+    /**
+     * Tells how many bytes are ready to be flushed immediately.
+     * 
+     * <p>Useful for multithreading scenarios ({@code nbWorkers} &ge; 1). Probe the oldest active job, defined as oldest job not yet entirely flushed, and check
+     * its output buffer.</p>
+     *
+     * @return amount of data stored in oldest job and ready to be flushed immediately. If {@code @return == 0}, it means either:
+     *         
+     *         <ul>
+     *         <li>there is no active job (could be checked with {@link #ZSTD_getFrameProgression getFrameProgression}), or</li>
+     *         <li>oldest job is still actively compressing data, but everything it has produced has also been flushed so far, therefore flushing speed is currently
+     *         limited by production speed of oldest job irrespective of the speed of concurrent newer jobs.</li>
+     *         </ul>
+     */
+    @NativeType("size_t")
+    public static long ZSTD_toFlushNow(@NativeType("ZSTD_CCtx *") long cctx) {
+        if (CHECKS) {
+            check(cctx);
+        }
+        return nZSTD_toFlushNow(cctx);
+    }
+
+    // --- [ ZSTD_initDStream_usingDict ] ---
+
+    public static native long nZSTD_initDStream_usingDict(long zds, long dict, long dictSize);
+
+    @NativeType("size_t")
+    public static long ZSTD_initDStream_usingDict(@NativeType("ZSTD_DStream *") long zds, @NativeType("void const *") ByteBuffer dict) {
+        if (CHECKS) {
+            check(zds);
+        }
+        return nZSTD_initDStream_usingDict(zds, memAddress(dict), dict.remaining());
+    }
+
+    // --- [ ZSTD_initDStream_usingDDict ] ---
+
+    public static native long nZSTD_initDStream_usingDDict(long zds, long ddict);
+
+    @NativeType("size_t")
+    public static long ZSTD_initDStream_usingDDict(@NativeType("ZSTD_DStream *") long zds, @NativeType("ZSTD_DDict const *") long ddict) {
+        if (CHECKS) {
+            check(zds);
+            check(ddict);
+        }
+        return nZSTD_initDStream_usingDDict(zds, ddict);
+    }
+
+    // --- [ ZSTD_resetDStream ] ---
+
+    public static native long nZSTD_resetDStream(long zds);
+
+    @NativeType("size_t")
+    public static long ZSTD_resetDStream(@NativeType("ZSTD_DStream *") long zds) {
+        if (CHECKS) {
+            check(zds);
+        }
+        return nZSTD_resetDStream(zds);
+    }
+
+    // --- [ ZSTD_compressBegin ] ---
+
+    public static native long nZSTD_compressBegin(long cctx, int compressionLevel);
+
+    @NativeType("size_t")
+    public static long ZSTD_compressBegin(@NativeType("ZSTD_CCtx *") long cctx, int compressionLevel) {
+        if (CHECKS) {
+            check(cctx);
+        }
+        return nZSTD_compressBegin(cctx, compressionLevel);
+    }
+
+    // --- [ ZSTD_compressBegin_usingDict ] ---
+
+    public static native long nZSTD_compressBegin_usingDict(long cctx, long dict, long dictSize, int compressionLevel);
+
+    @NativeType("size_t")
+    public static long ZSTD_compressBegin_usingDict(@NativeType("ZSTD_CCtx *") long cctx, @NativeType("void const *") ByteBuffer dict, int compressionLevel) {
+        if (CHECKS) {
+            check(cctx);
+        }
+        return nZSTD_compressBegin_usingDict(cctx, memAddress(dict), dict.remaining(), compressionLevel);
+    }
+
+    // --- [ ZSTD_compressBegin_advanced ] ---
+
+    public static native long nZSTD_compressBegin_advanced(long cctx, long dict, long dictSize, long params, long pledgedSrcSize);
+
+    @NativeType("size_t")
+    public static long ZSTD_compressBegin_advanced(@NativeType("ZSTD_CCtx *") long cctx, @NativeType("void const *") ByteBuffer dict, @NativeType("ZSTD_parameters") ZSTDParameters params, @NativeType("unsigned long long") long pledgedSrcSize) {
+        if (CHECKS) {
+            check(cctx);
+        }
+        return nZSTD_compressBegin_advanced(cctx, memAddress(dict), dict.remaining(), params.address(), pledgedSrcSize);
+    }
+
+    // --- [ ZSTD_compressBegin_usingCDict ] ---
+
+    public static native long nZSTD_compressBegin_usingCDict(long cctx, long cdict);
+
+    @NativeType("size_t")
+    public static long ZSTD_compressBegin_usingCDict(@NativeType("ZSTD_CCtx *") long cctx, @NativeType("ZSTD_CDict const *") long cdict) {
+        if (CHECKS) {
+            check(cctx);
+            check(cdict);
+        }
+        return nZSTD_compressBegin_usingCDict(cctx, cdict);
+    }
+
+    // --- [ ZSTD_compressBegin_usingCDict_advanced ] ---
+
+    public static native long nZSTD_compressBegin_usingCDict_advanced(long cctx, long cdict, long fParams, long pledgedSrcSize);
+
+    @NativeType("size_t")
+    public static long ZSTD_compressBegin_usingCDict_advanced(@NativeType("ZSTD_CCtx * const") long cctx, @NativeType("ZSTD_CDict const * const") long cdict, @NativeType("ZSTD_frameParameters const") ZSTDFrameParameters fParams, @NativeType("unsigned long long") long pledgedSrcSize) {
+        if (CHECKS) {
+            check(cctx);
+            check(cdict);
+        }
+        return nZSTD_compressBegin_usingCDict_advanced(cctx, cdict, fParams.address(), pledgedSrcSize);
     }
 
     // --- [ ZSTD_copyCCtx ] ---
@@ -959,24 +1345,28 @@ public class ZstdX {
         return nZSTD_copyCCtx(cctx, preparedCCtx, pledgedSrcSize);
     }
 
-    // --- [ ZSTD_getFrameProgression ] ---
+    // --- [ ZSTD_compressContinue ] ---
 
-    /** Unsafe version of: {@link #ZSTD_getFrameProgression getFrameProgression} */
-    public static native void nZSTD_getFrameProgression(long cctx, long __result);
+    public static native long nZSTD_compressContinue(long cctx, long dst, long dstCapacity, long src, long srcSize);
 
-    /**
-     * Tells how much data has been {@code ingested} (read from input) {@code consumed} (input actually compressed) and {@code produced} (output) for current
-     * frame. Therefore, {@code (ingested - consumed)} is amount of input data buffered internally, not yet compressed.
-     * 
-     * <p>Can report progression inside worker threads (multi-threading and non-blocking mode).</p>
-     */
-    @NativeType("ZSTD_frameProgression")
-    public static ZSTDFrameProgression ZSTD_getFrameProgression(@NativeType("ZSTD_CCtx const *") long cctx, ZSTDFrameProgression __result) {
+    @NativeType("size_t")
+    public static long ZSTD_compressContinue(@NativeType("ZSTD_CCtx *") long cctx, @NativeType("void *") ByteBuffer dst, @NativeType("void const *") ByteBuffer src) {
         if (CHECKS) {
             check(cctx);
         }
-        nZSTD_getFrameProgression(cctx, __result.address());
-        return __result;
+        return nZSTD_compressContinue(cctx, memAddress(dst), dst.remaining(), memAddress(src), src.remaining());
+    }
+
+    // --- [ ZSTD_compressEnd ] ---
+
+    public static native long nZSTD_compressEnd(long cctx, long dst, long dstCapacity, long src, long srcSize);
+
+    @NativeType("size_t")
+    public static long ZSTD_compressEnd(@NativeType("ZSTD_CCtx *") long cctx, @NativeType("void *") ByteBuffer dst, @NativeType("void const *") ByteBuffer src) {
+        if (CHECKS) {
+            check(cctx);
+        }
+        return nZSTD_compressEnd(cctx, memAddress(dst), dst.remaining(), memAddress(src), src.remaining());
     }
 
     // --- [ ZSTD_getFrameHeader ] ---
@@ -995,6 +1385,84 @@ public class ZstdX {
     @NativeType("size_t")
     public static long ZSTD_getFrameHeader(@NativeType("ZSTD_frameHeader *") ZSTDFrameHeader zfhPtr, @NativeType("void const *") ByteBuffer src) {
         return nZSTD_getFrameHeader(zfhPtr.address(), memAddress(src), src.remaining());
+    }
+
+    // --- [ ZSTD_decodingBufferSize_min ] ---
+
+    @NativeType("size_t")
+    public static native long ZSTD_decodingBufferSize_min(@NativeType("unsigned long long") long windowSize, @NativeType("unsigned long long") long frameContentSize);
+
+    // --- [ ZSTD_decompressBegin ] ---
+
+    public static native long nZSTD_decompressBegin(long dctx);
+
+    @NativeType("size_t")
+    public static long ZSTD_decompressBegin(@NativeType("ZSTD_DCtx *") long dctx) {
+        if (CHECKS) {
+            check(dctx);
+        }
+        return nZSTD_decompressBegin(dctx);
+    }
+
+    // --- [ ZSTD_decompressBegin_usingDict ] ---
+
+    public static native long nZSTD_decompressBegin_usingDict(long dctx, long dict, long dictSize);
+
+    @NativeType("size_t")
+    public static long ZSTD_decompressBegin_usingDict(@NativeType("ZSTD_DCtx *") long dctx, @NativeType("void const *") ByteBuffer dict) {
+        if (CHECKS) {
+            check(dctx);
+        }
+        return nZSTD_decompressBegin_usingDict(dctx, memAddress(dict), dict.remaining());
+    }
+
+    // --- [ ZSTD_decompressBegin_usingDDict ] ---
+
+    public static native long nZSTD_decompressBegin_usingDDict(long dctx, long ddict);
+
+    @NativeType("size_t")
+    public static long ZSTD_decompressBegin_usingDDict(@NativeType("ZSTD_DCtx *") long dctx, @NativeType("ZSTD_DDict const *") long ddict) {
+        if (CHECKS) {
+            check(dctx);
+            check(ddict);
+        }
+        return nZSTD_decompressBegin_usingDDict(dctx, ddict);
+    }
+
+    // --- [ ZSTD_nextSrcSizeToDecompress ] ---
+
+    public static native long nZSTD_nextSrcSizeToDecompress(long dctx);
+
+    @NativeType("size_t")
+    public static long ZSTD_nextSrcSizeToDecompress(@NativeType("ZSTD_DCtx *") long dctx) {
+        if (CHECKS) {
+            check(dctx);
+        }
+        return nZSTD_nextSrcSizeToDecompress(dctx);
+    }
+
+    // --- [ ZSTD_decompressContinue ] ---
+
+    public static native long nZSTD_decompressContinue(long dctx, long dst, long dstCapacity, long src, long srcSize);
+
+    @NativeType("size_t")
+    public static long ZSTD_decompressContinue(@NativeType("ZSTD_DCtx *") long dctx, @NativeType("void *") ByteBuffer dst, @NativeType("void const *") ByteBuffer src) {
+        if (CHECKS) {
+            check(dctx);
+        }
+        return nZSTD_decompressContinue(dctx, memAddress(dst), dst.remaining(), memAddress(src), src.remaining());
+    }
+
+    // --- [ ZSTD_nextInputType ] ---
+
+    public static native int nZSTD_nextInputType(long dctx);
+
+    @NativeType("ZSTD_nextInputType_e")
+    public static int ZSTD_nextInputType(@NativeType("ZSTD_DCtx *") long dctx) {
+        if (CHECKS) {
+            check(dctx);
+        }
+        return nZSTD_nextInputType(dctx);
     }
 
     // --- [ ZSTD_copyDCtx ] ---
@@ -1187,7 +1655,9 @@ public class ZstdX {
     /**
      * Reference a prefix (single-usage dictionary) for next compression job.
      * 
-     * <p>Decompression need same prefix to properly regenerate data. Prefix is <b>only used once</b>. Tables are discarded at end of compression job. ({@link #ZSTD_e_end e_end})</p>
+     * <p>Decompression will need same prefix to properly regenerate data. Compressing with a prefix is similar in outcome as performing a diff and compressing
+     * it, but performs much faster, especially during decompression (compression speed is tunable with compression level). Note that prefix is <b>only used
+     * once</b>. Tables are discarded at end of compression job ({@link #ZSTD_e_end e_end}).</p>
      * 
      * <p>Special: Adding any prefix (including {@code NULL}) invalidates any previous prefix or dictionary.</p>
      * 
@@ -1195,6 +1665,8 @@ public class ZstdX {
      * 
      * <ol>
      * <li>Prefix buffer is referenced. It <b>must</b> outlive compression job. Its content must remain unmodified up to end of compression ({@link #ZSTD_e_end e_end}).</li>
+     * <li>If the intention is to diff some large {@code src} data blob with some prior version of itself, ensure that the window size is large enough to
+     * contain the entire source. See {@link #ZSTD_p_windowLog p_windowLog}.</li>
      * <li>Referencing a prefix involves building tables, which are dependent on compression parameters. It's a CPU consuming operation, with non-negligible
      * impact on latency. If there is a need to use same prefix multiple times, consider {@link #ZSTD_CCtx_loadDictionary CCtx_loadDictionary} instead.</li>
      * <li>By default, the prefix is treated as raw content ({@code ZSTD_dm_rawContent}). Use {@link #ZSTD_CCtx_refPrefix_advanced CCtx_refPrefix_advanced} to alter {@code dictMode}.</li>
@@ -1376,6 +1848,18 @@ public class ZstdX {
         return nZSTD_CCtxParams_init(cctxParams, compressionLevel);
     }
 
+    // --- [ ZSTD_CCtxParams_init_advanced ] ---
+
+    public static native long nZSTD_CCtxParams_init_advanced(long cctxParams, long params);
+
+    @NativeType("size_t")
+    public static long ZSTD_CCtxParams_init_advanced(@NativeType("ZSTD_CCtx_params *") long cctxParams, @NativeType("ZSTD_parameters") ZSTDParameters params) {
+        if (CHECKS) {
+            check(cctxParams);
+        }
+        return nZSTD_CCtxParams_init_advanced(cctxParams, params.address());
+    }
+
     // --- [ ZSTD_CCtxParam_setParameter ] ---
 
     /** Unsafe version of: {@link #ZSTD_CCtxParam_setParameter CCtxParam_setParameter} */
@@ -1541,6 +2025,8 @@ public class ZstdX {
 
     /**
      * Reference a prefix (single-usage dictionary) for next compression job.
+     * 
+     * <p>This is the reverse operation of {@link #ZSTD_CCtx_refPrefix CCtx_refPrefix}, and must use the same prefix as the one used during compression.</p>
      * 
      * <p>Prefix is <b>only used once</b>. Reference is discarded at end of frame. End of frame is reached when {@code ZSTD_DCtx_decompress_generic()} returns 0.</p>
      * 

@@ -60,7 +60,7 @@ import static org.lwjgl.system.MemoryUtil.*;
  *             myOutputDebugString,                                      // pfnUserCallback
  *             NULL                                                      // pUserData
  *     };
- *     res = pfnCreateDebugUtilsMessengerEXT(instance, &amp;callback1, &amp;cb1);
+ *     res = pfnCreateDebugUtilsMessengerEXT(instance, &amp;callback1, NULL, &amp;cb1);
  *     if (res != VK_SUCCESS) {
  *        // Do error handling for VK_ERROR_OUT_OF_MEMORY
  *     }
@@ -68,7 +68,7 @@ import static org.lwjgl.system.MemoryUtil.*;
  *     callback1.messageSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT;
  *     callback1.pfnCallback = myDebugBreak;
  *     callback1.pUserData = NULL;
- *     res = pfnCreateDebugUtilsMessengerEXT(instance, &amp;callback1, &amp;cb2);
+ *     res = pfnCreateDebugUtilsMessengerEXT(instance, &amp;callback1, NULL, &amp;cb2);
  *     if (res != VK_SUCCESS) {
  *        // Do error handling for VK_ERROR_OUT_OF_MEMORY
  *     }
@@ -83,7 +83,7 @@ import static org.lwjgl.system.MemoryUtil.*;
  *             mystdOutLogger,                                           // pfnUserCallback
  *             NULL                                                      // pUserData
  *     };
- *     res = pfnCreateDebugUtilsMessengerEXT(instance, &amp;callback3, &amp;cb3);
+ *     res = pfnCreateDebugUtilsMessengerEXT(instance, &amp;callback3, NULL, &amp;cb3);
  *     if (res != VK_SUCCESS) {
  *        // Do error handling for VK_ERROR_OUT_OF_MEMORY
  *     }
@@ -91,9 +91,9 @@ import static org.lwjgl.system.MemoryUtil.*;
  *     ...
  * 
  *     // Remove callbacks when cleaning up
- *     pfnDestroyDebugUtilsMessengerEXT(instance, cb1);
- *     pfnDestroyDebugUtilsMessengerEXT(instance, cb2);
- *     pfnDestroyDebugUtilsMessengerEXT(instance, cb3);</code></pre>
+ *     pfnDestroyDebugUtilsMessengerEXT(instance, cb1, NULL);
+ *     pfnDestroyDebugUtilsMessengerEXT(instance, cb2, NULL);
+ *     pfnDestroyDebugUtilsMessengerEXT(instance, cb3, NULL);</code></pre>
  * 
  * <p><b>Example 2</b></p>
  * 
@@ -234,7 +234,7 @@ import static org.lwjgl.system.MemoryUtil.*;
  * </ul></dd>
  * <dt><b>Contact</b></dt>
  * <dd><ul>
- * <li>Mark Young @marky-lunarg</li>
+ * <li>Mark Young <a target="_blank" href="https://github.com/KhronosGroup/Vulkan-Docs/issues/new?title=VK_EXT_debug_utils:%20&amp;body=@marky-lunarg%20">marky-lunarg</a></li>
  * </ul></dd>
  * <dt><b>Last Modified Date</b></dt>
  * <dd>2017-09-14</dd>
@@ -383,6 +383,13 @@ public class EXTDebugUtils {
      * VkResult vkSetDebugUtilsObjectNameEXT(
      *     VkDevice                                    device,
      *     const VkDebugUtilsObjectNameInfoEXT*        pNameInfo);</code></pre>
+     * 
+     * <h5>Valid Usage</h5>
+     * 
+     * <ul>
+     * <li>{@code pNameInfo}-&gt;{@code objectType} <b>must</b> not be {@link VK10#VK_OBJECT_TYPE_UNKNOWN OBJECT_TYPE_UNKNOWN}</li>
+     * <li>{@code pNameInfo}-&gt;{@code objectHandle} <b>must</b> not be {@link VK10#VK_NULL_HANDLE NULL_HANDLE}</li>
+     * </ul>
      * 
      * <h5>Valid Usage (Implicit)</h5>
      * 
@@ -553,7 +560,7 @@ public class EXTDebugUtils {
      * <h5>Valid Usage</h5>
      * 
      * <ul>
-     * <li>There <b>must</b> be an outstanding {@link #vkQueueBeginDebugUtilsLabelEXT QueueBeginDebugUtilsLabelEXT} command prior to the {@link #vkQueueEndDebugUtilsLabelEXT QueueEndDebugUtilsLabelEXT} on the queue</li>
+     * <li>There <b>must</b> be an outstanding {@code vkQueueBeginDebugUtilsLabelEXT} command prior to the {@code vkQueueEndDebugUtilsLabelEXT} on the queue</li>
      * </ul>
      * 
      * <h5>Valid Usage (Implicit)</h5>
@@ -705,8 +712,8 @@ public class EXTDebugUtils {
      * <h5>Valid Usage</h5>
      * 
      * <ul>
-     * <li>There <b>must</b> be an outstanding {@link #vkCmdBeginDebugUtilsLabelEXT CmdBeginDebugUtilsLabelEXT} command prior to the {@link #vkCmdEndDebugUtilsLabelEXT CmdEndDebugUtilsLabelEXT} on the queue that {@code commandBuffer} is submitted to</li>
-     * <li>If {@code commandBuffer} is a secondary command buffer, there <b>must</b> be an outstanding {@link #vkCmdBeginDebugUtilsLabelEXT CmdBeginDebugUtilsLabelEXT} command recorded to {@code commandBuffer} that has not previously been ended by a call to {@link #vkCmdEndDebugUtilsLabelEXT CmdEndDebugUtilsLabelEXT}.</li>
+     * <li>There <b>must</b> be an outstanding {@code vkCmdBeginDebugUtilsLabelEXT} command prior to the {@code vkCmdEndDebugUtilsLabelEXT} on the queue that {@code commandBuffer} is submitted to</li>
+     * <li>If {@code commandBuffer} is a secondary command buffer, there <b>must</b> be an outstanding {@code vkCmdBeginDebugUtilsLabelEXT} command recorded to {@code commandBuffer} that has not previously been ended by a call to {@code vkCmdEndDebugUtilsLabelEXT}.</li>
      * </ul>
      * 
      * <h5>Valid Usage (Implicit)</h5>
@@ -845,6 +852,8 @@ public class EXTDebugUtils {
      * </ul></dd>
      * </dl>
      * 
+     * <p>The application <b>must</b> ensure that {@link #vkCreateDebugUtilsMessengerEXT CreateDebugUtilsMessengerEXT} is not executed in parallel with any Vulkan command that is also called with {@code instance} or child of {@code instance} as the dispatchable argument.</p>
+     * 
      * <h5>See Also</h5>
      * 
      * <p>{@link VkAllocationCallbacks}, {@link VkDebugUtilsMessengerCreateInfoEXT}</p>
@@ -909,12 +918,14 @@ public class EXTDebugUtils {
      * <li>Host access to {@code messenger} <b>must</b> be externally synchronized</li>
      * </ul>
      * 
+     * <p>The application <b>must</b> ensure that {@link #vkDestroyDebugUtilsMessengerEXT DestroyDebugUtilsMessengerEXT} is not executed in parallel with any Vulkan command that is also called with {@code instance} or child of {@code instance} as the dispatchable argument.</p>
+     * 
      * <h5>See Also</h5>
      * 
      * <p>{@link VkAllocationCallbacks}</p>
      *
      * @param instance   the instance where the callback was created.
-     * @param messenger  the {@code VkDebugUtilsMessengerEXT} object to destroy. {@code messenger} is an externally synchronized object and <b>must</b> not be used on more than one thread at a time. This means that {@link #vkDestroyDebugUtilsMessengerEXT DestroyDebugUtilsMessengerEXT} <b>must</b> not be called when a callback is active.
+     * @param messenger  the {@code VkDebugUtilsMessengerEXT} object to destroy. {@code messenger} is an externally synchronized object and <b>must</b> not be used on more than one thread at a time. This means that {@code vkDestroyDebugUtilsMessengerEXT} <b>must</b> not be called when a callback is active.
      * @param pAllocator controls host memory allocation as described in the <a target="_blank" href="https://www.khronos.org/registry/vulkan/specs/1.0-extensions/html/vkspec.html#memory-allocation">Memory Allocation</a> chapter.
      */
     public static void vkDestroyDebugUtilsMessengerEXT(VkInstance instance, @NativeType("VkDebugUtilsMessengerEXT") long messenger, @Nullable @NativeType("VkAllocationCallbacks const *") VkAllocationCallbacks pAllocator) {
@@ -950,6 +961,12 @@ public class EXTDebugUtils {
      * <h5>Description</h5>
      * 
      * <p>The call will propagate through the layers and generate callback(s) as indicated by the message's flags. The parameters are passed on to the callback in addition to the {@code pUserData} value that was defined at the time the messenger was registered.</p>
+     * 
+     * <h5>Valid Usage</h5>
+     * 
+     * <ul>
+     * <li>{@code objectType} member of each element of {@code pCallbackData}-&gt;{@code pObjects} <b>must</b> not be {@link VK10#VK_OBJECT_TYPE_UNKNOWN OBJECT_TYPE_UNKNOWN}</li>
+     * </ul>
      * 
      * <h5>Valid Usage (Implicit)</h5>
      * 

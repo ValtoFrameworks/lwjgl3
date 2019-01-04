@@ -688,6 +688,12 @@ public final class GLESCapabilities {
         glProgramUniform4ui64vNV,
         glVertexAttribDivisorNV,
         glGetInternalformatSampleivNV,
+        glGetMemoryObjectDetachedResourcesuivNV,
+        glResetMemoryObjectParameterNV,
+        glTexAttachMemoryNV,
+        glBufferAttachMemoryNV,
+        glTextureAttachMemoryNV,
+        glNamedBufferAttachMemoryNV,
         glUniformMatrix2x3fvNV,
         glUniformMatrix3x2fvNV,
         glUniformMatrix2x4fvNV,
@@ -1490,6 +1496,19 @@ public final class GLESCapabilities {
     public final boolean GL_NV_blend_minmax_factor;
     /** When true, {@link NVClipSpaceWScaling} is supported. */
     public final boolean GL_NV_clip_space_w_scaling;
+    /**
+     * When true, the <a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/NV/NV_compute_shader_derivatives.txt">NV_compute_shader_derivatives</a> extension is supported.
+     * 
+     * <p>This extension adds OpenGL ES API support for the OpenGL Shading Language (GLSL) extension {@code "NV_compute_shader_derivatives"}.</p>
+     * 
+     * <p>That extension, when enabled, allows applications to use derivatives in compute shaders. It adds compute shader support for explicit derivative
+     * built-in functions like {@code dFdx()}, automatic derivative computation in texture lookup functions like {@code texture()}, use of the optional LOD
+     * bias parameter to adjust the computed level of detail values in texture lookup functions, and the texture level of detail query function
+     * {@code textureQueryLod()}.</p>
+     * 
+     * <p>Requires {@link GLES32 GLES 3.2}.</p>
+     */
+    public final boolean GL_NV_compute_shader_derivatives;
     /** When true, {@link NVConditionalRender} is supported. */
     public final boolean GL_NV_conditional_render;
     /** When true, {@link NVConservativeRaster} is supported. */
@@ -1667,6 +1686,8 @@ public final class GLESCapabilities {
     public final boolean GL_NV_instanced_arrays;
     /** When true, {@link NVInternalformatSampleQuery} is supported. */
     public final boolean GL_NV_internalformat_sample_query;
+    /** When true, {@link NVMemoryAttachment} is supported. */
+    public final boolean GL_NV_memory_attachment;
     /** When true, {@link NVNonSquareMatrices} is supported. */
     public final boolean GL_NV_non_square_matrices;
     /** When true, {@link NVPathRendering} is supported. */
@@ -2127,12 +2148,42 @@ public final class GLESCapabilities {
     public final boolean GL_QCOM_perfmon_global_mode;
     /** When true, {@link QCOMShaderFramebufferFetchNoncoherent} is supported. */
     public final boolean GL_QCOM_shader_framebuffer_fetch_noncoherent;
+    /**
+     * When certain built-ins (e.g. {@code gl_LastFragData}, {@code gl_LastFragStencilARM}) are referenced in the shader, the shader is required to execute at
+     * sample-rate if the attachments are multisampled. In some use-cases executing such shaders at fragment-rate is actually the preferred behavior. When
+     * this extension is enabled, such GLSL shaders will execute at fragment-rate and the built-in will return a per-fragment value. This avoids the
+     * significant performance penalty that would otherwise be incurred with sample-rate shading.
+     * 
+     * <p>The following built-ins are affected when the this extension is enabled:</p>
+     * 
+     * <ul>
+     * <li>{@code gl_LastFragData} (from {@link EXTShaderFramebufferFetch EXT_shader_framebuffer_fetch})</li>
+     * <li>{@code gl_LastFragDepthARM} (from {@link #GL_ARM_shader_framebuffer_fetch_depth_stencil ARM_shader_framebuffer_fetch_depth_stencil})</li>
+     * </ul>
+     * 
+     * <p>The following built-ins are disallowed when this extension is enabled:</p>
+     * 
+     * <ul>
+     * <li>gl_SampleID</li>
+     * <li>gl_SamplePosition</li>
+     * <li>interpolateAtSample()</li>
+     * </ul>
+     */
+    public final boolean GL_QCOM_shader_framebuffer_fetch_rate;
     /** When true, {@link QCOMTextureFoveated} is supported. */
     public final boolean GL_QCOM_texture_foveated;
+    /** When true, {@link QCOMTextureFoveatedSubsampledLayout} is supported. */
+    public final boolean GL_QCOM_texture_foveated_subsampled_layout;
     /** When true, {@link QCOMTiledRendering} is supported. */
     public final boolean GL_QCOM_tiled_rendering;
     /** When true, {@link QCOMWriteonlyRendering} is supported. */
     public final boolean GL_QCOM_writeonly_rendering;
+    /**
+     * Extension {@link #GL_EXT_gpu_shader5 EXT_gpu_shader5} introduced the texture gather built-in functions. Extension {@link EXTYUVTarget EXT_YUV_target} adds the ability to sample from YUV
+     * textures, but does not include gather functions. This extension allows gather function to be used in combination with the YUV textures exposed in
+     * {@code EXT_YUV_target}.
+     */
+    public final boolean GL_QCOM_YUV_texture_gather;
     /** When true, {@link VIVShaderBinary} is supported. */
     public final boolean GL_VIV_shader_binary;
 
@@ -2812,6 +2863,12 @@ public final class GLESCapabilities {
         glProgramUniform4ui64vNV = provider.getFunctionAddress("glProgramUniform4ui64vNV");
         glVertexAttribDivisorNV = provider.getFunctionAddress("glVertexAttribDivisorNV");
         glGetInternalformatSampleivNV = provider.getFunctionAddress("glGetInternalformatSampleivNV");
+        glGetMemoryObjectDetachedResourcesuivNV = provider.getFunctionAddress("glGetMemoryObjectDetachedResourcesuivNV");
+        glResetMemoryObjectParameterNV = provider.getFunctionAddress("glResetMemoryObjectParameterNV");
+        glTexAttachMemoryNV = provider.getFunctionAddress("glTexAttachMemoryNV");
+        glBufferAttachMemoryNV = provider.getFunctionAddress("glBufferAttachMemoryNV");
+        glTextureAttachMemoryNV = provider.getFunctionAddress("glTextureAttachMemoryNV");
+        glNamedBufferAttachMemoryNV = provider.getFunctionAddress("glNamedBufferAttachMemoryNV");
         glUniformMatrix2x3fvNV = provider.getFunctionAddress("glUniformMatrix2x3fvNV");
         glUniformMatrix3x2fvNV = provider.getFunctionAddress("glUniformMatrix3x2fvNV");
         glUniformMatrix2x4fvNV = provider.getFunctionAddress("glUniformMatrix2x4fvNV");
@@ -3146,6 +3203,7 @@ public final class GLESCapabilities {
         GL_NV_blend_equation_advanced_coherent = ext.contains("GL_NV_blend_equation_advanced_coherent");
         GL_NV_blend_minmax_factor = ext.contains("GL_NV_blend_minmax_factor");
         GL_NV_clip_space_w_scaling = ext.contains("GL_NV_clip_space_w_scaling") && checkExtension("GL_NV_clip_space_w_scaling", NVClipSpaceWScaling.isAvailable(this));
+        GL_NV_compute_shader_derivatives = ext.contains("GL_NV_compute_shader_derivatives");
         GL_NV_conditional_render = ext.contains("GL_NV_conditional_render") && checkExtension("GL_NV_conditional_render", NVConditionalRender.isAvailable(this));
         GL_NV_conservative_raster = ext.contains("GL_NV_conservative_raster") && checkExtension("GL_NV_conservative_raster", NVConservativeRaster.isAvailable(this));
         GL_NV_conservative_raster_pre_snap = ext.contains("GL_NV_conservative_raster_pre_snap");
@@ -3171,6 +3229,7 @@ public final class GLESCapabilities {
         GL_NV_image_formats = ext.contains("GL_NV_image_formats");
         GL_NV_instanced_arrays = ext.contains("GL_NV_instanced_arrays") && checkExtension("GL_NV_instanced_arrays", NVInstancedArrays.isAvailable(this));
         GL_NV_internalformat_sample_query = ext.contains("GL_NV_internalformat_sample_query") && checkExtension("GL_NV_internalformat_sample_query", NVInternalformatSampleQuery.isAvailable(this));
+        GL_NV_memory_attachment = ext.contains("GL_NV_memory_attachment") && checkExtension("GL_NV_memory_attachment", NVMemoryAttachment.isAvailable(this, ext));
         GL_NV_non_square_matrices = ext.contains("GL_NV_non_square_matrices") && checkExtension("GL_NV_non_square_matrices", NVNonSquareMatrices.isAvailable(this));
         GL_NV_path_rendering = ext.contains("GL_NV_path_rendering") && checkExtension("GL_NV_path_rendering", NVPathRendering.isAvailable(this));
         GL_NV_path_rendering_shared_edge = ext.contains("GL_NV_path_rendering_shared_edge");
@@ -3261,9 +3320,12 @@ public final class GLESCapabilities {
         GL_QCOM_framebuffer_foveated = ext.contains("GL_QCOM_framebuffer_foveated") && checkExtension("GL_QCOM_framebuffer_foveated", QCOMFramebufferFoveated.isAvailable(this));
         GL_QCOM_perfmon_global_mode = ext.contains("GL_QCOM_perfmon_global_mode");
         GL_QCOM_shader_framebuffer_fetch_noncoherent = ext.contains("GL_QCOM_shader_framebuffer_fetch_noncoherent") && checkExtension("GL_QCOM_shader_framebuffer_fetch_noncoherent", QCOMShaderFramebufferFetchNoncoherent.isAvailable(this));
+        GL_QCOM_shader_framebuffer_fetch_rate = ext.contains("GL_QCOM_shader_framebuffer_fetch_rate");
         GL_QCOM_texture_foveated = ext.contains("GL_QCOM_texture_foveated") && checkExtension("GL_QCOM_texture_foveated", QCOMTextureFoveated.isAvailable(this));
+        GL_QCOM_texture_foveated_subsampled_layout = ext.contains("GL_QCOM_texture_foveated_subsampled_layout");
         GL_QCOM_tiled_rendering = ext.contains("GL_QCOM_tiled_rendering") && checkExtension("GL_QCOM_tiled_rendering", QCOMTiledRendering.isAvailable(this));
         GL_QCOM_writeonly_rendering = ext.contains("GL_QCOM_writeonly_rendering");
+        GL_QCOM_YUV_texture_gather = ext.contains("GL_QCOM_YUV_texture_gather");
         GL_VIV_shader_binary = ext.contains("GL_VIV_shader_binary");
 
         addresses = ThreadLocalUtil.getAddressesFromCapabilities(this);

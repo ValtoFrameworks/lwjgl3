@@ -36,7 +36,7 @@ val EXT_conditional_rendering = "EXTConditionalRendering".nativeClassVK("EXT_con
 
             <dt><b>Contact</b></dt>
             <dd><ul>
-                <li>Vikram Kushwaha @vkushwaha</li>
+                <li>Vikram Kushwaha <a target="_blank" href="https://github.com/KhronosGroup/Vulkan-Docs/issues/new?title=VK_EXT_conditional_rendering:%20&amp;body=@vkushwaha%20">vkushwaha</a></li>
             </ul></dd>
 
             <dt><b>Last Modified Date</b></dt>
@@ -153,8 +153,8 @@ val EXT_conditional_rendering = "EXTConditionalRendering".nativeClassVK("EXT_con
         ##VkConditionalRenderingBeginInfoEXT
         """,
 
-        VkCommandBuffer.IN("commandBuffer", "the command buffer into which this command will be recorded."),
-        VkConditionalRenderingBeginInfoEXT.const.p.IN("pConditionalRenderingBegin", "a pointer to an instance of the ##VkConditionalRenderingBeginInfoEXT structure specifying the parameters of conditional rendering.")
+        VkCommandBuffer("commandBuffer", "the command buffer into which this command will be recorded."),
+        VkConditionalRenderingBeginInfoEXT.const.p("pConditionalRenderingBegin", "a pointer to an instance of the ##VkConditionalRenderingBeginInfoEXT structure specifying the parameters of conditional rendering.")
     )
 
     void(
@@ -199,6 +199,6 @@ val EXT_conditional_rendering = "EXTConditionalRendering".nativeClassVK("EXT_con
         </table>
         """,
 
-        VkCommandBuffer.IN("commandBuffer", "the command buffer into which this command will be recorded.")
+        VkCommandBuffer("commandBuffer", "the command buffer into which this command will be recorded.")
     )
 }

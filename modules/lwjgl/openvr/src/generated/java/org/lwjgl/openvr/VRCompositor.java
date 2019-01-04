@@ -71,8 +71,8 @@ public class VRCompositor {
      * start rendering.
      */
     @NativeType("EVRCompositorError")
-    public static int VRCompositor_WaitGetPoses(@NativeType("TrackedDevicePose_t *") TrackedDevicePose.Buffer pRenderPoseArray, @NativeType("TrackedDevicePose_t *") TrackedDevicePose.Buffer pGamePoseArray) {
-        return nVRCompositor_WaitGetPoses(pRenderPoseArray.address(), pRenderPoseArray.remaining(), pGamePoseArray.address(), pGamePoseArray.remaining());
+    public static int VRCompositor_WaitGetPoses(@NativeType("TrackedDevicePose_t *") TrackedDevicePose.Buffer pRenderPoseArray, @Nullable @NativeType("TrackedDevicePose_t *") TrackedDevicePose.Buffer pGamePoseArray) {
+        return nVRCompositor_WaitGetPoses(pRenderPoseArray.address(), pRenderPoseArray.remaining(), memAddressSafe(pGamePoseArray), remainingSafe(pGamePoseArray));
     }
 
     // --- [ VRCompositor_GetLastPoses ] ---
@@ -299,7 +299,7 @@ public class VRCompositor {
 
     /** Get current fade color value. */
     @NativeType("HmdColor_t")
-    public static HmdColor VRCompositor_GetCurrentFadeColor(@NativeType("bool") boolean bBackground, HmdColor __result) {
+    public static HmdColor VRCompositor_GetCurrentFadeColor(@NativeType("bool") boolean bBackground, @NativeType("HmdColor_t") HmdColor __result) {
         nVRCompositor_GetCurrentFadeColor(bBackground, __result.address());
         return __result;
     }
@@ -345,7 +345,7 @@ public class VRCompositor {
      * a lat-long stereo pair.</p>
      */
     @NativeType("EVRCompositorError")
-    public static int VRCompositor_SetSkyboxOverride(@NativeType("Texture_t *") Texture.Buffer pTextures) {
+    public static int VRCompositor_SetSkyboxOverride(@NativeType("Texture_t const *") Texture.Buffer pTextures) {
         return nVRCompositor_SetSkyboxOverride(pTextures.address(), pTextures.remaining());
     }
 
@@ -755,6 +755,23 @@ public class VRCompositor {
             check(__functionAddress);
         }
         return callI(__functionAddress);
+    }
+
+    // --- [ VRCompositor_IsMotionSmoothingEnabled ] ---
+
+    /**
+     * Indicates whether or not motion smoothing is enabled by the user settings.
+     * 
+     * <p>If you want to know if motion smoothing actually triggered due to a late frame, check {@link CompositorFrameTiming} {@code m_nReprojectionFlags} &amp;
+     * {@code VRCompositor_ReprojectionMotion} instead.</p>
+     */
+    @NativeType("bool")
+    public static boolean VRCompositor_IsMotionSmoothingEnabled() {
+        long __functionAddress = OpenVR.VRCompositor.IsMotionSmoothingEnabled;
+        if (CHECKS) {
+            check(__functionAddress);
+        }
+        return callZ(__functionAddress);
     }
 
 }

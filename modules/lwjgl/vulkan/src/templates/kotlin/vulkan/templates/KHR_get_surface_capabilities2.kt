@@ -34,7 +34,7 @@ val KHR_get_surface_capabilities2 = "KHRGetSurfaceCapabilities2".nativeClassVK("
 
             <dt><b>Contact</b></dt>
             <dd><ul>
-                <li>James Jones @cubanismo</li>
+                <li>James Jones <a target="_blank" href="https://github.com/KhronosGroup/Vulkan-Docs/issues/new?title=VK_KHR_get_surface_capabilities2:%20&amp;body=@cubanismo%20">cubanismo</a></li>
             </ul></dd>
 
             <dt><b>Last Modified Date</b></dt>
@@ -87,7 +87,7 @@ val KHR_get_surface_capabilities2 = "KHRGetSurfaceCapabilities2".nativeClassVK("
 ￿    VkSurfaceCapabilities2KHR*                  pSurfaceCapabilities);</code></pre>
 
         <h5>Description</h5>
-        #GetPhysicalDeviceSurfaceCapabilities2KHR() behaves similarly to #GetPhysicalDeviceSurfaceCapabilitiesKHR(), with the ability to specify extended inputs via chained input structures, and to return extended information via chained output structures.
+        {@code vkGetPhysicalDeviceSurfaceCapabilities2KHR} behaves similarly to #GetPhysicalDeviceSurfaceCapabilitiesKHR(), with the ability to specify extended inputs via chained input structures, and to return extended information via chained output structures.
 
         <h5>Valid Usage (Implicit)</h5>
         <ul>
@@ -115,9 +115,9 @@ val KHR_get_surface_capabilities2 = "KHRGetSurfaceCapabilities2".nativeClassVK("
         ##VkPhysicalDeviceSurfaceInfo2KHR, ##VkSurfaceCapabilities2KHR
         """,
 
-        VkPhysicalDevice.IN("physicalDevice", "the physical device that will be associated with the swapchain to be created, as described for #CreateSwapchainKHR()."),
-        VkPhysicalDeviceSurfaceInfo2KHR.const.p.IN("pSurfaceInfo", "points to an instance of the ##VkPhysicalDeviceSurfaceInfo2KHR structure, describing the surface and other fixed parameters that would be consumed by #CreateSwapchainKHR()."),
-        VkSurfaceCapabilities2KHR.p.OUT("pSurfaceCapabilities", "points to an instance of the ##VkSurfaceCapabilities2KHR structure in which the capabilities are returned.")
+        VkPhysicalDevice("physicalDevice", "the physical device that will be associated with the swapchain to be created, as described for #CreateSwapchainKHR()."),
+        VkPhysicalDeviceSurfaceInfo2KHR.const.p("pSurfaceInfo", "points to an instance of the ##VkPhysicalDeviceSurfaceInfo2KHR structure, describing the surface and other fixed parameters that would be consumed by #CreateSwapchainKHR()."),
+        VkSurfaceCapabilities2KHR.p("pSurfaceCapabilities", "points to an instance of the ##VkSurfaceCapabilities2KHR structure in which the capabilities are returned.")
     )
 
     VkResult(
@@ -166,9 +166,9 @@ val KHR_get_surface_capabilities2 = "KHRGetSurfaceCapabilities2".nativeClassVK("
         ##VkPhysicalDeviceSurfaceInfo2KHR, ##VkSurfaceFormat2KHR
         """,
 
-        VkPhysicalDevice.IN("physicalDevice", "the physical device that will be associated with the swapchain to be created, as described for #CreateSwapchainKHR()."),
-        VkPhysicalDeviceSurfaceInfo2KHR.const.p.IN("pSurfaceInfo", "points to an instance of the ##VkPhysicalDeviceSurfaceInfo2KHR structure, describing the surface and other fixed parameters that would be consumed by #CreateSwapchainKHR()."),
-        AutoSize("pSurfaceFormats")..Check(1)..uint32_t.p.INOUT("pSurfaceFormatCount", "a pointer to an integer related to the number of format tuples available or queried, as described below."),
-        nullable..VkSurfaceFormat2KHR.p.OUT("pSurfaceFormats", "either {@code NULL} or a pointer to an array of ##VkSurfaceFormat2KHR structures.")
+        VkPhysicalDevice("physicalDevice", "the physical device that will be associated with the swapchain to be created, as described for #CreateSwapchainKHR()."),
+        VkPhysicalDeviceSurfaceInfo2KHR.const.p("pSurfaceInfo", "points to an instance of the ##VkPhysicalDeviceSurfaceInfo2KHR structure, describing the surface and other fixed parameters that would be consumed by #CreateSwapchainKHR()."),
+        AutoSize("pSurfaceFormats")..Check(1)..uint32_t.p("pSurfaceFormatCount", "a pointer to an integer related to the number of format tuples available or queried, as described below."),
+        nullable..VkSurfaceFormat2KHR.p("pSurfaceFormats", "either {@code NULL} or a pointer to an array of ##VkSurfaceFormat2KHR structures.")
     )
 }

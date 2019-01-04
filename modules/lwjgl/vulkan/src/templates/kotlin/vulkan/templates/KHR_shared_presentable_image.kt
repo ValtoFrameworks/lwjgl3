@@ -36,7 +36,7 @@ val KHR_shared_presentable_image = "KHRSharedPresentableImage".nativeClassVK("KH
 
             <dt><b>Contact</b></dt>
             <dd><ul>
-                <li>Alon Or-bach @alonorbach</li>
+                <li>Alon Or-bach <a target="_blank" href="https://github.com/KhronosGroup/Vulkan-Docs/issues/new?title=VK_KHR_shared_presentable_image:%20&amp;body=@alonorbach%20">alonorbach</a></li>
             </ul></dd>
 
             <dt><b>Last Modified Date</b></dt>
@@ -139,7 +139,7 @@ val KHR_shared_presentable_image = "KHRSharedPresentableImage".nativeClassVK("KH
         </dl>
         """,
 
-        VkDevice.IN("device", "the device associated with {@code swapchain}."),
-        VkSwapchainKHR.IN("swapchain", "the swapchain to query.")
+        VkDevice("device", "the device associated with {@code swapchain}."),
+        VkSwapchainKHR("swapchain", "the swapchain to query.")
     )
 }

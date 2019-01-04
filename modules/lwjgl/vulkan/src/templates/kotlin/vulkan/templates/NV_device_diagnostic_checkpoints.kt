@@ -36,7 +36,7 @@ val NV_device_diagnostic_checkpoints = "NVDeviceDiagnosticCheckpoints".nativeCla
 
             <dt><b>Contact</b></dt>
             <dd><ul>
-                <li>Nuno Subtil @nsubtil</li>
+                <li>Nuno Subtil <a target="_blank" href="https://github.com/KhronosGroup/Vulkan-Docs/issues/new?title=VK_NV_device_diagnostic_checkpoints:%20&amp;body=@nsubtil%20">nsubtil</a></li>
             </ul></dd>
 
             <dt><b>Last Modified Date</b></dt>
@@ -78,7 +78,7 @@ val NV_device_diagnostic_checkpoints = "NVDeviceDiagnosticCheckpoints".nativeCla
         insert diagnostic checkpoint in command stream.
 
         <h5>C Specification</h5>
-        Device diagnostic checkpoints are inserted into the command stream by calling {@code vkCmdSetCheckpointNV}.
+        Device diagnostic checkpoints are inserted into the command stream by calling #CmdSetCheckpointNV().
 
         <pre><code>
 ￿void vkCmdSetCheckpointNV(
@@ -104,8 +104,8 @@ val NV_device_diagnostic_checkpoints = "NVDeviceDiagnosticCheckpoints".nativeCla
         </table>
         """,
 
-        VkCommandBuffer.IN("commandBuffer", "the command buffer that will receive the marker"),
-        opaque_const_p.IN("pCheckpointMarker", "an opaque application-provided value that will be associated with the checkpoint.")
+        VkCommandBuffer("commandBuffer", "the command buffer that will receive the marker"),
+        opaque_const_p("pCheckpointMarker", "an opaque application-provided value that will be associated with the checkpoint.")
     )
 
     void(
@@ -114,7 +114,7 @@ val NV_device_diagnostic_checkpoints = "NVDeviceDiagnosticCheckpoints".nativeCla
         retrieve diagnostic checkpoint data.
 
         <h5>C Specification</h5>
-        If the device encounters an error during execution, the implementation will return a #ERROR_DEVICE_LOST error to the application at a certain point during host execution. When this happens, the application <b>can</b> call {@code vkGetQueueCheckpointDataNV} to retrieve information on the most recent diagnostic checkpoints that were executed by the device.
+        If the device encounters an error during execution, the implementation will return a #ERROR_DEVICE_LOST error to the application at a certain point during host execution. When this happens, the application <b>can</b> call #GetQueueCheckpointDataNV() to retrieve information on the most recent diagnostic checkpoints that were executed by the device.
 
         <pre><code>
 ￿void vkGetQueueCheckpointDataNV(
@@ -145,8 +145,8 @@ val NV_device_diagnostic_checkpoints = "NVDeviceDiagnosticCheckpoints".nativeCla
         ##VkCheckpointDataNV
         """,
 
-        VkQueue.IN("queue", "the {@code VkQueue} object the caller would like to retrieve checkpoint data for"),
-        AutoSize("pCheckpointData")..Check(1)..uint32_t.p.INOUT("pCheckpointDataCount", "a pointer to an integer related to the number of checkpoint markers available or queried, as described below."),
-        nullable..VkCheckpointDataNV.p.OUT("pCheckpointData", "either {@code NULL} or a pointer to an array of ##VkCheckpointDataNV structures.")
+        VkQueue("queue", "the {@code VkQueue} object the caller would like to retrieve checkpoint data for"),
+        AutoSize("pCheckpointData")..Check(1)..uint32_t.p("pCheckpointDataCount", "a pointer to an integer related to the number of checkpoint markers available or queried, as described below."),
+        nullable..VkCheckpointDataNV.p("pCheckpointData", "either {@code NULL} or a pointer to an array of ##VkCheckpointDataNV structures.")
     )
 }

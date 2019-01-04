@@ -51,11 +51,14 @@ This script is included in /build.xml and /config/update-dependencies.xml.
 
     <property name="module.lwjgl" location="modules/lwjgl" relative="true"/>
 
+    <property name="src.extract" location="modules/extract/src/main" relative="true"/>
     <property name="src.generator" location="modules/generator/src/main" relative="true"/>
 
     <property name="test.resources" location="modules/samples/src/test/resources" relative="true"/>
 
+    <property name="bin.extract" location="bin/classes/extract" relative="true"/>
     <property name="bin.generator" location="bin/classes/generator" relative="true"/>
+    <property name="bin.javadoc" location="bin/javadoc" relative="true"/>
     <property name="bin.lwjgl" location="bin/classes/lwjgl" relative="true"/>
     <property name="bin.samples" location="bin/classes/samples" relative="true"/>
     <property name="bin.templates" location="bin/classes/templates" relative="true"/>
@@ -124,6 +127,12 @@ This script is included in /build.xml and /config/update-dependencies.xml.
             <matches string="${java.version}" pattern="^9((\.0)*\.[1-9][0-9]*)*(-[a-zA-Z0-9]+)?$"/>
         </or>
     </condition>
+
+    <!-- Used for testing multi-release implementations. -->
+    <condition property="core.java11"><isset property="core.java12"/></condition>
+    <condition property="core.java10"><isset property="core.java11"/></condition>
+    <condition property="core.java9"><isset property="core.java10"/></condition>
+
     <property name="jni.headers" location="${java.home}/include" if:set="jdk9"/>
     <property name="jni.headers" location="${java.home}/../include" unless:set="jdk9"/>
     <condition property="set-boot-class-path">
@@ -140,6 +149,7 @@ This script is included in /build.xml and /config/update-dependencies.xml.
         <javac sourcepath="" debug="yes" source="8" target="8" encoding="UTF-8">
             <compilerarg line='--boot-class-path "${env.JAVA8_HOME}/jre/lib/rt.jar"' if:set="set-boot-class-path"/>
             <compilerarg value="-Xlint:all"/>
+            <compilerarg value="-XDignore.symbol.file"/> <!-- Suppresses internal API (e.g. Unsafe) usage warnings -->
         </javac>
     </presetdef>
 
@@ -147,6 +157,15 @@ This script is included in /build.xml and /config/update-dependencies.xml.
         <javac sourcepath="" debug="yes" encoding="UTF-8">
             <compilerarg line="--release 9"/>
             <compilerarg value="-Xlint:all"/>
+            <compilerarg value="-XDignore.symbol.file"/>
+        </javac>
+    </presetdef>
+
+    <presetdef name="lwjgl.javac10">
+        <javac sourcepath="" debug="yes" encoding="UTF-8">
+            <compilerarg line="--release 10"/>
+            <compilerarg value="-Xlint:all"/>
+            <compilerarg value="-XDignore.symbol.file"/>
         </javac>
     </presetdef>
 

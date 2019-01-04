@@ -16,6 +16,8 @@ import static org.lwjgl.system.Checks.*;
 import static org.lwjgl.system.MemoryUtil.*;
 import static org.lwjgl.system.MemoryStack.*;
 
+import static org.lwjgl.odbc.SQL.*;
+
 /**
  * <h3>Layout</h3>
  * 
@@ -24,7 +26,7 @@ import static org.lwjgl.system.MemoryStack.*;
  *     SQLCHAR precision;
  *     SQLSCHAR scale;
  *     SQLCHAR sign;
- *     SQLCHAR val[16];
+ *     SQLCHAR val[SQL_MAX_NUMERIC_LEN];
  * }</code></pre>
  */
 public class SQL_NUMERIC_STRUCT extends Struct implements NativeResource {
@@ -47,7 +49,7 @@ public class SQL_NUMERIC_STRUCT extends Struct implements NativeResource {
             __member(1),
             __member(1),
             __member(1),
-            __array(1, 16)
+            __array(1, SQL_MAX_NUMERIC_LEN)
         );
 
         SIZEOF = layout.getSize();
@@ -59,10 +61,6 @@ public class SQL_NUMERIC_STRUCT extends Struct implements NativeResource {
         VAL = layout.offsetof(3);
     }
 
-    SQL_NUMERIC_STRUCT(long address, @Nullable ByteBuffer container) {
-        super(address, container);
-    }
-
     /**
      * Creates a {@link SQL_NUMERIC_STRUCT} instance at the current position of the specified {@link ByteBuffer} container. Changes to the buffer's content will be
      * visible to the struct instance and vice versa.
@@ -70,7 +68,7 @@ public class SQL_NUMERIC_STRUCT extends Struct implements NativeResource {
      * <p>The created instance holds a strong reference to the container object.</p>
      */
     public SQL_NUMERIC_STRUCT(ByteBuffer container) {
-        this(memAddress(container), __checkContainer(container, SIZEOF));
+        super(memAddress(container), __checkContainer(container, SIZEOF));
     }
 
     @Override
@@ -86,7 +84,7 @@ public class SQL_NUMERIC_STRUCT extends Struct implements NativeResource {
     @NativeType("SQLCHAR")
     public byte sign() { return nsign(address()); }
     /** Returns a {@link ByteBuffer} view of the {@code val} field. */
-    @NativeType("SQLCHAR[16]")
+    @NativeType("SQLCHAR[SQL_MAX_NUMERIC_LEN]")
     public ByteBuffer val() { return nval(address()); }
     /** Returns the value at the specified index of the {@code val} field. */
     @NativeType("SQLCHAR")
@@ -99,7 +97,7 @@ public class SQL_NUMERIC_STRUCT extends Struct implements NativeResource {
     /** Sets the specified value to the {@code sign} field. */
     public SQL_NUMERIC_STRUCT sign(@NativeType("SQLCHAR") byte value) { nsign(address(), value); return this; }
     /** Copies the specified {@link ByteBuffer} to the {@code val} field. */
-    public SQL_NUMERIC_STRUCT val(@NativeType("SQLCHAR[16]") ByteBuffer value) { nval(address(), value); return this; }
+    public SQL_NUMERIC_STRUCT val(@NativeType("SQLCHAR[SQL_MAX_NUMERIC_LEN]") ByteBuffer value) { nval(address(), value); return this; }
     /** Sets the specified value at the specified index of the {@code val} field. */
     public SQL_NUMERIC_STRUCT val(int index, @NativeType("SQLCHAR") byte value) { nval(address(), index, value); return this; }
 
@@ -134,28 +132,29 @@ public class SQL_NUMERIC_STRUCT extends Struct implements NativeResource {
 
     /** Returns a new {@link SQL_NUMERIC_STRUCT} instance allocated with {@link MemoryUtil#memAlloc memAlloc}. The instance must be explicitly freed. */
     public static SQL_NUMERIC_STRUCT malloc() {
-        return create(nmemAllocChecked(SIZEOF));
+        return wrap(SQL_NUMERIC_STRUCT.class, nmemAllocChecked(SIZEOF));
     }
 
     /** Returns a new {@link SQL_NUMERIC_STRUCT} instance allocated with {@link MemoryUtil#memCalloc memCalloc}. The instance must be explicitly freed. */
     public static SQL_NUMERIC_STRUCT calloc() {
-        return create(nmemCallocChecked(1, SIZEOF));
+        return wrap(SQL_NUMERIC_STRUCT.class, nmemCallocChecked(1, SIZEOF));
     }
 
     /** Returns a new {@link SQL_NUMERIC_STRUCT} instance allocated with {@link BufferUtils}. */
     public static SQL_NUMERIC_STRUCT create() {
-        return new SQL_NUMERIC_STRUCT(BufferUtils.createByteBuffer(SIZEOF));
+        ByteBuffer container = BufferUtils.createByteBuffer(SIZEOF);
+        return wrap(SQL_NUMERIC_STRUCT.class, memAddress(container), container);
     }
 
     /** Returns a new {@link SQL_NUMERIC_STRUCT} instance for the specified memory address. */
     public static SQL_NUMERIC_STRUCT create(long address) {
-        return new SQL_NUMERIC_STRUCT(address, null);
+        return wrap(SQL_NUMERIC_STRUCT.class, address);
     }
 
     /** Like {@link #create(long) create}, but returns {@code null} if {@code address} is {@code NULL}. */
     @Nullable
     public static SQL_NUMERIC_STRUCT createSafe(long address) {
-        return address == NULL ? null : create(address);
+        return address == NULL ? null : wrap(SQL_NUMERIC_STRUCT.class, address);
     }
 
     /**
@@ -164,7 +163,7 @@ public class SQL_NUMERIC_STRUCT extends Struct implements NativeResource {
      * @param capacity the buffer capacity
      */
     public static SQL_NUMERIC_STRUCT.Buffer malloc(int capacity) {
-        return create(__malloc(capacity, SIZEOF), capacity);
+        return wrap(Buffer.class, nmemAllocChecked(__checkMalloc(capacity, SIZEOF)), capacity);
     }
 
     /**
@@ -173,7 +172,7 @@ public class SQL_NUMERIC_STRUCT extends Struct implements NativeResource {
      * @param capacity the buffer capacity
      */
     public static SQL_NUMERIC_STRUCT.Buffer calloc(int capacity) {
-        return create(nmemCallocChecked(capacity, SIZEOF), capacity);
+        return wrap(Buffer.class, nmemCallocChecked(capacity, SIZEOF), capacity);
     }
 
     /**
@@ -182,7 +181,8 @@ public class SQL_NUMERIC_STRUCT extends Struct implements NativeResource {
      * @param capacity the buffer capacity
      */
     public static SQL_NUMERIC_STRUCT.Buffer create(int capacity) {
-        return new Buffer(__create(capacity, SIZEOF));
+        ByteBuffer container = __create(capacity, SIZEOF);
+        return wrap(Buffer.class, memAddress(container), capacity, container);
     }
 
     /**
@@ -192,13 +192,13 @@ public class SQL_NUMERIC_STRUCT extends Struct implements NativeResource {
      * @param capacity the buffer capacity
      */
     public static SQL_NUMERIC_STRUCT.Buffer create(long address, int capacity) {
-        return new Buffer(address, capacity);
+        return wrap(Buffer.class, address, capacity);
     }
 
     /** Like {@link #create(long, int) create}, but returns {@code null} if {@code address} is {@code NULL}. */
     @Nullable
     public static SQL_NUMERIC_STRUCT.Buffer createSafe(long address, int capacity) {
-        return address == NULL ? null : create(address, capacity);
+        return address == NULL ? null : wrap(Buffer.class, address, capacity);
     }
 
     // -----------------------------------
@@ -219,7 +219,7 @@ public class SQL_NUMERIC_STRUCT extends Struct implements NativeResource {
      * @param stack the stack from which to allocate
      */
     public static SQL_NUMERIC_STRUCT mallocStack(MemoryStack stack) {
-        return create(stack.nmalloc(ALIGNOF, SIZEOF));
+        return wrap(SQL_NUMERIC_STRUCT.class, stack.nmalloc(ALIGNOF, SIZEOF));
     }
 
     /**
@@ -228,7 +228,7 @@ public class SQL_NUMERIC_STRUCT extends Struct implements NativeResource {
      * @param stack the stack from which to allocate
      */
     public static SQL_NUMERIC_STRUCT callocStack(MemoryStack stack) {
-        return create(stack.ncalloc(ALIGNOF, 1, SIZEOF));
+        return wrap(SQL_NUMERIC_STRUCT.class, stack.ncalloc(ALIGNOF, 1, SIZEOF));
     }
 
     /**
@@ -256,7 +256,7 @@ public class SQL_NUMERIC_STRUCT extends Struct implements NativeResource {
      * @param capacity the buffer capacity
      */
     public static SQL_NUMERIC_STRUCT.Buffer mallocStack(int capacity, MemoryStack stack) {
-        return create(stack.nmalloc(ALIGNOF, capacity * SIZEOF), capacity);
+        return wrap(Buffer.class, stack.nmalloc(ALIGNOF, capacity * SIZEOF), capacity);
     }
 
     /**
@@ -266,44 +266,46 @@ public class SQL_NUMERIC_STRUCT extends Struct implements NativeResource {
      * @param capacity the buffer capacity
      */
     public static SQL_NUMERIC_STRUCT.Buffer callocStack(int capacity, MemoryStack stack) {
-        return create(stack.ncalloc(ALIGNOF, capacity, SIZEOF), capacity);
+        return wrap(Buffer.class, stack.ncalloc(ALIGNOF, capacity, SIZEOF), capacity);
     }
 
     // -----------------------------------
 
     /** Unsafe version of {@link #precision}. */
-    public static byte nprecision(long struct) { return memGetByte(struct + SQL_NUMERIC_STRUCT.PRECISION); }
+    public static byte nprecision(long struct) { return UNSAFE.getByte(null, struct + SQL_NUMERIC_STRUCT.PRECISION); }
     /** Unsafe version of {@link #scale}. */
-    public static byte nscale(long struct) { return memGetByte(struct + SQL_NUMERIC_STRUCT.SCALE); }
+    public static byte nscale(long struct) { return UNSAFE.getByte(null, struct + SQL_NUMERIC_STRUCT.SCALE); }
     /** Unsafe version of {@link #sign}. */
-    public static byte nsign(long struct) { return memGetByte(struct + SQL_NUMERIC_STRUCT.SIGN); }
+    public static byte nsign(long struct) { return UNSAFE.getByte(null, struct + SQL_NUMERIC_STRUCT.SIGN); }
     /** Unsafe version of {@link #val}. */
-    public static ByteBuffer nval(long struct) { return memByteBuffer(struct + SQL_NUMERIC_STRUCT.VAL, 16); }
+    public static ByteBuffer nval(long struct) { return memByteBuffer(struct + SQL_NUMERIC_STRUCT.VAL, SQL_MAX_NUMERIC_LEN); }
     /** Unsafe version of {@link #val(int) val}. */
     public static byte nval(long struct, int index) {
-        return memGetByte(struct + SQL_NUMERIC_STRUCT.VAL + check(index, 16) * 1);
+        return UNSAFE.getByte(null, struct + SQL_NUMERIC_STRUCT.VAL + check(index, SQL_MAX_NUMERIC_LEN) * 1);
     }
 
     /** Unsafe version of {@link #precision(byte) precision}. */
-    public static void nprecision(long struct, byte value) { memPutByte(struct + SQL_NUMERIC_STRUCT.PRECISION, value); }
+    public static void nprecision(long struct, byte value) { UNSAFE.putByte(null, struct + SQL_NUMERIC_STRUCT.PRECISION, value); }
     /** Unsafe version of {@link #scale(byte) scale}. */
-    public static void nscale(long struct, byte value) { memPutByte(struct + SQL_NUMERIC_STRUCT.SCALE, value); }
+    public static void nscale(long struct, byte value) { UNSAFE.putByte(null, struct + SQL_NUMERIC_STRUCT.SCALE, value); }
     /** Unsafe version of {@link #sign(byte) sign}. */
-    public static void nsign(long struct, byte value) { memPutByte(struct + SQL_NUMERIC_STRUCT.SIGN, value); }
+    public static void nsign(long struct, byte value) { UNSAFE.putByte(null, struct + SQL_NUMERIC_STRUCT.SIGN, value); }
     /** Unsafe version of {@link #val(ByteBuffer) val}. */
     public static void nval(long struct, ByteBuffer value) {
-        if (CHECKS) { checkGT(value, 16); }
+        if (CHECKS) { checkGT(value, SQL_MAX_NUMERIC_LEN); }
         memCopy(memAddress(value), struct + SQL_NUMERIC_STRUCT.VAL, value.remaining() * 1);
     }
     /** Unsafe version of {@link #val(int, byte) val}. */
     public static void nval(long struct, int index, byte value) {
-        memPutByte(struct + SQL_NUMERIC_STRUCT.VAL + check(index, 16) * 1, value);
+        UNSAFE.putByte(null, struct + SQL_NUMERIC_STRUCT.VAL + check(index, SQL_MAX_NUMERIC_LEN) * 1, value);
     }
 
     // -----------------------------------
 
     /** An array of {@link SQL_NUMERIC_STRUCT} structs. */
     public static class Buffer extends StructBuffer<SQL_NUMERIC_STRUCT, Buffer> implements NativeResource {
+
+        private static final SQL_NUMERIC_STRUCT ELEMENT_FACTORY = SQL_NUMERIC_STRUCT.create(-1L);
 
         /**
          * Creates a new {@link SQL_NUMERIC_STRUCT.Buffer} instance backed by the specified container.
@@ -332,18 +334,8 @@ public class SQL_NUMERIC_STRUCT extends Struct implements NativeResource {
         }
 
         @Override
-        protected Buffer newBufferInstance(long address, @Nullable ByteBuffer container, int mark, int pos, int lim, int cap) {
-            return new Buffer(address, container, mark, pos, lim, cap);
-        }
-
-        @Override
-        protected SQL_NUMERIC_STRUCT newInstance(long address) {
-            return new SQL_NUMERIC_STRUCT(address, container);
-        }
-
-        @Override
-        public int sizeof() {
-            return SIZEOF;
+        protected SQL_NUMERIC_STRUCT getElementFactory() {
+            return ELEMENT_FACTORY;
         }
 
         /** Returns the value of the {@code precision} field. */
@@ -356,7 +348,7 @@ public class SQL_NUMERIC_STRUCT extends Struct implements NativeResource {
         @NativeType("SQLCHAR")
         public byte sign() { return SQL_NUMERIC_STRUCT.nsign(address()); }
         /** Returns a {@link ByteBuffer} view of the {@code val} field. */
-        @NativeType("SQLCHAR[16]")
+        @NativeType("SQLCHAR[SQL_MAX_NUMERIC_LEN]")
         public ByteBuffer val() { return SQL_NUMERIC_STRUCT.nval(address()); }
         /** Returns the value at the specified index of the {@code val} field. */
         @NativeType("SQLCHAR")
@@ -369,7 +361,7 @@ public class SQL_NUMERIC_STRUCT extends Struct implements NativeResource {
         /** Sets the specified value to the {@code sign} field. */
         public SQL_NUMERIC_STRUCT.Buffer sign(@NativeType("SQLCHAR") byte value) { SQL_NUMERIC_STRUCT.nsign(address(), value); return this; }
         /** Copies the specified {@link ByteBuffer} to the {@code val} field. */
-        public SQL_NUMERIC_STRUCT.Buffer val(@NativeType("SQLCHAR[16]") ByteBuffer value) { SQL_NUMERIC_STRUCT.nval(address(), value); return this; }
+        public SQL_NUMERIC_STRUCT.Buffer val(@NativeType("SQLCHAR[SQL_MAX_NUMERIC_LEN]") ByteBuffer value) { SQL_NUMERIC_STRUCT.nval(address(), value); return this; }
         /** Sets the specified value at the specified index of the {@code val} field. */
         public SQL_NUMERIC_STRUCT.Buffer val(int index, @NativeType("SQLCHAR") byte value) { SQL_NUMERIC_STRUCT.nval(address(), index, value); return this; }
 

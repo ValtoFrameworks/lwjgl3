@@ -38,7 +38,7 @@ val AMD_draw_indirect_count = "AMDDrawIndirectCount".nativeClassVK("AMD_draw_ind
 
             <dt><b>Contact</b></dt>
             <dd><ul>
-                <li>Daniel Rakos @drakos-amd</li>
+                <li>Daniel Rakos <a target="_blank" href="https://github.com/KhronosGroup/Vulkan-Docs/issues/new?title=VK_AMD_draw_indirect_count:%20&amp;body=@drakos-amd%20">drakos-amd</a></li>
             </ul></dd>
 
             <dt><b>Last Modified Date</b></dt>
@@ -89,7 +89,7 @@ val AMD_draw_indirect_count = "AMDDrawIndirectCount".nativeClassVK("AMD_draw_ind
 ￿    uint32_t                                    stride);</code></pre>
 
         <h5>Description</h5>
-        #CmdDrawIndirectCountAMD() behaves similarly to #CmdDrawIndirect() except that the draw count is read by the device from a buffer during execution. The command will read an unsigned 32-bit integer from {@code countBuffer} located at {@code countBufferOffset} and use this as the draw count.
+        {@code vkCmdDrawIndirectCountAMD} behaves similarly to #CmdDrawIndirect() except that the draw count is read by the device from a buffer during execution. The command will read an unsigned 32-bit integer from {@code countBuffer} located at {@code countBufferOffset} and use this as the draw count.
 
         <h5>Valid Usage</h5>
         <ul>
@@ -106,7 +106,7 @@ val AMD_draw_indirect_count = "AMDDrawIndirectCount".nativeClassVK("AMD_draw_ind
             <li>The subpass index of the current render pass <b>must</b> be equal to the {@code subpass} member of the ##VkGraphicsPipelineCreateInfo structure specified when creating the {@code VkPipeline} bound to #PIPELINE_BIND_POINT_GRAPHICS.</li>
             <li>For each set <em>n</em> that is statically used by the {@code VkPipeline} bound to #PIPELINE_BIND_POINT_GRAPHICS, a descriptor set <b>must</b> have been bound to <em>n</em> at #PIPELINE_BIND_POINT_GRAPHICS, with a {@code VkPipelineLayout} that is compatible for set <em>n</em>, with the {@code VkPipelineLayout} used to create the current {@code VkPipeline}, as described in <a target="_blank" href="https://www.khronos.org/registry/vulkan/specs/1.0-extensions/html/vkspec.html\#descriptorsets-compatibility">the “Pipeline Layout Compatibility” section</a></li>
             <li>For each push constant that is statically used by the {@code VkPipeline} bound to #PIPELINE_BIND_POINT_GRAPHICS, a push constant value <b>must</b> have been set for #PIPELINE_BIND_POINT_GRAPHICS, with a {@code VkPipelineLayout} that is compatible for push constants, with the {@code VkPipelineLayout} used to create the current {@code VkPipeline}, as described in <a target="_blank" href="https://www.khronos.org/registry/vulkan/specs/1.0-extensions/html/vkspec.html\#descriptorsets-compatibility">the “Pipeline Layout Compatibility” section</a></li>
-            <li>Descriptors in each bound descriptor set, specified via #CmdBindDescriptorSets(), <b>must</b> be valid if they are statically used by the bound {@code VkPipeline} object, specified via #CmdBindPipeline()</li>
+            <li>Descriptors in each bound descriptor set, specified via {@code vkCmdBindDescriptorSets}, <b>must</b> be valid if they are statically used by the bound {@code VkPipeline} object, specified via {@code vkCmdBindPipeline}</li>
             <li>All vertex input bindings accessed via vertex input variables declared in the vertex shader entry point&#8217;s interface <b>must</b> have valid buffers bound</li>
             <li>A valid graphics pipeline <b>must</b> be bound to the current command buffer with #PIPELINE_BIND_POINT_GRAPHICS</li>
             <li>If the {@code VkPipeline} object bound to #PIPELINE_BIND_POINT_GRAPHICS requires any dynamic state, that state <b>must</b> have been set on the current command buffer</li>
@@ -119,13 +119,14 @@ val AMD_draw_indirect_count = "AMDDrawIndirectCount".nativeClassVK("AMD_draw_ind
             <li>If any {@code VkSampler} object that is accessed from a shader by the {@code VkPipeline} bound to #PIPELINE_BIND_POINT_GRAPHICS uses unnormalized coordinates, it <b>must</b> not be used with any of the SPIR-V {@code OpImageSample*} or {@code OpImageSparseSample*} instructions that includes a LOD bias or any offset values, in any shader stage</li>
             <li>If the <a target="_blank" href="https://www.khronos.org/registry/vulkan/specs/1.0-extensions/html/vkspec.html\#features-features-robustBufferAccess">robust buffer access</a> feature is not enabled, and any shader stage in the {@code VkPipeline} object bound to #PIPELINE_BIND_POINT_GRAPHICS accesses a uniform buffer, it <b>must</b> not access values outside of the range of that buffer specified in the bound descriptor set</li>
             <li>If the <a target="_blank" href="https://www.khronos.org/registry/vulkan/specs/1.0-extensions/html/vkspec.html\#features-features-robustBufferAccess">robust buffer access</a> feature is not enabled, and any shader stage in the {@code VkPipeline} object bound to #PIPELINE_BIND_POINT_GRAPHICS accesses a storage buffer, it <b>must</b> not access values outside of the range of that buffer specified in the bound descriptor set</li>
-            <li>If a {@code VkImageView} is sampled with with #FILTER_LINEAR as a result of this command, then the image view&#8217;s <a target="_blank" href="https://www.khronos.org/registry/vulkan/specs/1.0-extensions/html/vkspec.html\#resources-image-view-format-features">format features</a> <b>must</b> contain #FORMAT_FEATURE_SAMPLED_IMAGE_FILTER_LINEAR_BIT.</li>
+            <li>If a {@code VkImageView} is sampled with #FILTER_LINEAR as a result of this command, then the image view&#8217;s <a target="_blank" href="https://www.khronos.org/registry/vulkan/specs/1.0-extensions/html/vkspec.html\#resources-image-view-format-features">format features</a> <b>must</b> contain #FORMAT_FEATURE_SAMPLED_IMAGE_FILTER_LINEAR_BIT.</li>
             <li>Image subresources used as attachments in the current render pass <b>must</b> not be accessed in any way other than as an attachment by this command.</li>
             <li>If the draw is recorded in a render pass instance with multiview enabled, the maximum instance index <b>must</b> be less than or equal to ##VkPhysicalDeviceMultiviewProperties{@code ::maxMultiviewInstanceIndex}.</li>
             <li>If {@code commandBuffer} is an unprotected command buffer, and any pipeline stage in the {@code VkPipeline} object bound to #PIPELINE_BIND_POINT_GRAPHICS reads from or writes to any image or buffer, that image or buffer <b>must</b> not be a protected image or protected buffer.</li>
             <li>If {@code commandBuffer} is a protected command buffer, and any pipeline stage in the {@code VkPipeline} object bound to #PIPELINE_BIND_POINT_GRAPHICS writes to any image or buffer, that image or buffer <b>must</b> not be an unprotected image or unprotected buffer.</li>
             <li>If {@code commandBuffer} is a protected command buffer, and any pipeline stage other than the framebuffer-space pipeline stages in the {@code VkPipeline} object bound to #PIPELINE_BIND_POINT_GRAPHICS reads from or writes to any image or buffer, the image or buffer <b>must</b> not be a protected image or protected buffer.</li>
             <li>If the bound graphics pipeline was created with ##VkPipelineSampleLocationsStateCreateInfoEXT{@code ::sampleLocationsEnable} set to #TRUE and the current subpass has a depth/stencil attachment, then that attachment <b>must</b> have been created with the #IMAGE_CREATE_SAMPLE_LOCATIONS_COMPATIBLE_DEPTH_BIT_EXT bit set</li>
+            <li>Any {@code VkImage} created with a ##VkImageCreateInfo{@code ::flags} containing #IMAGE_CREATE_CORNER_SAMPLED_BIT_NV sampled as a result of this command <b>must</b> only be sampled using a {@code VkSamplerAddressMode} of #SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE.</li>
         </ul>
 
         <h5>Valid Usage (Implicit)</h5>
@@ -152,13 +153,13 @@ val AMD_draw_indirect_count = "AMDDrawIndirectCount".nativeClassVK("AMD_draw_ind
         </table>
         """,
 
-        VkCommandBuffer.IN("commandBuffer", "the command buffer into which the command is recorded."),
-        VkBuffer.IN("buffer", "the buffer containing draw parameters."),
-        VkDeviceSize.IN("offset", "the byte offset into {@code buffer} where parameters begin."),
-        VkBuffer.IN("countBuffer", "the buffer containing the draw count."),
-        VkDeviceSize.IN("countBufferOffset", "the byte offset into {@code countBuffer} where the draw count begins."),
-        uint32_t.IN("maxDrawCount", "specifies the maximum number of draws that will be executed. The actual number of executed draw calls is the minimum of the count specified in {@code countBuffer} and {@code maxDrawCount}."),
-        uint32_t.IN("stride", "the byte stride between successive sets of draw parameters.")
+        VkCommandBuffer("commandBuffer", "the command buffer into which the command is recorded."),
+        VkBuffer("buffer", "the buffer containing draw parameters."),
+        VkDeviceSize("offset", "the byte offset into {@code buffer} where parameters begin."),
+        VkBuffer("countBuffer", "the buffer containing the draw count."),
+        VkDeviceSize("countBufferOffset", "the byte offset into {@code countBuffer} where the draw count begins."),
+        uint32_t("maxDrawCount", "specifies the maximum number of draws that will be executed. The actual number of executed draw calls is the minimum of the count specified in {@code countBuffer} and {@code maxDrawCount}."),
+        uint32_t("stride", "the byte stride between successive sets of draw parameters.")
     )
 
     void(
@@ -180,7 +181,7 @@ val AMD_draw_indirect_count = "AMDDrawIndirectCount".nativeClassVK("AMD_draw_ind
 ￿    uint32_t                                    stride);</code></pre>
 
         <h5>Description</h5>
-        #CmdDrawIndexedIndirectCountAMD() behaves similarly to #CmdDrawIndexedIndirect() except that the draw count is read by the device from a buffer during execution. The command will read an unsigned 32-bit integer from {@code countBuffer} located at {@code countBufferOffset} and use this as the draw count.
+        {@code vkCmdDrawIndexedIndirectCountAMD} behaves similarly to #CmdDrawIndexedIndirect() except that the draw count is read by the device from a buffer during execution. The command will read an unsigned 32-bit integer from {@code countBuffer} located at {@code countBufferOffset} and use this as the draw count.
 
         <h5>Valid Usage</h5>
         <ul>
@@ -197,7 +198,7 @@ val AMD_draw_indirect_count = "AMDDrawIndirectCount".nativeClassVK("AMD_draw_ind
             <li>The subpass index of the current render pass <b>must</b> be equal to the {@code subpass} member of the ##VkGraphicsPipelineCreateInfo structure specified when creating the {@code VkPipeline} bound to #PIPELINE_BIND_POINT_GRAPHICS.</li>
             <li>For each set <em>n</em> that is statically used by the {@code VkPipeline} bound to #PIPELINE_BIND_POINT_GRAPHICS, a descriptor set <b>must</b> have been bound to <em>n</em> at #PIPELINE_BIND_POINT_GRAPHICS, with a {@code VkPipelineLayout} that is compatible for set <em>n</em>, with the {@code VkPipelineLayout} used to create the current {@code VkPipeline}, as described in <a target="_blank" href="https://www.khronos.org/registry/vulkan/specs/1.0-extensions/html/vkspec.html\#descriptorsets-compatibility">the “Pipeline Layout Compatibility” section</a></li>
             <li>For each push constant that is statically used by the {@code VkPipeline} bound to #PIPELINE_BIND_POINT_GRAPHICS, a push constant value <b>must</b> have been set for #PIPELINE_BIND_POINT_GRAPHICS, with a {@code VkPipelineLayout} that is compatible for push constants, with the {@code VkPipelineLayout} used to create the current {@code VkPipeline}, as described in <a target="_blank" href="https://www.khronos.org/registry/vulkan/specs/1.0-extensions/html/vkspec.html\#descriptorsets-compatibility">the “Pipeline Layout Compatibility” section</a></li>
-            <li>Descriptors in each bound descriptor set, specified via #CmdBindDescriptorSets(), <b>must</b> be valid if they are statically used by the bound {@code VkPipeline} object, specified via #CmdBindPipeline()</li>
+            <li>Descriptors in each bound descriptor set, specified via {@code vkCmdBindDescriptorSets}, <b>must</b> be valid if they are statically used by the bound {@code VkPipeline} object, specified via {@code vkCmdBindPipeline}</li>
             <li>All vertex input bindings accessed via vertex input variables declared in the vertex shader entry point&#8217;s interface <b>must</b> have valid buffers bound</li>
             <li>A valid graphics pipeline <b>must</b> be bound to the current command buffer with #PIPELINE_BIND_POINT_GRAPHICS</li>
             <li>If the {@code VkPipeline} object bound to #PIPELINE_BIND_POINT_GRAPHICS requires any dynamic state, that state <b>must</b> have been set on the current command buffer</li>
@@ -210,13 +211,14 @@ val AMD_draw_indirect_count = "AMDDrawIndirectCount".nativeClassVK("AMD_draw_ind
             <li>If any {@code VkSampler} object that is accessed from a shader by the {@code VkPipeline} bound to #PIPELINE_BIND_POINT_GRAPHICS uses unnormalized coordinates, it <b>must</b> not be used with any of the SPIR-V {@code OpImageSample*} or {@code OpImageSparseSample*} instructions that includes a LOD bias or any offset values, in any shader stage</li>
             <li>If the <a target="_blank" href="https://www.khronos.org/registry/vulkan/specs/1.0-extensions/html/vkspec.html\#features-features-robustBufferAccess">robust buffer access</a> feature is not enabled, and any shader stage in the {@code VkPipeline} object bound to #PIPELINE_BIND_POINT_GRAPHICS accesses a uniform buffer, it <b>must</b> not access values outside of the range of that buffer specified in the bound descriptor set</li>
             <li>If the <a target="_blank" href="https://www.khronos.org/registry/vulkan/specs/1.0-extensions/html/vkspec.html\#features-features-robustBufferAccess">robust buffer access</a> feature is not enabled, and any shader stage in the {@code VkPipeline} object bound to #PIPELINE_BIND_POINT_GRAPHICS accesses a storage buffer, it <b>must</b> not access values outside of the range of that buffer specified in the bound descriptor set</li>
-            <li>If a {@code VkImageView} is sampled with with #FILTER_LINEAR as a result of this command, then the image view&#8217;s <a target="_blank" href="https://www.khronos.org/registry/vulkan/specs/1.0-extensions/html/vkspec.html\#resources-image-view-format-features">format features</a> <b>must</b> contain #FORMAT_FEATURE_SAMPLED_IMAGE_FILTER_LINEAR_BIT.</li>
+            <li>If a {@code VkImageView} is sampled with #FILTER_LINEAR as a result of this command, then the image view&#8217;s <a target="_blank" href="https://www.khronos.org/registry/vulkan/specs/1.0-extensions/html/vkspec.html\#resources-image-view-format-features">format features</a> <b>must</b> contain #FORMAT_FEATURE_SAMPLED_IMAGE_FILTER_LINEAR_BIT.</li>
             <li>Image subresources used as attachments in the current render pass <b>must</b> not be accessed in any way other than as an attachment by this command.</li>
             <li>If the draw is recorded in a render pass instance with multiview enabled, the maximum instance index <b>must</b> be less than or equal to ##VkPhysicalDeviceMultiviewProperties{@code ::maxMultiviewInstanceIndex}.</li>
             <li>If {@code commandBuffer} is an unprotected command buffer, and any pipeline stage in the {@code VkPipeline} object bound to #PIPELINE_BIND_POINT_GRAPHICS reads from or writes to any image or buffer, that image or buffer <b>must</b> not be a protected image or protected buffer.</li>
             <li>If {@code commandBuffer} is a protected command buffer, and any pipeline stage in the {@code VkPipeline} object bound to #PIPELINE_BIND_POINT_GRAPHICS writes to any image or buffer, that image or buffer <b>must</b> not be an unprotected image or unprotected buffer.</li>
             <li>If {@code commandBuffer} is a protected command buffer, and any pipeline stage other than the framebuffer-space pipeline stages in the {@code VkPipeline} object bound to #PIPELINE_BIND_POINT_GRAPHICS reads from or writes to any image or buffer, the image or buffer <b>must</b> not be a protected image or protected buffer.</li>
             <li>If the bound graphics pipeline was created with ##VkPipelineSampleLocationsStateCreateInfoEXT{@code ::sampleLocationsEnable} set to #TRUE and the current subpass has a depth/stencil attachment, then that attachment <b>must</b> have been created with the #IMAGE_CREATE_SAMPLE_LOCATIONS_COMPATIBLE_DEPTH_BIT_EXT bit set</li>
+            <li>Any {@code VkImage} created with a ##VkImageCreateInfo{@code ::flags} containing #IMAGE_CREATE_CORNER_SAMPLED_BIT_NV sampled as a result of this command <b>must</b> only be sampled using a {@code VkSamplerAddressMode} of #SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE.</li>
         </ul>
 
         <h5>Valid Usage (Implicit)</h5>
@@ -243,12 +245,12 @@ val AMD_draw_indirect_count = "AMDDrawIndirectCount".nativeClassVK("AMD_draw_ind
         </table>
         """,
 
-        VkCommandBuffer.IN("commandBuffer", "the command buffer into which the command is recorded."),
-        VkBuffer.IN("buffer", "the buffer containing draw parameters."),
-        VkDeviceSize.IN("offset", "the byte offset into {@code buffer} where parameters begin."),
-        VkBuffer.IN("countBuffer", "the buffer containing the draw count."),
-        VkDeviceSize.IN("countBufferOffset", "the byte offset into {@code countBuffer} where the draw count begins."),
-        uint32_t.IN("maxDrawCount", "specifies the maximum number of draws that will be executed. The actual number of executed draw calls is the minimum of the count specified in {@code countBuffer} and {@code maxDrawCount}."),
-        uint32_t.IN("stride", "the byte stride between successive sets of draw parameters.")
+        VkCommandBuffer("commandBuffer", "the command buffer into which the command is recorded."),
+        VkBuffer("buffer", "the buffer containing draw parameters."),
+        VkDeviceSize("offset", "the byte offset into {@code buffer} where parameters begin."),
+        VkBuffer("countBuffer", "the buffer containing the draw count."),
+        VkDeviceSize("countBufferOffset", "the byte offset into {@code countBuffer} where the draw count begins."),
+        uint32_t("maxDrawCount", "specifies the maximum number of draws that will be executed. The actual number of executed draw calls is the minimum of the count specified in {@code countBuffer} and {@code maxDrawCount}."),
+        uint32_t("stride", "the byte stride between successive sets of draw parameters.")
     )
 }

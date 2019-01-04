@@ -71,7 +71,7 @@ val KHR_device_group_creation = "KHRDeviceGroupCreation".nativeClassVK("KHR_devi
 
             <dt><b>Contact</b></dt>
             <dd><ul>
-                <li>Jeff Bolz @jeffbolznv</li>
+                <li>Jeff Bolz <a target="_blank" href="https://github.com/KhronosGroup/Vulkan-Docs/issues/new?title=VK_KHR_device_group_creation:%20&amp;body=@jeffbolznv%20">jeffbolznv</a></li>
             </ul></dd>
 
             <dt><b>Last Modified Date</b></dt>
@@ -127,8 +127,8 @@ val KHR_device_group_creation = "KHRDeviceGroupCreation".nativeClassVK("KHR_devi
         "EnumeratePhysicalDeviceGroupsKHR",
         "See #EnumeratePhysicalDeviceGroups().",
 
-        VkInstance.IN("instance", "a handle to a Vulkan instance previously created with #CreateInstance()."),
-        AutoSize("pPhysicalDeviceGroupProperties")..Check(1)..uint32_t.p.INOUT("pPhysicalDeviceGroupCount", "a pointer to an integer related to the number of device groups available or queried, as described below."),
-        nullable..VkPhysicalDeviceGroupProperties.p.OUT("pPhysicalDeviceGroupProperties", "either {@code NULL} or a pointer to an array of ##VkPhysicalDeviceGroupProperties structures.")
+        VkInstance("instance", "a handle to a Vulkan instance previously created with #CreateInstance()."),
+        AutoSize("pPhysicalDeviceGroupProperties")..Check(1)..uint32_t.p("pPhysicalDeviceGroupCount", "a pointer to an integer related to the number of device groups available or queried, as described below."),
+        nullable..VkPhysicalDeviceGroupProperties.p("pPhysicalDeviceGroupProperties", "either {@code NULL} or a pointer to an array of ##VkPhysicalDeviceGroupProperties structures.")
     )
 }

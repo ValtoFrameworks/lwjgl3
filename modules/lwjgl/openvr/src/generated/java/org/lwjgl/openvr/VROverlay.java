@@ -54,8 +54,9 @@ public class VROverlay {
         }
         MemoryStack stack = stackGet(); int stackPointer = stack.getPointer();
         try {
-            ByteBuffer pchOverlayKeyEncoded = stack.ASCII(pchOverlayKey);
-            return nVROverlay_FindOverlay(memAddress(pchOverlayKeyEncoded), memAddress(pOverlayHandle));
+            stack.nASCII(pchOverlayKey, true);
+            long pchOverlayKeyEncoded = stack.getPointerAddress();
+            return nVROverlay_FindOverlay(pchOverlayKeyEncoded, memAddress(pOverlayHandle));
         } finally {
             stack.setPointer(stackPointer);
         }
@@ -91,9 +92,11 @@ public class VROverlay {
         }
         MemoryStack stack = stackGet(); int stackPointer = stack.getPointer();
         try {
-            ByteBuffer pchOverlayKeyEncoded = stack.ASCII(pchOverlayKey);
-            ByteBuffer pchOverlayNameEncoded = stack.ASCII(pchOverlayName);
-            return nVROverlay_CreateOverlay(memAddress(pchOverlayKeyEncoded), memAddress(pchOverlayNameEncoded), memAddress(pOverlayHandle));
+            stack.nASCII(pchOverlayKey, true);
+            long pchOverlayKeyEncoded = stack.getPointerAddress();
+            stack.nASCII(pchOverlayName, true);
+            long pchOverlayNameEncoded = stack.getPointerAddress();
+            return nVROverlay_CreateOverlay(pchOverlayKeyEncoded, pchOverlayNameEncoded, memAddress(pOverlayHandle));
         } finally {
             stack.setPointer(stackPointer);
         }
@@ -242,7 +245,7 @@ public class VROverlay {
 
     /** Sets the name to use for this overlay. */
     @NativeType("EVROverlayError")
-    public static int VROverlay_SetOverlayName(@NativeType("VROverlayHandle_t") long ulOverlayHandle, @NativeType("char *") ByteBuffer pchName) {
+    public static int VROverlay_SetOverlayName(@NativeType("VROverlayHandle_t") long ulOverlayHandle, @NativeType("char const *") ByteBuffer pchName) {
         if (CHECKS) {
             checkNT1(pchName);
         }
@@ -251,11 +254,12 @@ public class VROverlay {
 
     /** Sets the name to use for this overlay. */
     @NativeType("EVROverlayError")
-    public static int VROverlay_SetOverlayName(@NativeType("VROverlayHandle_t") long ulOverlayHandle, @NativeType("char *") CharSequence pchName) {
+    public static int VROverlay_SetOverlayName(@NativeType("VROverlayHandle_t") long ulOverlayHandle, @NativeType("char const *") CharSequence pchName) {
         MemoryStack stack = stackGet(); int stackPointer = stack.getPointer();
         try {
-            ByteBuffer pchNameEncoded = stack.ASCII(pchName);
-            return nVROverlay_SetOverlayName(ulOverlayHandle, memAddress(pchNameEncoded));
+            stack.nASCII(pchName, true);
+            long pchNameEncoded = stack.getPointerAddress();
+            return nVROverlay_SetOverlayName(ulOverlayHandle, pchNameEncoded);
         } finally {
             stack.setPointer(stackPointer);
         }
@@ -340,7 +344,7 @@ public class VROverlay {
     /**
      * Specify flag setting for a given overlay.
      *
-     * @param eOverlayFlag one of:<br><table><tr><td>{@link VR#VROverlayFlags_None}</td><td>{@link VR#VROverlayFlags_Curved}</td></tr><tr><td>{@link VR#VROverlayFlags_RGSS4X}</td><td>{@link VR#VROverlayFlags_NoDashboardTab}</td></tr><tr><td>{@link VR#VROverlayFlags_AcceptsGamepadEvents}</td><td>{@link VR#VROverlayFlags_ShowGamepadFocus}</td></tr><tr><td>{@link VR#VROverlayFlags_SendVRScrollEvents}</td><td>{@link VR#VROverlayFlags_SendVRTouchpadEvents}</td></tr><tr><td>{@link VR#VROverlayFlags_ShowTouchPadScrollWheel}</td><td>{@link VR#VROverlayFlags_TransferOwnershipToInternalProcess}</td></tr><tr><td>{@link VR#VROverlayFlags_SideBySide_Parallel}</td><td>{@link VR#VROverlayFlags_SideBySide_Crossed}</td></tr><tr><td>{@link VR#VROverlayFlags_Panorama}</td><td>{@link VR#VROverlayFlags_StereoPanorama}</td></tr><tr><td>{@link VR#VROverlayFlags_SortWithNonSceneOverlays}</td><td>{@link VR#VROverlayFlags_VisibleInDashboard}</td></tr></table>
+     * @param eOverlayFlag one of:<br><table><tr><td>{@link VR#VROverlayFlags_None}</td><td>{@link VR#VROverlayFlags_Curved}</td></tr><tr><td>{@link VR#VROverlayFlags_RGSS4X}</td><td>{@link VR#VROverlayFlags_NoDashboardTab}</td></tr><tr><td>{@link VR#VROverlayFlags_AcceptsGamepadEvents}</td><td>{@link VR#VROverlayFlags_ShowGamepadFocus}</td></tr><tr><td>{@link VR#VROverlayFlags_SendVRScrollEvents}</td><td>{@link VR#VROverlayFlags_SendVRTouchpadEvents}</td></tr><tr><td>{@link VR#VROverlayFlags_ShowTouchPadScrollWheel}</td><td>{@link VR#VROverlayFlags_TransferOwnershipToInternalProcess}</td></tr><tr><td>{@link VR#VROverlayFlags_SideBySide_Parallel}</td><td>{@link VR#VROverlayFlags_SideBySide_Crossed}</td></tr><tr><td>{@link VR#VROverlayFlags_Panorama}</td><td>{@link VR#VROverlayFlags_StereoPanorama}</td></tr><tr><td>{@link VR#VROverlayFlags_SortWithNonSceneOverlays}</td><td>{@link VR#VROverlayFlags_VisibleInDashboard}</td></tr><tr><td>{@link VR#VROverlayFlags_MakeOverlaysInteractiveIfVisible}</td></tr></table>
      */
     @NativeType("EVROverlayError")
     public static int VROverlay_SetOverlayFlag(@NativeType("VROverlayHandle_t") long ulOverlayHandle, @NativeType("VROverlayFlags") int eOverlayFlag, @NativeType("bool") boolean bEnabled) {
@@ -365,7 +369,7 @@ public class VROverlay {
     /**
      * Sets flag setting for a given overlay.
      *
-     * @param eOverlayFlag one of:<br><table><tr><td>{@link VR#VROverlayFlags_None}</td><td>{@link VR#VROverlayFlags_Curved}</td></tr><tr><td>{@link VR#VROverlayFlags_RGSS4X}</td><td>{@link VR#VROverlayFlags_NoDashboardTab}</td></tr><tr><td>{@link VR#VROverlayFlags_AcceptsGamepadEvents}</td><td>{@link VR#VROverlayFlags_ShowGamepadFocus}</td></tr><tr><td>{@link VR#VROverlayFlags_SendVRScrollEvents}</td><td>{@link VR#VROverlayFlags_SendVRTouchpadEvents}</td></tr><tr><td>{@link VR#VROverlayFlags_ShowTouchPadScrollWheel}</td><td>{@link VR#VROverlayFlags_TransferOwnershipToInternalProcess}</td></tr><tr><td>{@link VR#VROverlayFlags_SideBySide_Parallel}</td><td>{@link VR#VROverlayFlags_SideBySide_Crossed}</td></tr><tr><td>{@link VR#VROverlayFlags_Panorama}</td><td>{@link VR#VROverlayFlags_StereoPanorama}</td></tr><tr><td>{@link VR#VROverlayFlags_SortWithNonSceneOverlays}</td><td>{@link VR#VROverlayFlags_VisibleInDashboard}</td></tr></table>
+     * @param eOverlayFlag one of:<br><table><tr><td>{@link VR#VROverlayFlags_None}</td><td>{@link VR#VROverlayFlags_Curved}</td></tr><tr><td>{@link VR#VROverlayFlags_RGSS4X}</td><td>{@link VR#VROverlayFlags_NoDashboardTab}</td></tr><tr><td>{@link VR#VROverlayFlags_AcceptsGamepadEvents}</td><td>{@link VR#VROverlayFlags_ShowGamepadFocus}</td></tr><tr><td>{@link VR#VROverlayFlags_SendVRScrollEvents}</td><td>{@link VR#VROverlayFlags_SendVRTouchpadEvents}</td></tr><tr><td>{@link VR#VROverlayFlags_ShowTouchPadScrollWheel}</td><td>{@link VR#VROverlayFlags_TransferOwnershipToInternalProcess}</td></tr><tr><td>{@link VR#VROverlayFlags_SideBySide_Parallel}</td><td>{@link VR#VROverlayFlags_SideBySide_Crossed}</td></tr><tr><td>{@link VR#VROverlayFlags_Panorama}</td><td>{@link VR#VROverlayFlags_StereoPanorama}</td></tr><tr><td>{@link VR#VROverlayFlags_SortWithNonSceneOverlays}</td><td>{@link VR#VROverlayFlags_VisibleInDashboard}</td></tr><tr><td>{@link VR#VROverlayFlags_MakeOverlaysInteractiveIfVisible}</td></tr></table>
      */
     @NativeType("EVROverlayError")
     public static int VROverlay_GetOverlayFlag(@NativeType("VROverlayHandle_t") long ulOverlayHandle, @NativeType("VROverlayFlags") int eOverlayFlag, @NativeType("bool *") ByteBuffer pbEnabled) {
@@ -694,7 +698,7 @@ public class VROverlay {
     }
 
     @NativeType("EVROverlayError")
-    public static int VROverlay_SetOverlayRenderModel(@NativeType("VROverlayHandle_t") long ulOverlayHandle, @NativeType("char *") ByteBuffer pchRenderModel, @NativeType("HmdColor_t *") HmdColor pColor) {
+    public static int VROverlay_SetOverlayRenderModel(@NativeType("VROverlayHandle_t") long ulOverlayHandle, @NativeType("char const *") ByteBuffer pchRenderModel, @NativeType("HmdColor_t *") HmdColor pColor) {
         if (CHECKS) {
             checkNT1(pchRenderModel);
         }
@@ -702,11 +706,12 @@ public class VROverlay {
     }
 
     @NativeType("EVROverlayError")
-    public static int VROverlay_SetOverlayRenderModel(@NativeType("VROverlayHandle_t") long ulOverlayHandle, @NativeType("char *") CharSequence pchRenderModel, @NativeType("HmdColor_t *") HmdColor pColor) {
+    public static int VROverlay_SetOverlayRenderModel(@NativeType("VROverlayHandle_t") long ulOverlayHandle, @NativeType("char const *") CharSequence pchRenderModel, @NativeType("HmdColor_t *") HmdColor pColor) {
         MemoryStack stack = stackGet(); int stackPointer = stack.getPointer();
         try {
-            ByteBuffer pchRenderModelEncoded = stack.ASCII(pchRenderModel);
-            return nVROverlay_SetOverlayRenderModel(ulOverlayHandle, memAddress(pchRenderModelEncoded), pColor.address());
+            stack.nASCII(pchRenderModel, true);
+            long pchRenderModelEncoded = stack.getPointerAddress();
+            return nVROverlay_SetOverlayRenderModel(ulOverlayHandle, pchRenderModelEncoded, pColor.address());
         } finally {
             stack.setPointer(stackPointer);
         }
@@ -841,8 +846,9 @@ public class VROverlay {
     public static int VROverlay_SetOverlayTransformTrackedDeviceComponent(@NativeType("VROverlayHandle_t") long ulOverlayHandle, @NativeType("TrackedDeviceIndex_t") int unDeviceIndex, @NativeType("char const *") CharSequence pchComponentName) {
         MemoryStack stack = stackGet(); int stackPointer = stack.getPointer();
         try {
-            ByteBuffer pchComponentNameEncoded = stack.ASCII(pchComponentName);
-            return nVROverlay_SetOverlayTransformTrackedDeviceComponent(ulOverlayHandle, unDeviceIndex, memAddress(pchComponentNameEncoded));
+            stack.nASCII(pchComponentName, true);
+            long pchComponentNameEncoded = stack.getPointerAddress();
+            return nVROverlay_SetOverlayTransformTrackedDeviceComponent(ulOverlayHandle, unDeviceIndex, pchComponentNameEncoded);
         } finally {
             stack.setPointer(stackPointer);
         }
@@ -1287,8 +1293,9 @@ public class VROverlay {
     public static int VROverlay_SetOverlayFromFile(@NativeType("VROverlayHandle_t") long ulOverlayHandle, @NativeType("char const *") CharSequence pchFilePath) {
         MemoryStack stack = stackGet(); int stackPointer = stack.getPointer();
         try {
-            ByteBuffer pchFilePathEncoded = stack.ASCII(pchFilePath);
-            return nVROverlay_SetOverlayFromFile(ulOverlayHandle, memAddress(pchFilePathEncoded));
+            stack.nASCII(pchFilePath, true);
+            long pchFilePathEncoded = stack.getPointerAddress();
+            return nVROverlay_SetOverlayFromFile(ulOverlayHandle, pchFilePathEncoded);
         } finally {
             stack.setPointer(stackPointer);
         }
@@ -1401,9 +1408,11 @@ public class VROverlay {
         }
         MemoryStack stack = stackGet(); int stackPointer = stack.getPointer();
         try {
-            ByteBuffer pchOverlayKeyEncoded = stack.ASCII(pchOverlayKey);
-            ByteBuffer pchOverlayFriendlyNameEncoded = stack.ASCII(pchOverlayFriendlyName);
-            return nVROverlay_CreateDashboardOverlay(memAddress(pchOverlayKeyEncoded), memAddress(pchOverlayFriendlyNameEncoded), memAddress(pMainHandle), memAddress(pThumbnailHandle));
+            stack.nASCII(pchOverlayKey, true);
+            long pchOverlayKeyEncoded = stack.getPointerAddress();
+            stack.nASCII(pchOverlayFriendlyName, true);
+            long pchOverlayFriendlyNameEncoded = stack.getPointerAddress();
+            return nVROverlay_CreateDashboardOverlay(pchOverlayKeyEncoded, pchOverlayFriendlyNameEncoded, memAddress(pMainHandle), memAddress(pThumbnailHandle));
         } finally {
             stack.setPointer(stackPointer);
         }
@@ -1488,8 +1497,9 @@ public class VROverlay {
     public static void VROverlay_ShowDashboard(@NativeType("char const *") CharSequence pchOverlayToShow) {
         MemoryStack stack = stackGet(); int stackPointer = stack.getPointer();
         try {
-            ByteBuffer pchOverlayToShowEncoded = stack.ASCII(pchOverlayToShow);
-            nVROverlay_ShowDashboard(memAddress(pchOverlayToShowEncoded));
+            stack.nASCII(pchOverlayToShow, true);
+            long pchOverlayToShowEncoded = stack.getPointerAddress();
+            nVROverlay_ShowDashboard(pchOverlayToShowEncoded);
         } finally {
             stack.setPointer(stackPointer);
         }
@@ -1543,9 +1553,11 @@ public class VROverlay {
     public static int VROverlay_ShowKeyboard(@NativeType("EGamepadTextInputMode") int eInputMode, @NativeType("EGamepadTextInputLineMode") int eLineInputMode, @NativeType("char const *") CharSequence pchDescription, @NativeType("uint32_t") int unCharMax, @NativeType("char const *") CharSequence pchExistingText, @NativeType("bool") boolean bUseMinimalMode, @NativeType("uint64_t") long uUserValue) {
         MemoryStack stack = stackGet(); int stackPointer = stack.getPointer();
         try {
-            ByteBuffer pchDescriptionEncoded = stack.ASCII(pchDescription);
-            ByteBuffer pchExistingTextEncoded = stack.ASCII(pchExistingText);
-            return nVROverlay_ShowKeyboard(eInputMode, eLineInputMode, memAddress(pchDescriptionEncoded), unCharMax, memAddress(pchExistingTextEncoded), bUseMinimalMode, uUserValue);
+            stack.nASCII(pchDescription, true);
+            long pchDescriptionEncoded = stack.getPointerAddress();
+            stack.nASCII(pchExistingText, true);
+            long pchExistingTextEncoded = stack.getPointerAddress();
+            return nVROverlay_ShowKeyboard(eInputMode, eLineInputMode, pchDescriptionEncoded, unCharMax, pchExistingTextEncoded, bUseMinimalMode, uUserValue);
         } finally {
             stack.setPointer(stackPointer);
         }
@@ -1583,9 +1595,11 @@ public class VROverlay {
     public static int VROverlay_ShowKeyboardForOverlay(@NativeType("VROverlayHandle_t") long ulOverlayHandle, @NativeType("EGamepadTextInputMode") int eInputMode, @NativeType("EGamepadTextInputLineMode") int eLineInputMode, @NativeType("char const *") CharSequence pchDescription, @NativeType("uint32_t") int unCharMax, @NativeType("char const *") CharSequence pchExistingText, @NativeType("bool") boolean bUseMinimalMode, @NativeType("uint64_t") long uUserValue) {
         MemoryStack stack = stackGet(); int stackPointer = stack.getPointer();
         try {
-            ByteBuffer pchDescriptionEncoded = stack.ASCII(pchDescription);
-            ByteBuffer pchExistingTextEncoded = stack.ASCII(pchExistingText);
-            return nVROverlay_ShowKeyboardForOverlay(ulOverlayHandle, eInputMode, eLineInputMode, memAddress(pchDescriptionEncoded), unCharMax, memAddress(pchExistingTextEncoded), bUseMinimalMode, uUserValue);
+            stack.nASCII(pchDescription, true);
+            long pchDescriptionEncoded = stack.getPointerAddress();
+            stack.nASCII(pchExistingText, true);
+            long pchExistingTextEncoded = stack.getPointerAddress();
+            return nVROverlay_ShowKeyboardForOverlay(ulOverlayHandle, eInputMode, eLineInputMode, pchDescriptionEncoded, unCharMax, pchExistingTextEncoded, bUseMinimalMode, uUserValue);
         } finally {
             stack.setPointer(stackPointer);
         }
@@ -1733,13 +1747,19 @@ public class VROverlay {
     public static int VROverlay_ShowMessageOverlay(@NativeType("char const *") CharSequence pchText, @NativeType("char const *") CharSequence pchCaption, @NativeType("char const *") CharSequence pchButton0Text, @Nullable @NativeType("char const *") CharSequence pchButton1Text, @Nullable @NativeType("char const *") CharSequence pchButton2Text, @Nullable @NativeType("char const *") CharSequence pchButton3Text) {
         MemoryStack stack = stackGet(); int stackPointer = stack.getPointer();
         try {
-            ByteBuffer pchTextEncoded = stack.ASCII(pchText);
-            ByteBuffer pchCaptionEncoded = stack.ASCII(pchCaption);
-            ByteBuffer pchButton0TextEncoded = stack.ASCII(pchButton0Text);
-            ByteBuffer pchButton1TextEncoded = stack.ASCIISafe(pchButton1Text);
-            ByteBuffer pchButton2TextEncoded = stack.ASCIISafe(pchButton2Text);
-            ByteBuffer pchButton3TextEncoded = stack.ASCIISafe(pchButton3Text);
-            return nVROverlay_ShowMessageOverlay(memAddress(pchTextEncoded), memAddress(pchCaptionEncoded), memAddress(pchButton0TextEncoded), memAddressSafe(pchButton1TextEncoded), memAddressSafe(pchButton2TextEncoded), memAddressSafe(pchButton3TextEncoded));
+            stack.nASCII(pchText, true);
+            long pchTextEncoded = stack.getPointerAddress();
+            stack.nASCII(pchCaption, true);
+            long pchCaptionEncoded = stack.getPointerAddress();
+            stack.nASCII(pchButton0Text, true);
+            long pchButton0TextEncoded = stack.getPointerAddress();
+            stack.nASCIISafe(pchButton1Text, true);
+            long pchButton1TextEncoded = pchButton1Text == null ? NULL : stack.getPointerAddress();
+            stack.nASCIISafe(pchButton2Text, true);
+            long pchButton2TextEncoded = pchButton2Text == null ? NULL : stack.getPointerAddress();
+            stack.nASCIISafe(pchButton3Text, true);
+            long pchButton3TextEncoded = pchButton3Text == null ? NULL : stack.getPointerAddress();
+            return nVROverlay_ShowMessageOverlay(pchTextEncoded, pchCaptionEncoded, pchButton0TextEncoded, pchButton1TextEncoded, pchButton2TextEncoded, pchButton3TextEncoded);
         } finally {
             stack.setPointer(stackPointer);
         }

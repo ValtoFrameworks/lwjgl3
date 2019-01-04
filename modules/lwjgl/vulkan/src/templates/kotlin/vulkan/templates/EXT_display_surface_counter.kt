@@ -34,7 +34,7 @@ val EXT_display_surface_counter = "EXTDisplaySurfaceCounter".nativeClassVK("EXT_
 
             <dt><b>Contact</b></dt>
             <dd><ul>
-                <li>James Jones @cubanismo</li>
+                <li>James Jones <a target="_blank" href="https://github.com/KhronosGroup/Vulkan-Docs/issues/new?title=VK_EXT_display_surface_counter:%20&amp;body=@cubanismo%20">cubanismo</a></li>
             </ul></dd>
 
             <dt><b>Last Modified Date</b></dt>
@@ -69,7 +69,8 @@ val EXT_display_surface_counter = "EXTDisplaySurfaceCounter".nativeClassVK("EXT_
     EnumConstant(
         "Extends {@code VkStructureType}.",
 
-        "STRUCTURE_TYPE_SURFACE_CAPABILITIES_2_EXT".."1000090000"
+        "STRUCTURE_TYPE_SURFACE_CAPABILITIES_2_EXT".."1000090000",
+        "STRUCTURE_TYPE_SURFACE_CAPABILITIES2_EXT".."1000090000"
     )
 
     EnumConstant(
@@ -103,7 +104,7 @@ val EXT_display_surface_counter = "EXTDisplaySurfaceCounter".nativeClassVK("EXT_
 ￿    VkSurfaceCapabilities2EXT*                  pSurfaceCapabilities);</code></pre>
 
         <h5>Description</h5>
-        #GetPhysicalDeviceSurfaceCapabilities2EXT() behaves similarly to #GetPhysicalDeviceSurfaceCapabilitiesKHR(), with the ability to return extended information by adding extension structures to the {@code pNext} chain of its {@code pSurfaceCapabilities} parameter.
+        {@code vkGetPhysicalDeviceSurfaceCapabilities2EXT} behaves similarly to #GetPhysicalDeviceSurfaceCapabilitiesKHR(), with the ability to return extended information by adding extension structures to the {@code pNext} chain of its {@code pSurfaceCapabilities} parameter.
 
         <h5>Valid Usage (Implicit)</h5>
         <ul>
@@ -132,8 +133,8 @@ val EXT_display_surface_counter = "EXTDisplaySurfaceCounter".nativeClassVK("EXT_
         ##VkSurfaceCapabilities2EXT
         """,
 
-        VkPhysicalDevice.IN("physicalDevice", "the physical device that will be associated with the swapchain to be created, as described for #CreateSwapchainKHR()."),
-        VkSurfaceKHR.IN("surface", "the surface that will be associated with the swapchain."),
-        VkSurfaceCapabilities2EXT.p.OUT("pSurfaceCapabilities", "a pointer to an instance of the ##VkSurfaceCapabilities2EXT structure in which the capabilities are returned.")
+        VkPhysicalDevice("physicalDevice", "the physical device that will be associated with the swapchain to be created, as described for #CreateSwapchainKHR()."),
+        VkSurfaceKHR("surface", "the surface that will be associated with the swapchain."),
+        VkSurfaceCapabilities2EXT.p("pSurfaceCapabilities", "a pointer to an instance of the ##VkSurfaceCapabilities2EXT structure in which the capabilities are returned.")
     )
 }

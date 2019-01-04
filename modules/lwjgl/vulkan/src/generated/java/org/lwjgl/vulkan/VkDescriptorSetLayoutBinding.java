@@ -20,7 +20,7 @@ import static org.lwjgl.system.MemoryStack.*;
  * 
  * <h5>Description</h5>
  * 
- * <p>The above layout definition allows the descriptor bindings to be specified sparsely such that not all binding numbers between 0 and the maximum binding number need to be specified in the {@code pBindings} array. Bindings that are not specified have a {@code descriptorCount} and {@code stageFlags} of zero, and the {@code descriptorType} is treated as undefined. However, all binding numbers between 0 and the maximum binding number in the {@link VkDescriptorSetLayoutCreateInfo}{@code ::pBindings} array <b>may</b> consume memory in the descriptor set layout even if not all descriptor bindings are used, though it <b>should</b> not consume additional memory from the descriptor pool.</p>
+ * <p>The above layout definition allows the descriptor bindings to be specified sparsely such that not all binding numbers between 0 and the maximum binding number need to be specified in the {@code pBindings} array. Bindings that are not specified have a {@code descriptorCount} and {@code stageFlags} of zero, and the value of {@code descriptorType} is undefined. However, all binding numbers between 0 and the maximum binding number in the {@link VkDescriptorSetLayoutCreateInfo}{@code ::pBindings} array <b>may</b> consume memory in the descriptor set layout even if not all descriptor bindings are used, though it <b>should</b> not consume additional memory from the descriptor pool.</p>
  * 
  * <div style="margin-left: 26px; border-left: 1px solid gray; padding-left: 14px;"><h5>Note</h5>
  * 
@@ -31,6 +31,8 @@ import static org.lwjgl.system.MemoryStack.*;
  * 
  * <ul>
  * <li>If {@code descriptorType} is {@link VK10#VK_DESCRIPTOR_TYPE_SAMPLER DESCRIPTOR_TYPE_SAMPLER} or {@link VK10#VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER}, and {@code descriptorCount} is not 0 and {@code pImmutableSamplers} is not {@code NULL}, {@code pImmutableSamplers} <b>must</b> be a valid pointer to an array of {@code descriptorCount} valid {@code VkSampler} handles</li>
+ * <li>If {@code descriptorType} is {@link EXTInlineUniformBlock#VK_DESCRIPTOR_TYPE_INLINE_UNIFORM_BLOCK_EXT DESCRIPTOR_TYPE_INLINE_UNIFORM_BLOCK_EXT} then {@code descriptorCount} <b>must</b> be a multiple of 4</li>
+ * <li>If {@code descriptorType} is {@link EXTInlineUniformBlock#VK_DESCRIPTOR_TYPE_INLINE_UNIFORM_BLOCK_EXT DESCRIPTOR_TYPE_INLINE_UNIFORM_BLOCK_EXT} then {@code descriptorCount} <b>must</b> be less than or equal to {@link VkPhysicalDeviceInlineUniformBlockPropertiesEXT}{@code ::maxInlineUniformBlockSize}</li>
  * <li>If {@code descriptorCount} is not 0, {@code stageFlags} <b>must</b> be a valid combination of {@code VkShaderStageFlagBits} values</li>
  * <li>If {@code descriptorType} is {@link VK10#VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT DESCRIPTOR_TYPE_INPUT_ATTACHMENT} and {@code descriptorCount} is not 0, then {@code stageFlags} <b>must</b> be 0 or {@link VK10#VK_SHADER_STAGE_FRAGMENT_BIT SHADER_STAGE_FRAGMENT_BIT}</li>
  * </ul>
@@ -50,7 +52,7 @@ import static org.lwjgl.system.MemoryStack.*;
  * <ul>
  * <li>{@code binding} &ndash; the binding number of this entry and corresponds to a resource of the same binding number in the shader stages.</li>
  * <li>{@code descriptorType} &ndash; a {@code VkDescriptorType} specifying which type of resource descriptors are used for this binding.</li>
- * <li>{@code descriptorCount} &ndash; the number of descriptors contained in the binding, accessed in a shader as an array. If {@code descriptorCount} is zero this binding entry is reserved and the resource <b>must</b> not be accessed from any stage via this binding within any pipeline using the set layout.</li>
+ * <li>{@code descriptorCount} &ndash; the number of descriptors contained in the binding, accessed in a shader as an array , except if {@code descriptorType} is {@link EXTInlineUniformBlock#VK_DESCRIPTOR_TYPE_INLINE_UNIFORM_BLOCK_EXT DESCRIPTOR_TYPE_INLINE_UNIFORM_BLOCK_EXT} in which case {@code descriptorCount} is the size in bytes of the inline uniform block . If {@code descriptorCount} is zero this binding entry is reserved and the resource <b>must</b> not be accessed from any stage via this binding within any pipeline using the set layout.</li>
  * <li>{@code stageFlags} &ndash; member is a bitmask of {@code VkShaderStageFlagBits} specifying which pipeline shader stages <b>can</b> access a resource for this binding. {@link VK10#VK_SHADER_STAGE_ALL SHADER_STAGE_ALL} is a shorthand specifying that all defined shader stages, including any additional stages defined by extensions, <b>can</b> access the resource.
  * 
  * <p>If a shader stage is not included in {@code stageFlags}, then a resource <b>must</b> not be accessed from that stage via this binding within any pipeline using the set layout. Other than input attachments which are limited to the fragment shader, there are no limitations on what combinations of stages <b>can</b> use a descriptor binding, and in particular a binding <b>can</b> be used by both graphics stages and the compute stage.</p></li>
@@ -103,10 +105,6 @@ public class VkDescriptorSetLayoutBinding extends Struct implements NativeResour
         PIMMUTABLESAMPLERS = layout.offsetof(4);
     }
 
-    VkDescriptorSetLayoutBinding(long address, @Nullable ByteBuffer container) {
-        super(address, container);
-    }
-
     /**
      * Creates a {@link VkDescriptorSetLayoutBinding} instance at the current position of the specified {@link ByteBuffer} container. Changes to the buffer's content will be
      * visible to the struct instance and vice versa.
@@ -114,7 +112,7 @@ public class VkDescriptorSetLayoutBinding extends Struct implements NativeResour
      * <p>The created instance holds a strong reference to the container object.</p>
      */
     public VkDescriptorSetLayoutBinding(ByteBuffer container) {
-        this(memAddress(container), __checkContainer(container, SIZEOF));
+        super(memAddress(container), __checkContainer(container, SIZEOF));
     }
 
     @Override
@@ -181,28 +179,29 @@ public class VkDescriptorSetLayoutBinding extends Struct implements NativeResour
 
     /** Returns a new {@link VkDescriptorSetLayoutBinding} instance allocated with {@link MemoryUtil#memAlloc memAlloc}. The instance must be explicitly freed. */
     public static VkDescriptorSetLayoutBinding malloc() {
-        return create(nmemAllocChecked(SIZEOF));
+        return wrap(VkDescriptorSetLayoutBinding.class, nmemAllocChecked(SIZEOF));
     }
 
     /** Returns a new {@link VkDescriptorSetLayoutBinding} instance allocated with {@link MemoryUtil#memCalloc memCalloc}. The instance must be explicitly freed. */
     public static VkDescriptorSetLayoutBinding calloc() {
-        return create(nmemCallocChecked(1, SIZEOF));
+        return wrap(VkDescriptorSetLayoutBinding.class, nmemCallocChecked(1, SIZEOF));
     }
 
     /** Returns a new {@link VkDescriptorSetLayoutBinding} instance allocated with {@link BufferUtils}. */
     public static VkDescriptorSetLayoutBinding create() {
-        return new VkDescriptorSetLayoutBinding(BufferUtils.createByteBuffer(SIZEOF));
+        ByteBuffer container = BufferUtils.createByteBuffer(SIZEOF);
+        return wrap(VkDescriptorSetLayoutBinding.class, memAddress(container), container);
     }
 
     /** Returns a new {@link VkDescriptorSetLayoutBinding} instance for the specified memory address. */
     public static VkDescriptorSetLayoutBinding create(long address) {
-        return new VkDescriptorSetLayoutBinding(address, null);
+        return wrap(VkDescriptorSetLayoutBinding.class, address);
     }
 
     /** Like {@link #create(long) create}, but returns {@code null} if {@code address} is {@code NULL}. */
     @Nullable
     public static VkDescriptorSetLayoutBinding createSafe(long address) {
-        return address == NULL ? null : create(address);
+        return address == NULL ? null : wrap(VkDescriptorSetLayoutBinding.class, address);
     }
 
     /**
@@ -211,7 +210,7 @@ public class VkDescriptorSetLayoutBinding extends Struct implements NativeResour
      * @param capacity the buffer capacity
      */
     public static VkDescriptorSetLayoutBinding.Buffer malloc(int capacity) {
-        return create(__malloc(capacity, SIZEOF), capacity);
+        return wrap(Buffer.class, nmemAllocChecked(__checkMalloc(capacity, SIZEOF)), capacity);
     }
 
     /**
@@ -220,7 +219,7 @@ public class VkDescriptorSetLayoutBinding extends Struct implements NativeResour
      * @param capacity the buffer capacity
      */
     public static VkDescriptorSetLayoutBinding.Buffer calloc(int capacity) {
-        return create(nmemCallocChecked(capacity, SIZEOF), capacity);
+        return wrap(Buffer.class, nmemCallocChecked(capacity, SIZEOF), capacity);
     }
 
     /**
@@ -229,7 +228,8 @@ public class VkDescriptorSetLayoutBinding extends Struct implements NativeResour
      * @param capacity the buffer capacity
      */
     public static VkDescriptorSetLayoutBinding.Buffer create(int capacity) {
-        return new Buffer(__create(capacity, SIZEOF));
+        ByteBuffer container = __create(capacity, SIZEOF);
+        return wrap(Buffer.class, memAddress(container), capacity, container);
     }
 
     /**
@@ -239,13 +239,13 @@ public class VkDescriptorSetLayoutBinding extends Struct implements NativeResour
      * @param capacity the buffer capacity
      */
     public static VkDescriptorSetLayoutBinding.Buffer create(long address, int capacity) {
-        return new Buffer(address, capacity);
+        return wrap(Buffer.class, address, capacity);
     }
 
     /** Like {@link #create(long, int) create}, but returns {@code null} if {@code address} is {@code NULL}. */
     @Nullable
     public static VkDescriptorSetLayoutBinding.Buffer createSafe(long address, int capacity) {
-        return address == NULL ? null : create(address, capacity);
+        return address == NULL ? null : wrap(Buffer.class, address, capacity);
     }
 
     // -----------------------------------
@@ -266,7 +266,7 @@ public class VkDescriptorSetLayoutBinding extends Struct implements NativeResour
      * @param stack the stack from which to allocate
      */
     public static VkDescriptorSetLayoutBinding mallocStack(MemoryStack stack) {
-        return create(stack.nmalloc(ALIGNOF, SIZEOF));
+        return wrap(VkDescriptorSetLayoutBinding.class, stack.nmalloc(ALIGNOF, SIZEOF));
     }
 
     /**
@@ -275,7 +275,7 @@ public class VkDescriptorSetLayoutBinding extends Struct implements NativeResour
      * @param stack the stack from which to allocate
      */
     public static VkDescriptorSetLayoutBinding callocStack(MemoryStack stack) {
-        return create(stack.ncalloc(ALIGNOF, 1, SIZEOF));
+        return wrap(VkDescriptorSetLayoutBinding.class, stack.ncalloc(ALIGNOF, 1, SIZEOF));
     }
 
     /**
@@ -303,7 +303,7 @@ public class VkDescriptorSetLayoutBinding extends Struct implements NativeResour
      * @param capacity the buffer capacity
      */
     public static VkDescriptorSetLayoutBinding.Buffer mallocStack(int capacity, MemoryStack stack) {
-        return create(stack.nmalloc(ALIGNOF, capacity * SIZEOF), capacity);
+        return wrap(Buffer.class, stack.nmalloc(ALIGNOF, capacity * SIZEOF), capacity);
     }
 
     /**
@@ -313,30 +313,30 @@ public class VkDescriptorSetLayoutBinding extends Struct implements NativeResour
      * @param capacity the buffer capacity
      */
     public static VkDescriptorSetLayoutBinding.Buffer callocStack(int capacity, MemoryStack stack) {
-        return create(stack.ncalloc(ALIGNOF, capacity, SIZEOF), capacity);
+        return wrap(Buffer.class, stack.ncalloc(ALIGNOF, capacity, SIZEOF), capacity);
     }
 
     // -----------------------------------
 
     /** Unsafe version of {@link #binding}. */
-    public static int nbinding(long struct) { return memGetInt(struct + VkDescriptorSetLayoutBinding.BINDING); }
+    public static int nbinding(long struct) { return UNSAFE.getInt(null, struct + VkDescriptorSetLayoutBinding.BINDING); }
     /** Unsafe version of {@link #descriptorType}. */
-    public static int ndescriptorType(long struct) { return memGetInt(struct + VkDescriptorSetLayoutBinding.DESCRIPTORTYPE); }
+    public static int ndescriptorType(long struct) { return UNSAFE.getInt(null, struct + VkDescriptorSetLayoutBinding.DESCRIPTORTYPE); }
     /** Unsafe version of {@link #descriptorCount}. */
-    public static int ndescriptorCount(long struct) { return memGetInt(struct + VkDescriptorSetLayoutBinding.DESCRIPTORCOUNT); }
+    public static int ndescriptorCount(long struct) { return UNSAFE.getInt(null, struct + VkDescriptorSetLayoutBinding.DESCRIPTORCOUNT); }
     /** Unsafe version of {@link #stageFlags}. */
-    public static int nstageFlags(long struct) { return memGetInt(struct + VkDescriptorSetLayoutBinding.STAGEFLAGS); }
+    public static int nstageFlags(long struct) { return UNSAFE.getInt(null, struct + VkDescriptorSetLayoutBinding.STAGEFLAGS); }
     /** Unsafe version of {@link #pImmutableSamplers() pImmutableSamplers}. */
     @Nullable public static LongBuffer npImmutableSamplers(long struct) { return memLongBufferSafe(memGetAddress(struct + VkDescriptorSetLayoutBinding.PIMMUTABLESAMPLERS), ndescriptorCount(struct)); }
 
     /** Unsafe version of {@link #binding(int) binding}. */
-    public static void nbinding(long struct, int value) { memPutInt(struct + VkDescriptorSetLayoutBinding.BINDING, value); }
+    public static void nbinding(long struct, int value) { UNSAFE.putInt(null, struct + VkDescriptorSetLayoutBinding.BINDING, value); }
     /** Unsafe version of {@link #descriptorType(int) descriptorType}. */
-    public static void ndescriptorType(long struct, int value) { memPutInt(struct + VkDescriptorSetLayoutBinding.DESCRIPTORTYPE, value); }
+    public static void ndescriptorType(long struct, int value) { UNSAFE.putInt(null, struct + VkDescriptorSetLayoutBinding.DESCRIPTORTYPE, value); }
     /** Sets the specified value to the {@code descriptorCount} field of the specified {@code struct}. */
-    public static void ndescriptorCount(long struct, int value) { memPutInt(struct + VkDescriptorSetLayoutBinding.DESCRIPTORCOUNT, value); }
+    public static void ndescriptorCount(long struct, int value) { UNSAFE.putInt(null, struct + VkDescriptorSetLayoutBinding.DESCRIPTORCOUNT, value); }
     /** Unsafe version of {@link #stageFlags(int) stageFlags}. */
-    public static void nstageFlags(long struct, int value) { memPutInt(struct + VkDescriptorSetLayoutBinding.STAGEFLAGS, value); }
+    public static void nstageFlags(long struct, int value) { UNSAFE.putInt(null, struct + VkDescriptorSetLayoutBinding.STAGEFLAGS, value); }
     /** Unsafe version of {@link #pImmutableSamplers(LongBuffer) pImmutableSamplers}. */
     public static void npImmutableSamplers(long struct, @Nullable LongBuffer value) { memPutAddress(struct + VkDescriptorSetLayoutBinding.PIMMUTABLESAMPLERS, memAddressSafe(value)); if (value != null) { ndescriptorCount(struct, value.remaining()); } }
 
@@ -344,6 +344,8 @@ public class VkDescriptorSetLayoutBinding extends Struct implements NativeResour
 
     /** An array of {@link VkDescriptorSetLayoutBinding} structs. */
     public static class Buffer extends StructBuffer<VkDescriptorSetLayoutBinding, Buffer> implements NativeResource {
+
+        private static final VkDescriptorSetLayoutBinding ELEMENT_FACTORY = VkDescriptorSetLayoutBinding.create(-1L);
 
         /**
          * Creates a new {@link VkDescriptorSetLayoutBinding.Buffer} instance backed by the specified container.
@@ -372,18 +374,8 @@ public class VkDescriptorSetLayoutBinding extends Struct implements NativeResour
         }
 
         @Override
-        protected Buffer newBufferInstance(long address, @Nullable ByteBuffer container, int mark, int pos, int lim, int cap) {
-            return new Buffer(address, container, mark, pos, lim, cap);
-        }
-
-        @Override
-        protected VkDescriptorSetLayoutBinding newInstance(long address) {
-            return new VkDescriptorSetLayoutBinding(address, container);
-        }
-
-        @Override
-        public int sizeof() {
-            return SIZEOF;
+        protected VkDescriptorSetLayoutBinding getElementFactory() {
+            return ELEMENT_FACTORY;
         }
 
         /** Returns the value of the {@code binding} field. */

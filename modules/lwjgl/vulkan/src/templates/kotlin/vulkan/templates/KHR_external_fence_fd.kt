@@ -34,7 +34,7 @@ val KHR_external_fence_fd = "KHRExternalFenceFd".nativeClassVK("KHR_external_fen
 
             <dt><b>Contact</b></dt>
             <dd><ul>
-                <li>Jesse Hall @critsec</li>
+                <li>Jesse Hall <a target="_blank" href="https://github.com/KhronosGroup/Vulkan-Docs/issues/new?title=VK_KHR_external_fence_fd:%20&amp;body=@critsec%20">critsec</a></li>
             </ul></dd>
 
             <dt><b>Last Modified Date</b></dt>
@@ -120,8 +120,8 @@ val KHR_external_fence_fd = "KHRExternalFenceFd".nativeClassVK("KHR_external_fen
         ##VkImportFenceFdInfoKHR
         """,
 
-        VkDevice.IN("device", "the logical device that created the fence."),
-        VkImportFenceFdInfoKHR.const.p.IN("pImportFenceFdInfo", "points to a ##VkImportFenceFdInfoKHR structure specifying the fence and import parameters.")
+        VkDevice("device", "the logical device that created the fence."),
+        VkImportFenceFdInfoKHR.const.p("pImportFenceFdInfo", "points to a ##VkImportFenceFdInfoKHR structure specifying the fence and import parameters.")
     )
 
     VkResult(
@@ -139,13 +139,13 @@ val KHR_external_fence_fd = "KHRExternalFenceFd".nativeClassVK("KHR_external_fen
 ￿    int*                                        pFd);</code></pre>
 
         <h5>Description</h5>
-        Each call to #GetFenceFdKHR() <b>must</b> create a new file descriptor and transfer ownership of it to the application. To avoid leaking resources, the application <b>must</b> release ownership of the file descriptor when it is no longer needed.
+        Each call to {@code vkGetFenceFdKHR} <b>must</b> create a new file descriptor and transfer ownership of it to the application. To avoid leaking resources, the application <b>must</b> release ownership of the file descriptor when it is no longer needed.
 
         <div style="margin-left: 26px; border-left: 1px solid gray; padding-left: 14px;"><h5>Note</h5>
         Ownership can be released in many ways. For example, the application can call {@code close}() on the file descriptor, or transfer ownership back to Vulkan by using the file descriptor to import a fence payload.
         </div>
 
-        If {@code pGetFdInfo}-&gt;{@code handleType} is #EXTERNAL_FENCE_HANDLE_TYPE_SYNC_FD_BIT and the fence is signaled at the time #GetFenceFdKHR() is called, {@code pFd} <b>may</b> return the value {@code -1} instead of a valid file descriptor.
+        If {@code pGetFdInfo}-&gt;{@code handleType} is #EXTERNAL_FENCE_HANDLE_TYPE_SYNC_FD_BIT and the fence is signaled at the time {@code vkGetFenceFdKHR} is called, {@code pFd} <b>may</b> return the value {@code -1} instead of a valid file descriptor.
 
         Where supported by the operating system, the implementation <b>must</b> set the file descriptor to be closed automatically when an {@code execve} system call is made.
 
@@ -176,8 +176,8 @@ val KHR_external_fence_fd = "KHRExternalFenceFd".nativeClassVK("KHR_external_fen
         ##VkFenceGetFdInfoKHR
         """,
 
-        VkDevice.IN("device", "the logical device that created the fence being exported."),
-        VkFenceGetFdInfoKHR.const.p.IN("pGetFdInfo", "a pointer to an instance of the ##VkFenceGetFdInfoKHR structure containing parameters of the export operation."),
-        Check(1)..int.p.OUT("pFd", "will return the file descriptor representing the fence payload.")
+        VkDevice("device", "the logical device that created the fence being exported."),
+        VkFenceGetFdInfoKHR.const.p("pGetFdInfo", "a pointer to an instance of the ##VkFenceGetFdInfoKHR structure containing parameters of the export operation."),
+        Check(1)..int.p("pFd", "will return the file descriptor representing the fence payload.")
     )
 }

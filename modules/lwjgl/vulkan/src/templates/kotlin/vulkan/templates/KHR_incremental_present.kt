@@ -11,7 +11,7 @@ import vulkan.*
 val KHR_incremental_present = "KHRIncrementalPresent".nativeClassVK("KHR_incremental_present", type = "device", postfix = KHR) {
     documentation =
         """
-        This device extension extends {@code vkQueuePresentKHR}, from the {@link KHRSwapchain VK_KHR_swapchain} extension, allowing an application to specify a list of rectangular, modified regions of each image to present. This should be used in situations where an application is only changing a small portion of the presentable images within a swapchain, since it enables the presentation engine to avoid wasting time presenting parts of the surface that haven't changed.
+        This device extension extends #QueuePresentKHR(), from the {@link KHRSwapchain VK_KHR_swapchain} extension, allowing an application to specify a list of rectangular, modified regions of each image to present. This should be used in situations where an application is only changing a small portion of the presentable images within a swapchain, since it enables the presentation engine to avoid wasting time presenting parts of the surface that haven't changed.
 
         This extension is leveraged from the {@code EGL_KHR_swap_buffers_with_damage} extension.
 
@@ -39,7 +39,7 @@ val KHR_incremental_present = "KHRIncrementalPresent".nativeClassVK("KHR_increme
 
             <dt><b>Contact</b></dt>
             <dd><ul>
-                <li>Ian Elliott @ianelliottus</li>
+                <li>Ian Elliott <a target="_blank" href="https://github.com/KhronosGroup/Vulkan-Docs/issues/new?title=VK_KHR_incremental_present:%20&amp;body=@ianelliottus%20">ianelliottus</a></li>
             </ul></dd>
 
             <dt><b>Last Modified Date</b></dt>

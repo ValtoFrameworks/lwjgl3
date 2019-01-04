@@ -17,13 +17,15 @@ import static org.lwjgl.system.MemoryUtil.*;
 /**
  * Structure describing sample location limits that can be supported by an implementation.
  * 
+ * <h5>Description</h5>
+ * 
+ * <p>If the {@link VkPhysicalDeviceSampleLocationsPropertiesEXT} structure is included in the {@code pNext} chain of {@link VkPhysicalDeviceProperties2}, it is filled with the implementation-dependent limits.</p>
+ * 
  * <h5>Valid Usage (Implicit)</h5>
  * 
  * <ul>
  * <li>{@code sType} <b>must</b> be {@link EXTSampleLocations#VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SAMPLE_LOCATIONS_PROPERTIES_EXT STRUCTURE_TYPE_PHYSICAL_DEVICE_SAMPLE_LOCATIONS_PROPERTIES_EXT}</li>
  * </ul>
- * 
- * <p>If the {@link VkPhysicalDeviceSampleLocationsPropertiesEXT} structure is included in the {@code pNext} chain of {@link VkPhysicalDeviceProperties2}, it is filled with the implementation-dependent limits.</p>
  * 
  * <h5>See Also</h5>
  * 
@@ -32,6 +34,8 @@ import static org.lwjgl.system.MemoryUtil.*;
  * <h3>Member documentation</h3>
  * 
  * <ul>
+ * <li>{@code sType} &ndash; the type of this structure.</li>
+ * <li>{@code pNext} &ndash; {@code NULL} or a pointer to an extension-specific structure.</li>
  * <li>{@code sampleLocationSampleCounts} &ndash; a bitmask of {@code VkSampleCountFlagBits} indicating the sample counts supporting custom sample locations.</li>
  * <li>{@code maxSampleLocationGridSize} &ndash; the maximum size of the pixel grid in which sample locations <b>can</b> vary that is supported for all sample counts in {@code sampleLocationSampleCounts}.</li>
  * <li>{@code sampleLocationCoordinateRange} &ndash; the range of supported sample location coordinates.</li>
@@ -93,10 +97,6 @@ public class VkPhysicalDeviceSampleLocationsPropertiesEXT extends Struct {
         VARIABLESAMPLELOCATIONS = layout.offsetof(6);
     }
 
-    VkPhysicalDeviceSampleLocationsPropertiesEXT(long address, @Nullable ByteBuffer container) {
-        super(address, container);
-    }
-
     /**
      * Creates a {@link VkPhysicalDeviceSampleLocationsPropertiesEXT} instance at the current position of the specified {@link ByteBuffer} container. Changes to the buffer's content will be
      * visible to the struct instance and vice versa.
@@ -104,7 +104,7 @@ public class VkPhysicalDeviceSampleLocationsPropertiesEXT extends Struct {
      * <p>The created instance holds a strong reference to the container object.</p>
      */
     public VkPhysicalDeviceSampleLocationsPropertiesEXT(ByteBuffer container) {
-        this(memAddress(container), __checkContainer(container, SIZEOF));
+        super(memAddress(container), __checkContainer(container, SIZEOF));
     }
 
     @Override
@@ -167,13 +167,13 @@ public class VkPhysicalDeviceSampleLocationsPropertiesEXT extends Struct {
 
     /** Returns a new {@link VkPhysicalDeviceSampleLocationsPropertiesEXT} instance for the specified memory address. */
     public static VkPhysicalDeviceSampleLocationsPropertiesEXT create(long address) {
-        return new VkPhysicalDeviceSampleLocationsPropertiesEXT(address, null);
+        return wrap(VkPhysicalDeviceSampleLocationsPropertiesEXT.class, address);
     }
 
     /** Like {@link #create(long) create}, but returns {@code null} if {@code address} is {@code NULL}. */
     @Nullable
     public static VkPhysicalDeviceSampleLocationsPropertiesEXT createSafe(long address) {
-        return address == NULL ? null : create(address);
+        return address == NULL ? null : wrap(VkPhysicalDeviceSampleLocationsPropertiesEXT.class, address);
     }
 
     /**
@@ -183,38 +183,38 @@ public class VkPhysicalDeviceSampleLocationsPropertiesEXT extends Struct {
      * @param capacity the buffer capacity
      */
     public static VkPhysicalDeviceSampleLocationsPropertiesEXT.Buffer create(long address, int capacity) {
-        return new Buffer(address, capacity);
+        return wrap(Buffer.class, address, capacity);
     }
 
     /** Like {@link #create(long, int) create}, but returns {@code null} if {@code address} is {@code NULL}. */
     @Nullable
     public static VkPhysicalDeviceSampleLocationsPropertiesEXT.Buffer createSafe(long address, int capacity) {
-        return address == NULL ? null : create(address, capacity);
+        return address == NULL ? null : wrap(Buffer.class, address, capacity);
     }
 
     // -----------------------------------
 
     /** Unsafe version of {@link #sType}. */
-    public static int nsType(long struct) { return memGetInt(struct + VkPhysicalDeviceSampleLocationsPropertiesEXT.STYPE); }
+    public static int nsType(long struct) { return UNSAFE.getInt(null, struct + VkPhysicalDeviceSampleLocationsPropertiesEXT.STYPE); }
     /** Unsafe version of {@link #pNext}. */
     public static long npNext(long struct) { return memGetAddress(struct + VkPhysicalDeviceSampleLocationsPropertiesEXT.PNEXT); }
     /** Unsafe version of {@link #sampleLocationSampleCounts}. */
-    public static int nsampleLocationSampleCounts(long struct) { return memGetInt(struct + VkPhysicalDeviceSampleLocationsPropertiesEXT.SAMPLELOCATIONSAMPLECOUNTS); }
+    public static int nsampleLocationSampleCounts(long struct) { return UNSAFE.getInt(null, struct + VkPhysicalDeviceSampleLocationsPropertiesEXT.SAMPLELOCATIONSAMPLECOUNTS); }
     /** Unsafe version of {@link #maxSampleLocationGridSize}. */
     public static VkExtent2D nmaxSampleLocationGridSize(long struct) { return VkExtent2D.create(struct + VkPhysicalDeviceSampleLocationsPropertiesEXT.MAXSAMPLELOCATIONGRIDSIZE); }
     /** Unsafe version of {@link #sampleLocationCoordinateRange}. */
     public static FloatBuffer nsampleLocationCoordinateRange(long struct) { return memFloatBuffer(struct + VkPhysicalDeviceSampleLocationsPropertiesEXT.SAMPLELOCATIONCOORDINATERANGE, 2); }
     /** Unsafe version of {@link #sampleLocationCoordinateRange(int) sampleLocationCoordinateRange}. */
     public static float nsampleLocationCoordinateRange(long struct, int index) {
-        return memGetFloat(struct + VkPhysicalDeviceSampleLocationsPropertiesEXT.SAMPLELOCATIONCOORDINATERANGE + check(index, 2) * 4);
+        return UNSAFE.getFloat(null, struct + VkPhysicalDeviceSampleLocationsPropertiesEXT.SAMPLELOCATIONCOORDINATERANGE + check(index, 2) * 4);
     }
     /** Unsafe version of {@link #sampleLocationSubPixelBits}. */
-    public static int nsampleLocationSubPixelBits(long struct) { return memGetInt(struct + VkPhysicalDeviceSampleLocationsPropertiesEXT.SAMPLELOCATIONSUBPIXELBITS); }
+    public static int nsampleLocationSubPixelBits(long struct) { return UNSAFE.getInt(null, struct + VkPhysicalDeviceSampleLocationsPropertiesEXT.SAMPLELOCATIONSUBPIXELBITS); }
     /** Unsafe version of {@link #variableSampleLocations}. */
-    public static int nvariableSampleLocations(long struct) { return memGetInt(struct + VkPhysicalDeviceSampleLocationsPropertiesEXT.VARIABLESAMPLELOCATIONS); }
+    public static int nvariableSampleLocations(long struct) { return UNSAFE.getInt(null, struct + VkPhysicalDeviceSampleLocationsPropertiesEXT.VARIABLESAMPLELOCATIONS); }
 
     /** Unsafe version of {@link #sType(int) sType}. */
-    public static void nsType(long struct, int value) { memPutInt(struct + VkPhysicalDeviceSampleLocationsPropertiesEXT.STYPE, value); }
+    public static void nsType(long struct, int value) { UNSAFE.putInt(null, struct + VkPhysicalDeviceSampleLocationsPropertiesEXT.STYPE, value); }
     /** Unsafe version of {@link #pNext(long) pNext}. */
     public static void npNext(long struct, long value) { memPutAddress(struct + VkPhysicalDeviceSampleLocationsPropertiesEXT.PNEXT, value); }
 
@@ -222,6 +222,8 @@ public class VkPhysicalDeviceSampleLocationsPropertiesEXT extends Struct {
 
     /** An array of {@link VkPhysicalDeviceSampleLocationsPropertiesEXT} structs. */
     public static class Buffer extends StructBuffer<VkPhysicalDeviceSampleLocationsPropertiesEXT, Buffer> {
+
+        private static final VkPhysicalDeviceSampleLocationsPropertiesEXT ELEMENT_FACTORY = VkPhysicalDeviceSampleLocationsPropertiesEXT.create(-1L);
 
         /**
          * Creates a new {@link VkPhysicalDeviceSampleLocationsPropertiesEXT.Buffer} instance backed by the specified container.
@@ -250,18 +252,8 @@ public class VkPhysicalDeviceSampleLocationsPropertiesEXT extends Struct {
         }
 
         @Override
-        protected Buffer newBufferInstance(long address, @Nullable ByteBuffer container, int mark, int pos, int lim, int cap) {
-            return new Buffer(address, container, mark, pos, lim, cap);
-        }
-
-        @Override
-        protected VkPhysicalDeviceSampleLocationsPropertiesEXT newInstance(long address) {
-            return new VkPhysicalDeviceSampleLocationsPropertiesEXT(address, container);
-        }
-
-        @Override
-        public int sizeof() {
-            return SIZEOF;
+        protected VkPhysicalDeviceSampleLocationsPropertiesEXT getElementFactory() {
+            return ELEMENT_FACTORY;
         }
 
         /** Returns the value of the {@code sType} field. */

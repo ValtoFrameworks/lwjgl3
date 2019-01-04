@@ -49,7 +49,7 @@ val KHR_maintenance3 = "KHRMaintenance3".nativeClassVK("KHR_maintenance3", type 
 
             <dt><b>Contact</b></dt>
             <dd><ul>
-                <li>Jeff Bolz @jeffbolznv</li>
+                <li>Jeff Bolz <a target="_blank" href="https://github.com/KhronosGroup/Vulkan-Docs/issues/new?title=VK_KHR_maintenance3:%20&amp;body=@jeffbolznv%20">jeffbolznv</a></li>
             </ul></dd>
 
             <dt><b>Status</b></dt>
@@ -93,8 +93,8 @@ val KHR_maintenance3 = "KHRMaintenance3".nativeClassVK("KHR_maintenance3", type 
         "GetDescriptorSetLayoutSupportKHR",
         "See #GetDescriptorSetLayoutSupport().",
 
-        VkDevice.IN("device", "the logical device that would create the descriptor set layout."),
-        VkDescriptorSetLayoutCreateInfo.const.p.IN("pCreateInfo", "a pointer to an instance of the ##VkDescriptorSetLayoutCreateInfo structure specifying the state of the descriptor set layout object."),
-        VkDescriptorSetLayoutSupport.p.OUT("pSupport", "points to a ##VkDescriptorSetLayoutSupport structure in which information about support for the descriptor set layout object is returned.")
+        VkDevice("device", "the logical device that would create the descriptor set layout."),
+        VkDescriptorSetLayoutCreateInfo.const.p("pCreateInfo", "a pointer to an instance of the ##VkDescriptorSetLayoutCreateInfo structure specifying the state of the descriptor set layout object."),
+        VkDescriptorSetLayoutSupport.p("pSupport", "points to a ##VkDescriptorSetLayoutSupport structure in which information about support for the descriptor set layout object is returned.")
     )
 }

@@ -34,7 +34,7 @@ val EXT_external_memory_host = "EXTExternalMemoryHost".nativeClassVK("EXT_extern
 
             <dt><b>Contact</b></dt>
             <dd><ul>
-                <li>Daniel Rakos @drakos-amd</li>
+                <li>Daniel Rakos <a target="_blank" href="https://github.com/KhronosGroup/Vulkan-Docs/issues/new?title=VK_EXT_external_memory_host:%20&amp;body=@drakos-amd%20">drakos-amd</a></li>
             </ul></dd>
 
             <dt><b>Last Modified Date</b></dt>
@@ -129,9 +129,9 @@ val EXT_external_memory_host = "EXTExternalMemoryHost".nativeClassVK("EXT_extern
         ##VkMemoryHostPointerPropertiesEXT
         """,
 
-        VkDevice.IN("device", "the logical device that will be importing {@code pHostPointer}."),
-        VkExternalMemoryHandleTypeFlagBits.IN("handleType", "the type of the handle {@code pHostPointer}."),
-        opaque_const_p.IN("pHostPointer", "the host pointer to import from."),
-        VkMemoryHostPointerPropertiesEXT.p.OUT("pMemoryHostPointerProperties", "")
+        VkDevice("device", "the logical device that will be importing {@code pHostPointer}."),
+        VkExternalMemoryHandleTypeFlagBits("handleType", "the type of the handle {@code pHostPointer}."),
+        opaque_const_p("pHostPointer", "the host pointer to import from."),
+        VkMemoryHostPointerPropertiesEXT.p("pMemoryHostPointerProperties", "")
     )
 }

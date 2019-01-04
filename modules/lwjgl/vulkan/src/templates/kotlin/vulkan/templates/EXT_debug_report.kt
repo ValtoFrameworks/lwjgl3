@@ -86,7 +86,7 @@ val EXT_debug_report = "EXTDebugReport".nativeClassVK("EXT_debug_report", type =
 
             <dt><b>Contact</b></dt>
             <dd><ul>
-                <li>Courtney Goeltzenleuchter @courtney-g</li>
+                <li>Courtney Goeltzenleuchter <a target="_blank" href="https://github.com/KhronosGroup/Vulkan-Docs/issues/new?title=VK_EXT_debug_report:%20&amp;body=@courtney-g%20">courtney-g</a></li>
             </ul></dd>
 
             <dt><b>Last Modified Date</b></dt>
@@ -120,7 +120,8 @@ val EXT_debug_report = "EXTDebugReport".nativeClassVK("EXT_debug_report", type =
     EnumConstant(
         "Extends {@code VkStructureType}.",
 
-        "STRUCTURE_TYPE_DEBUG_REPORT_CALLBACK_CREATE_INFO_EXT".."1000011000"
+        "STRUCTURE_TYPE_DEBUG_REPORT_CALLBACK_CREATE_INFO_EXT".."1000011000",
+        "STRUCTURE_TYPE_DEBUG_REPORT_CREATE_INFO_EXT".."1000011000"
     )
 
     EnumConstant(
@@ -138,8 +139,8 @@ val EXT_debug_report = "EXTDebugReport".nativeClassVK("EXT_debug_report", type =
     EnumConstant(
         "Extends {@code VkDebugReportObjectTypeEXT}.",
 
-        "DEBUG_REPORT_OBJECT_TYPE_SAMPLER_YCBCR_CONVERSION_EXT".."1000011000",
-        "DEBUG_REPORT_OBJECT_TYPE_DESCRIPTOR_UPDATE_TEMPLATE_EXT".."1000011000"
+        "DEBUG_REPORT_OBJECT_TYPE_SAMPLER_YCBCR_CONVERSION_EXT".."1000156000",
+        "DEBUG_REPORT_OBJECT_TYPE_DESCRIPTOR_UPDATE_TEMPLATE_EXT".."1000085000"
     )
 
     EnumConstant(
@@ -225,11 +226,13 @@ val EXT_debug_report = "EXTDebugReport".nativeClassVK("EXT_debug_report", type =
         "DEBUG_REPORT_OBJECT_TYPE_SURFACE_KHR_EXT".."26",
         "DEBUG_REPORT_OBJECT_TYPE_SWAPCHAIN_KHR_EXT".."27",
         "DEBUG_REPORT_OBJECT_TYPE_DEBUG_REPORT_CALLBACK_EXT_EXT".."28",
+        "DEBUG_REPORT_OBJECT_TYPE_DEBUG_REPORT_EXT".."28",
         "DEBUG_REPORT_OBJECT_TYPE_DISPLAY_KHR_EXT".."29",
         "DEBUG_REPORT_OBJECT_TYPE_DISPLAY_MODE_KHR_EXT".."30",
         "DEBUG_REPORT_OBJECT_TYPE_OBJECT_TABLE_NVX_EXT".."31",
         "DEBUG_REPORT_OBJECT_TYPE_INDIRECT_COMMANDS_LAYOUT_NVX_EXT".."32",
-        "DEBUG_REPORT_OBJECT_TYPE_VALIDATION_CACHE_EXT_EXT".."33"
+        "DEBUG_REPORT_OBJECT_TYPE_VALIDATION_CACHE_EXT_EXT".."33",
+        "DEBUG_REPORT_OBJECT_TYPE_VALIDATION_CACHE_EXT".."33"
     )
 
     EnumConstant(
@@ -298,10 +301,10 @@ val EXT_debug_report = "EXTDebugReport".nativeClassVK("EXT_debug_report", type =
         ##VkAllocationCallbacks, ##VkDebugReportCallbackCreateInfoEXT
         """,
 
-        VkInstance.IN("instance", "the instance the callback will be logged on."),
-        VkDebugReportCallbackCreateInfoEXT.const.p.IN("pCreateInfo", "points to a ##VkDebugReportCallbackCreateInfoEXT structure which defines the conditions under which this callback will be called."),
-        nullable..VkAllocationCallbacks.const.p.IN("pAllocator", "controls host memory allocation as described in the <a target=\"_blank\" href=\"https://www.khronos.org/registry/vulkan/specs/1.0-extensions/html/vkspec.html\\#memory-allocation\">Memory Allocation</a> chapter."),
-        Check(1)..VkDebugReportCallbackEXT.p.OUT("pCallback", "a pointer to record the {@code VkDebugReportCallbackEXT} object created.")
+        VkInstance("instance", "the instance the callback will be logged on."),
+        VkDebugReportCallbackCreateInfoEXT.const.p("pCreateInfo", "points to a ##VkDebugReportCallbackCreateInfoEXT structure which defines the conditions under which this callback will be called."),
+        nullable..VkAllocationCallbacks.const.p("pAllocator", "controls host memory allocation as described in the <a target=\"_blank\" href=\"https://www.khronos.org/registry/vulkan/specs/1.0-extensions/html/vkspec.html\\#memory-allocation\">Memory Allocation</a> chapter."),
+        Check(1)..VkDebugReportCallbackEXT.p("pCallback", "a pointer to record the {@code VkDebugReportCallbackEXT} object created.")
     )
 
     void(
@@ -341,9 +344,9 @@ val EXT_debug_report = "EXTDebugReport".nativeClassVK("EXT_debug_report", type =
         ##VkAllocationCallbacks
         """,
 
-        VkInstance.IN("instance", "the instance where the callback was created."),
-        VkDebugReportCallbackEXT.IN("callback", "the {@code VkDebugReportCallbackEXT} object to destroy. {@code callback} is an externally synchronized object and <b>must</b> not be used on more than one thread at a time. This means that #DestroyDebugReportCallbackEXT() <b>must</b> not be called when a callback is active."),
-        nullable..VkAllocationCallbacks.const.p.IN("pAllocator", "controls host memory allocation as described in the <a target=\"_blank\" href=\"https://www.khronos.org/registry/vulkan/specs/1.0-extensions/html/vkspec.html\\#memory-allocation\">Memory Allocation</a> chapter.")
+        VkInstance("instance", "the instance where the callback was created."),
+        VkDebugReportCallbackEXT("callback", "the {@code VkDebugReportCallbackEXT} object to destroy. {@code callback} is an externally synchronized object and <b>must</b> not be used on more than one thread at a time. This means that {@code vkDestroyDebugReportCallbackEXT} <b>must</b> not be called when a callback is active."),
+        nullable..VkAllocationCallbacks.const.p("pAllocator", "controls host memory allocation as described in the <a target=\"_blank\" href=\"https://www.khronos.org/registry/vulkan/specs/1.0-extensions/html/vkspec.html\\#memory-allocation\">Memory Allocation</a> chapter.")
     )
 
     void(
@@ -385,13 +388,13 @@ val EXT_debug_report = "EXTDebugReport".nativeClassVK("EXT_debug_report", type =
         </ul>
         """,
 
-        VkInstance.IN("instance", "the debug stream&#8217;s {@code VkInstance}."),
-        VkDebugReportFlagsEXT.IN("flags", "specifies the {@code VkDebugReportFlagBitsEXT} classification of this event/message."),
-        VkDebugReportObjectTypeEXT.IN("objectType", "a {@code VkDebugReportObjectTypeEXT} specifying the type of object being used or created at the time the event was triggered."),
-        uint64_t.IN("object", "this is the object where the issue was detected. {@code object} <b>can</b> be #NULL_HANDLE if there is no object associated with the event."),
-        size_t.IN("location", "an application defined value."),
-        int32_t.IN("messageCode", "an application defined value."),
-        charUTF8.const.p.IN("pLayerPrefix", "the abbreviation of the component making this event/message."),
-        charUTF8.const.p.IN("pMessage", "a null-terminated string detailing the trigger conditions.")
+        VkInstance("instance", "the debug stream&#8217;s {@code VkInstance}."),
+        VkDebugReportFlagsEXT("flags", "specifies the {@code VkDebugReportFlagBitsEXT} classification of this event/message."),
+        VkDebugReportObjectTypeEXT("objectType", "a {@code VkDebugReportObjectTypeEXT} specifying the type of object being used or created at the time the event was triggered."),
+        uint64_t("object", "this is the object where the issue was detected. {@code object} <b>can</b> be #NULL_HANDLE if there is no object associated with the event."),
+        size_t("location", "an application defined value."),
+        int32_t("messageCode", "an application defined value."),
+        charUTF8.const.p("pLayerPrefix", "the abbreviation of the component making this event/message."),
+        charUTF8.const.p("pMessage", "a null-terminated string detailing the trigger conditions.")
     )
 }

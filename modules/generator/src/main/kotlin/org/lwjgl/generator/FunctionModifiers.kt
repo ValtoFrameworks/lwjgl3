@@ -115,7 +115,7 @@ class Macro internal constructor(val function: Boolean, val constant: Boolean, v
 
     override fun validate(func: Func) {
         if (constant && func.parameters.isNotEmpty())
-            throw IllegalArgumentException("The constant macro modifier can only be applied on functions with no arguments.")
+            throw IllegalArgumentException("The constant macro modifier can only be applied to functions with no arguments.")
     }
 }
 
@@ -134,7 +134,11 @@ val internal = AccessModifier(Access.INTERNAL)
 
 /** Overrides the native function name. This is useful for functions like Windows functions that have both a Unicode (W suffix) and ANSI version (A suffix). */
 class NativeName(val nativeName: String) : FunctionModifier {
-    internal val name get() = if (nativeName.contains(' ')) nativeName else "\"$nativeName\""
+    companion object {
+        private val EXPRESSION_REGEX = "[ (]".toRegex()
+    }
+
+    internal val name get() = if (nativeName.contains(EXPRESSION_REGEX)) nativeName else "\"$nativeName\""
 
     override val isSpecial = false
 }
@@ -158,10 +162,10 @@ class MapPointer(
     override fun validate(func: Func) {
         val returnType = func.returns.nativeType
         if (returnType !is PointerType<*>)
-            throw IllegalArgumentException("The MapPointer modifier can only be applied on functions with pointer return types.")
+            throw IllegalArgumentException("The MapPointer modifier can only be applied to functions with pointer return types.")
 
         if (returnType.elementType !is VoidType)
-            throw IllegalArgumentException("The MapPointer modifier can only be applied on function with void pointer return types.")
+            throw IllegalArgumentException("The MapPointer modifier can only be applied to functions with void pointer return types.")
     }
 }
 
@@ -172,7 +176,7 @@ class Construct(
     override val isSpecial = true
     override fun validate(func: Func) {
         if (func.returns.nativeType !is ObjectType)
-            throw IllegalArgumentException("The Construct modifier can only be applied on function with object return types.")
+            throw IllegalArgumentException("The Construct modifier can only be applied to functions with object return types.")
     }
 }
 
@@ -187,7 +191,7 @@ object Nonnull : FunctionModifier {
 
     override fun validate(func: Func) {
         if (func.returns.nativeType !is PointerType<*> && func.returns.nativeType !is JObjectType)
-            throw IllegalArgumentException("The Nonnull modifier can only be applied on functions with pointer or Java instance return types.")
+            throw IllegalArgumentException("The Nonnull modifier can only be applied to functions with pointer or Java instance return types.")
     }
 
 }

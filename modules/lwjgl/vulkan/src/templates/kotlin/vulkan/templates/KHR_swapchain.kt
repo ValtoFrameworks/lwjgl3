@@ -39,8 +39,8 @@ val KHR_swapchain = "KHRSwapchain".nativeClassVK("KHR_swapchain", type = "device
 
             <dt><b>Contact</b></dt>
             <dd><ul>
-                <li>James Jones @cubanismo</li>
-                <li>Ian Elliott @ianelliottus</li>
+                <li>James Jones <a target="_blank" href="https://github.com/KhronosGroup/Vulkan-Docs/issues/new?title=VK_KHR_swapchain:%20&amp;body=@cubanismo%20">cubanismo</a></li>
+                <li>Ian Elliott <a target="_blank" href="https://github.com/KhronosGroup/Vulkan-Docs/issues/new?title=VK_KHR_swapchain:%20&amp;body=@ianelliottus%20">ianelliottus</a></li>
             </ul></dd>
 
             <dt><b>Last Modified Date</b></dt>
@@ -116,12 +116,12 @@ val KHR_swapchain = "KHRSwapchain".nativeClassVK("KHR_swapchain", type = "device
     EnumConstant(
         "Extends {@code VkStructureType}.",
 
-        "STRUCTURE_TYPE_DEVICE_GROUP_PRESENT_CAPABILITIES_KHR".."1000001007",
-        "STRUCTURE_TYPE_IMAGE_SWAPCHAIN_CREATE_INFO_KHR".."1000001008",
-        "STRUCTURE_TYPE_BIND_IMAGE_MEMORY_SWAPCHAIN_INFO_KHR".."1000001009",
-        "STRUCTURE_TYPE_ACQUIRE_NEXT_IMAGE_INFO_KHR".."1000001010",
-        "STRUCTURE_TYPE_DEVICE_GROUP_PRESENT_INFO_KHR".."1000001011",
-        "STRUCTURE_TYPE_DEVICE_GROUP_SWAPCHAIN_CREATE_INFO_KHR".."1000001012"
+        "STRUCTURE_TYPE_DEVICE_GROUP_PRESENT_CAPABILITIES_KHR".."1000060007",
+        "STRUCTURE_TYPE_IMAGE_SWAPCHAIN_CREATE_INFO_KHR".."1000060008",
+        "STRUCTURE_TYPE_BIND_IMAGE_MEMORY_SWAPCHAIN_INFO_KHR".."1000060009",
+        "STRUCTURE_TYPE_ACQUIRE_NEXT_IMAGE_INFO_KHR".."1000060010",
+        "STRUCTURE_TYPE_DEVICE_GROUP_PRESENT_INFO_KHR".."1000060011",
+        "STRUCTURE_TYPE_DEVICE_GROUP_SWAPCHAIN_CREATE_INFO_KHR".."1000060012"
     )
 
     EnumConstant(
@@ -203,10 +203,10 @@ val KHR_swapchain = "KHRSwapchain".nativeClassVK("KHR_swapchain", type = "device
         ##VkAllocationCallbacks, ##VkSwapchainCreateInfoKHR
         """,
 
-        VkDevice.IN("device", "the device to create the swapchain for."),
-        VkSwapchainCreateInfoKHR.const.p.IN("pCreateInfo", "a pointer to an instance of the ##VkSwapchainCreateInfoKHR structure specifying the parameters of the created swapchain."),
-        nullable..VkAllocationCallbacks.const.p.IN("pAllocator", "the allocator used for host memory allocated for the swapchain object when there is no more specific allocator available (see <a target=\"_blank\" href=\"https://www.khronos.org/registry/vulkan/specs/1.0-extensions/html/vkspec.html\\#memory-allocation\">Memory Allocation</a>)."),
-        Check(1)..VkSwapchainKHR.p.OUT("pSwapchain", "a pointer to a {@code VkSwapchainKHR} handle in which the created swapchain object will be returned.")
+        VkDevice("device", "the device to create the swapchain for."),
+        VkSwapchainCreateInfoKHR.const.p("pCreateInfo", "a pointer to an instance of the ##VkSwapchainCreateInfoKHR structure specifying the parameters of the created swapchain."),
+        nullable..VkAllocationCallbacks.const.p("pAllocator", "the allocator used for host memory allocated for the swapchain object when there is no more specific allocator available (see <a target=\"_blank\" href=\"https://www.khronos.org/registry/vulkan/specs/1.0-extensions/html/vkspec.html\\#memory-allocation\">Memory Allocation</a>)."),
+        Check(1)..VkSwapchainKHR.p("pSwapchain", "a pointer to a {@code VkSwapchainKHR} handle in which the created swapchain object will be returned.")
     )
 
     void(
@@ -252,9 +252,9 @@ val KHR_swapchain = "KHRSwapchain".nativeClassVK("KHR_swapchain", type = "device
         ##VkAllocationCallbacks
         """,
 
-        VkDevice.IN("device", "the {@code VkDevice} associated with {@code swapchain}."),
-        VkSwapchainKHR.IN("swapchain", "the swapchain to destroy."),
-        nullable..VkAllocationCallbacks.const.p.IN("pAllocator", "the allocator used for host memory allocated for the swapchain object when there is no more specific allocator available (see <a target=\"_blank\" href=\"https://www.khronos.org/registry/vulkan/specs/1.0-extensions/html/vkspec.html\\#memory-allocation\">Memory Allocation</a>).")
+        VkDevice("device", "the {@code VkDevice} associated with {@code swapchain}."),
+        VkSwapchainKHR("swapchain", "the swapchain to destroy."),
+        nullable..VkAllocationCallbacks.const.p("pAllocator", "the allocator used for host memory allocated for the swapchain object when there is no more specific allocator available (see <a target=\"_blank\" href=\"https://www.khronos.org/registry/vulkan/specs/1.0-extensions/html/vkspec.html\\#memory-allocation\">Memory Allocation</a>).")
     )
 
     VkResult(
@@ -300,10 +300,10 @@ val KHR_swapchain = "KHRSwapchain".nativeClassVK("KHR_swapchain", type = "device
         </dl>
         """,
 
-        VkDevice.IN("device", "the device associated with {@code swapchain}."),
-        VkSwapchainKHR.IN("swapchain", "the swapchain to query."),
-        AutoSize("pSwapchainImages")..Check(1)..uint32_t.p.INOUT("pSwapchainImageCount", "a pointer to an integer related to the number of presentable images available or queried, as described below."),
-        nullable..VkImage.p.OUT("pSwapchainImages", "either {@code NULL} or a pointer to an array of {@code VkImage} handles.")
+        VkDevice("device", "the device associated with {@code swapchain}."),
+        VkSwapchainKHR("swapchain", "the swapchain to query."),
+        AutoSize("pSwapchainImages")..Check(1)..uint32_t.p("pSwapchainImageCount", "a pointer to an integer related to the number of presentable images available or queried, as described below."),
+        nullable..VkImage.p("pSwapchainImages", "either {@code NULL} or a pointer to an array of {@code VkImage} handles.")
     )
 
     VkResult(
@@ -373,12 +373,12 @@ val KHR_swapchain = "KHRSwapchain".nativeClassVK("KHR_swapchain", type = "device
         </dl>
         """,
 
-        VkDevice.IN("device", "the device associated with {@code swapchain}."),
-        VkSwapchainKHR.IN("swapchain", "the non-retired swapchain from which an image is being acquired."),
-        uint64_t.IN("timeout", "specifies how long the function waits, in nanoseconds, if no image is available."),
-        VkSemaphore.IN("semaphore", "#NULL_HANDLE or a semaphore to signal."),
-        VkFence.IN("fence", "#NULL_HANDLE or a fence to signal."),
-        Check(1)..uint32_t.p.OUT("pImageIndex", "a pointer to a {@code uint32_t} that is set to the index of the next image to use (i.e. an index into the array of images returned by #GetSwapchainImagesKHR()).")
+        VkDevice("device", "the device associated with {@code swapchain}."),
+        VkSwapchainKHR("swapchain", "the non-retired swapchain from which an image is being acquired."),
+        uint64_t("timeout", "specifies how long the function waits, in nanoseconds, if no image is available."),
+        VkSemaphore("semaphore", "#NULL_HANDLE or a semaphore to signal."),
+        VkFence("fence", "#NULL_HANDLE or a fence to signal."),
+        Check(1)..uint32_t.p("pImageIndex", "a pointer to a {@code uint32_t} that is set to the index of the next image to use (i.e. an index into the array of images returned by {@code vkGetSwapchainImagesKHR}).")
     )
 
     VkResult(
@@ -401,7 +401,7 @@ val KHR_swapchain = "KHRSwapchain".nativeClassVK("KHR_swapchain", type = "device
 
         <h5>Valid Usage</h5>
         <ul>
-            <li>Each element of {@code pSwapchains} member of {@code pPresentInfo} <b>must</b> be a swapchain that is created for a surface for which presentation is supported from {@code queue} as determined using a call to #GetPhysicalDeviceSurfaceSupportKHR()</li>
+            <li>Each element of {@code pSwapchains} member of {@code pPresentInfo} <b>must</b> be a swapchain that is created for a surface for which presentation is supported from {@code queue} as determined using a call to {@code vkGetPhysicalDeviceSurfaceSupportKHR}</li>
             <li>If more than one member of {@code pSwapchains} was created from a display surface, all display surfaces referenced that refer to the same display <b>must</b> use the same display mode</li>
             <li>When a semaphore unsignal operation defined by the elements of the {@code pWaitSemaphores} member of {@code pPresentInfo} executes on {@code queue}, no other queue <b>must</b> be waiting on the same semaphore.</li>
             <li>All elements of the {@code pWaitSemaphores} member of {@code pPresentInfo} <b>must</b> be semaphores that are signaled, or have <a target="_blank" href="https://www.khronos.org/registry/vulkan/specs/1.0-extensions/html/vkspec.html\#synchronization-semaphores-signaling">semaphore signal operations</a> previously submitted for execution.</li>
@@ -411,9 +411,9 @@ val KHR_swapchain = "KHRSwapchain".nativeClassVK("KHR_swapchain", type = "device
 
         Queueing an image for presentation defines a set of <em>queue operations</em>, including waiting on the semaphores and submitting a presentation request to the presentation engine. However, the scope of this set of queue operations does not include the actual processing of the image by the presentation engine.
 
-        If #QueuePresentKHR() fails to enqueue the corresponding set of queue operations, it <b>may</b> return #ERROR_OUT_OF_HOST_MEMORY or #ERROR_OUT_OF_DEVICE_MEMORY. If it does, the implementation <b>must</b> ensure that the state and contents of any resources or synchronization primitives referenced is unaffected by the call or its failure.
+        If {@code vkQueuePresentKHR} fails to enqueue the corresponding set of queue operations, it <b>may</b> return #ERROR_OUT_OF_HOST_MEMORY or #ERROR_OUT_OF_DEVICE_MEMORY. If it does, the implementation <b>must</b> ensure that the state and contents of any resources or synchronization primitives referenced is unaffected by the call or its failure.
 
-        If #QueuePresentKHR() fails in such a way that the implementation is unable to make that guarantee, the implementation <b>must</b> return #ERROR_DEVICE_LOST.
+        If {@code vkQueuePresentKHR} fails in such a way that the implementation is unable to make that guarantee, the implementation <b>must</b> return #ERROR_DEVICE_LOST.
 
         However, if the presentation request is rejected by the presentation engine with an error #ERROR_OUT_OF_DATE_KHR or #ERROR_SURFACE_LOST_KHR, the set of queue operations are still considered to be enqueued and thus any semaphore to be waited on gets unsignaled when the corresponding queue operation is complete.
 
@@ -458,8 +458,8 @@ val KHR_swapchain = "KHRSwapchain".nativeClassVK("KHR_swapchain", type = "device
         ##VkPresentInfoKHR
         """,
 
-        VkQueue.IN("queue", "a queue that is capable of presentation to the target surface&#8217;s platform on the same device as the image&#8217;s swapchain."),
-        VkPresentInfoKHR.const.p.IN("pPresentInfo", "a pointer to an instance of the ##VkPresentInfoKHR structure specifying the parameters of the presentation.")
+        VkQueue("queue", "a queue that is capable of presentation to the target surface&#8217;s platform on the same device as the image&#8217;s swapchain."),
+        VkPresentInfoKHR.const.p("pPresentInfo", "a pointer to an instance of the ##VkPresentInfoKHR structure specifying the parameters of the presentation.")
     )
 
     DependsOn("Vulkan11")..VkResult(
@@ -501,8 +501,8 @@ val KHR_swapchain = "KHRSwapchain".nativeClassVK("KHR_swapchain", type = "device
         ##VkDeviceGroupPresentCapabilitiesKHR
         """,
 
-        VkDevice.IN("device", "the logical device."),
-        VkDeviceGroupPresentCapabilitiesKHR.p.OUT("pDeviceGroupPresentCapabilities", "a pointer to a structure of type ##VkDeviceGroupPresentCapabilitiesKHR that is filled with the logical device&#8217;s capabilities.")
+        VkDevice("device", "the logical device."),
+        VkDeviceGroupPresentCapabilitiesKHR.p("pDeviceGroupPresentCapabilities", "a pointer to a structure of type ##VkDeviceGroupPresentCapabilitiesKHR that is filled with the logical device&#8217;s capabilities.")
     )
 
     DependsOn("Vulkan11")..VkResult(
@@ -553,9 +553,9 @@ val KHR_swapchain = "KHRSwapchain".nativeClassVK("KHR_swapchain", type = "device
         </dl>
         """,
 
-        VkDevice.IN("device", "the logical device."),
-        VkSurfaceKHR.IN("surface", "the surface."),
-        Check(1)..VkDeviceGroupPresentModeFlagsKHR.p.INOUT("pModes", "a pointer to a value of type {@code VkDeviceGroupPresentModeFlagsKHR} that is filled with the supported device group present modes for the surface.")
+        VkDevice("device", "the logical device."),
+        VkSurfaceKHR("surface", "the surface."),
+        Check(1)..VkDeviceGroupPresentModeFlagsKHR.p("pModes", "a pointer to a value of type {@code VkDeviceGroupPresentModeFlagsKHR} that is filled with the supported device group present modes for the surface.")
     )
 
     DependsOn("Vulkan11")..VkResult(
@@ -615,10 +615,10 @@ val KHR_swapchain = "KHRSwapchain".nativeClassVK("KHR_swapchain", type = "device
         ##VkRect2D
         """,
 
-        VkPhysicalDevice.IN("physicalDevice", "the physical device."),
-        VkSurfaceKHR.IN("surface", "the surface."),
-        AutoSize("pRects")..Check(1)..uint32_t.p.INOUT("pRectCount", "a pointer to an integer related to the number of rectangles available or queried, as described below."),
-        nullable..VkRect2D.p.OUT("pRects", "either {@code NULL} or a pointer to an array of ##VkRect2D structures.")
+        VkPhysicalDevice("physicalDevice", "the physical device."),
+        VkSurfaceKHR("surface", "the surface."),
+        AutoSize("pRects")..Check(1)..uint32_t.p("pRectCount", "a pointer to an integer related to the number of rectangles available or queried, as described below."),
+        nullable..VkRect2D.p("pRects", "either {@code NULL} or a pointer to an array of ##VkRect2D structures.")
     )
 
     DependsOn("Vulkan11")..VkResult(
@@ -671,8 +671,8 @@ val KHR_swapchain = "KHRSwapchain".nativeClassVK("KHR_swapchain", type = "device
         ##VkAcquireNextImageInfoKHR
         """,
 
-        VkDevice.IN("device", "the device associated with {@code swapchain}."),
-        VkAcquireNextImageInfoKHR.const.p.IN("pAcquireInfo", "a pointer to a structure of type ##VkAcquireNextImageInfoKHR containing parameters of the acquire."),
-        Check(1)..uint32_t.p.OUT("pImageIndex", "a pointer to a {@code uint32_t} that is set to the index of the next image to use.")
+        VkDevice("device", "the device associated with {@code swapchain}."),
+        VkAcquireNextImageInfoKHR.const.p("pAcquireInfo", "a pointer to a structure of type ##VkAcquireNextImageInfoKHR containing parameters of the acquire."),
+        Check(1)..uint32_t.p("pImageIndex", "a pointer to a {@code uint32_t} that is set to the index of the next image to use.")
     )
 }
